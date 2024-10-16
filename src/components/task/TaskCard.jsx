@@ -29,7 +29,7 @@ const TaskCard = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Stack sx={{ flexDirection: "row", gap: 1,justifyContent:'center', alignItems:'center' }}>
+                  <Stack sx={{ flexDirection: "row", gap: 1,justifyContent:'center', alignItems:'c' }}>
                     {data.isForm && data.isPublicForm && (
                       <Typography>
                         <PeopleIcon />
