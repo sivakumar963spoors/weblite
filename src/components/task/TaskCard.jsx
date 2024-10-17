@@ -43,6 +43,9 @@ const TaskCard = () => {
                     <Typography sx={{ fontWeight: {sm:600, xs:100} , fontSize:{xs:'13px'}}}>
                       {data.title}
                     </Typography>
+                    <Typography sx={{ fontWeight: {sm:600, xs:100} , fontSize:{xs:'13px'}}}>
+                      {data.title}
+                    </Typography>
                   </Stack>
                   
                   <Stack sx={{ flexDirection: "row", gap: 1 }}>
