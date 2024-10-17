@@ -38,7 +38,7 @@ const TaskCard = () => {
                       alignItems: "center",
                     }}
                   >
-                    {/* Conditionally render the icon based on the type */}
+                  
                     {data.moduleId === 37 &&data.formType === 1 ? (
                       <Typography>
                         <WorkIcon />
@@ -63,7 +63,7 @@ const TaskCard = () => {
                     </Typography>
                   </Stack>
 
-                  {/* Buttons */}
+               
                   <Stack sx={{ flexDirection: "row", gap: 1 }}>
                     <CustomButton title={"show all"} size={"small"} />
                     {data.isForm && (
@@ -73,7 +73,7 @@ const TaskCard = () => {
                 </Stack>
                 <Divider sx={{ width: "100%", height: "10px" }} />
 
-                {/* Conditional Rendering for Data Display */}
+       
                 {data.isForm && data.resposedata && (
                   <Stack
                     sx={{
@@ -147,6 +147,7 @@ const TaskCard = () => {
                 )}
               </Stack>
             </Stack>
+            <Typography>uhui</Typography>
           </Stack>
         ))}
       </Stack>
