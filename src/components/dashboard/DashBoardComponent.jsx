@@ -8,6 +8,7 @@ const DashBoardComponent = () => {
        <Box sx={{mt:15}}>
 
       <Typography>Dashboard</Typography>
+      <Typography>dashjkjh</Typography>
        </Box>
     </div>
   )
