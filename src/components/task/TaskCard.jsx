@@ -1,10 +1,11 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddIcon from "@mui/icons-material/Add";
 import PeopleIcon from "@mui/icons-material/People";
+import WorkIcon from "@mui/icons-material/Work"; // Import Work Icon
 import { Divider, Stack, Typography } from "@mui/material";
 import React from "react";
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData } from "./TaskData";
+
 const TaskCard = () => {
   return (
     <>
@@ -16,7 +17,7 @@ const TaskCard = () => {
           >
             <Stack
               sx={{
-                width: {sm:'90%', xs:'95%'},
+                width: { sm: "90%", xs: "95%" },
                 bgcolor: "#FFF",
                 borderRadius: "4px",
               }}
@@ -29,43 +30,65 @@ const TaskCard = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Stack sx={{ flexDirection: "row", gap: 1,justifyContent:'center', alignItems:'center' }}>
-                    {data.isForm && data.isPublicForm && (
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      gap: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* Conditionally render the icon based on the type */}
+                    {data.moduleId === 37 &&data.formType === 1 ? (
                       <Typography>
-                        <PeopleIcon />
+                        <WorkIcon />
                       </Typography>
+                    ) : (
+                      <>
+                        {data.moduleId === '9'  && (
+                          <Typography>
+                            <PeopleIcon />
+                          </Typography>
+                        )}
+                       
+                      </>
                     )}
-                    {data.isForm && data.isPrivateForm && (
-                      <Typography>
-                        <AccountCircleIcon />
-                      </Typography>
-                    )}
-                    <Typography sx={{ fontWeight: {sm:600, xs:100} , fontSize:{xs:'13px'}}}>
-                      {data.title}
+                    <Typography
+                      sx={{
+                        fontWeight: { sm: 600, xs: 100 },
+                        fontSize: { xs: "13px" },
+                      }}
+                    >
+                      {data.moduleName}
                     </Typography>
                   </Stack>
-                  
+
+                  {/* Buttons */}
                   <Stack sx={{ flexDirection: "row", gap: 1 }}>
-                    <CustomButton title={"show all"} size={"small"}/>
-                {data.isForm&&   <CustomButton title={"Add"} startIcon={<AddIcon />} />}
+                    <CustomButton title={"show all"} size={"small"} />
+                    {data.isForm && (
+                      <CustomButton title={"Add"} startIcon={<AddIcon />} />
+                    )}
                   </Stack>
                 </Stack>
-                <Divider sx={{ width: "100%" , height:'10px'}} />
-                {data.resposedata && (
+                <Divider sx={{ width: "100%", height: "10px" }} />
+
+                {/* Conditional Rendering for Data Display */}
+                {data.isForm && data.resposedata && (
                   <Stack
                     sx={{
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "center",
-
                       flexWrap: "wrap",
                       gap: 1,
-                      textTransform:'capitalize', mt:1
+                      textTransform: "capitalize",
+                      mt: 1,
                     }}
                   >
-                    {data.resposedata.map((eachresposedata) => (
+                    {data.resposedata.map((eachResposeData) => (
                       <Stack
-                        key={eachresposedata.cardTitle}
+                        key={eachResposeData.cardTitle}
                         spacing={1}
                         sx={{
                           border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -73,17 +96,53 @@ const TaskCard = () => {
                           textAlign: "center",
                           borderRadius: "4px",
                           width: "300px",
-                          cursor:'pointer',
-                          '&:hover':{
-                            bgcolor:'#F9F9F9'
-                          }
-                          
+                          cursor: "pointer",
+                          "&:hover": { bgcolor: "#F9F9F9" },
                         }}
                       >
-                        <Typography>{eachresposedata.count}</Typography>
-                        <Typography>{eachresposedata.cardTitle}</Typography>
+                        <Typography>{eachResposeData.count}</Typography>
+                        <Typography>{eachResposeData.cardTitle}</Typography>
                       </Stack>
                     ))}
+                  </Stack>
+                )}
+
+                {data.isWork && (
+                  <Stack sx={{ mt: 1 }}>
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        gap: 2,
+                        flexWrap: "wrap",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {data.stats.map((stat, statIndex) => (
+                        <Stack
+                          key={statIndex}
+                          sx={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1,
+                            width: "100%",
+                            padding: 1,
+                            borderRadius: "4px",
+                          }}
+                        >
+                          <Typography sx={{ py: '1px' ,fontSize:'13px'}}>{stat.label}</Typography>
+                          <Typography sx={{ color: stat.color }}>  {stat.value} </Typography> 
+                        </Stack>
+                      ))}
+                    </Stack>
+                  </Stack>
+                )}
+
+                {data.isEmployee && (
+                  <Stack sx={{ mt: 1 }}>
+                    <Typography variant="subtitle2">
+                      Employee Details
+                    </Typography>
                   </Stack>
                 )}
               </Stack>
@@ -96,3 +155,20 @@ const TaskCard = () => {
 };
 
 export default TaskCard;
+// import React from 'react'
+// import { cardData } from './TaskData'
+// import { Stack, Typography } from '@mui/material'
+
+// const TaskCard = () => {
+//   return (
+//     <div>
+//       {cardData.map((each)=>
+//       <Stack>
+//         {each.moduleId  === 36 && <Typography>form data</Typography>}
+//         {each.moduleId === 37 && <Typography>workSpe</Typography>}
+//       </Stack>)}
+//     </div>
+//   )
+// }
+
+// export default TaskCard
