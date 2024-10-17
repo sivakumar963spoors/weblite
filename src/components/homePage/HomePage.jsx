@@ -1,33 +1,24 @@
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import WindowIcon from "@mui/icons-material/Window";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TopBar from "../navbar/TopBar";
+import TaskCard from '../task/TaskCard';
 const HomePage = () => {
   const [userName, setUserName] = useState("vishakha");
-  const [open, setOpen] = React.useState(false);
-
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
+  const [openActionRequird, setOpenActionRequird] = useState(false);
+const nav=useNavigate()
+  const toggleActionRequird = () => {
+    setOpenActionRequird(!openActionRequird);
   };
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <Divider />
-    </Box>
-  );
-
+const navigateToDashBoard =()=>{
+nav('/dashboard')
+}
   return (
     <Box>
-      <Box sx={{ position: "fixed" }}>
-        <TopBar />
-      </Box>
+     
 
       <Box sx={{ mt: 15 }}>
         <Box>
@@ -38,6 +29,8 @@ const HomePage = () => {
                 justifyContent: "center",
                 zIndex: 1000,
                 mt: -3.5,
+              
+              
               }}
             >
               <Stack
@@ -65,30 +58,6 @@ const HomePage = () => {
                 </Stack>
               </Stack>
             </Stack>
-            {/* <Stack  sx={{
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-              
-              }}>
-            <Stack
-                sx={{
-                  border: "1px solid #c9c9c9",
-                  width: "90%",
-                  zIndex: 999,
-                  bgcolor: "#FFF",
-                  
-                  borderRadius: "4px",
-                }}
-              >
-                <Stack sx={{ px: 4, py: 2.5 }}>
-                  <Stack sx={{flexDirection:'row', gap:2, alignItems:'center'}}>
-                  <IconButton sx={{border:'1px solid black'}}><WindowIcon sx={{color:'#000'}}/></IconButton>
-                  <Typography sx={{fontWeight:'bold'}}>Dashboard</Typography>
-                  </Stack>
-                </Stack>
-              </Stack>
-            </Stack> */}
             <Stack
               sx={{
                 alignItems: "center",
@@ -106,7 +75,42 @@ const HomePage = () => {
                   borderRadius: "4px",
                 }}
               >
-                <Stack sx={{ px: 4, py: 2.5 }}>
+                <Stack sx={{ px: 4, py: 1 }}>
+                  <Stack
+                    sx={{ flexDirection: "row", gap: 2, alignItems: "center" , cursor:"pointer"}}
+                    onClick={navigateToDashBoard}
+                  >
+                    <IconButton sx={{ border: "1px solid #4154f1" }}>
+                      <WindowIcon sx={{ color: "#4154f1" }} />
+                    </IconButton>
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      Dashboard
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Stack>
+            <Stack
+              sx={{
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1000,
+              }}
+            >
+              <Stack
+                sx={{
+                  border: "1px solid #c9c9c9",
+                  width: "90%",
+                  zIndex: 999,
+                  bgcolor: "#FFF",
+
+                  borderTopLeftRadius: "5px",
+                  borderTopRightRadius: "5px",
+                  borderBottomLeftRadius: openActionRequird ? "0px" : "5px",
+                  borderBottomRightRadius: openActionRequird ? "0px" : "5px",
+                }}
+              >
+                <Stack sx={{ px: 4,  }}>
                   <Stack
                     sx={{
                       flexDirection: "row",
@@ -115,41 +119,41 @@ const HomePage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography sx={{ fontWeight: "bold" }}>
+                    <Typography sx={{ color: "red",fontFamily:'"Poppins", sans-serif',fontWeight:600, letterSpacing:0.3 }}>
                       Action Required
                     </Typography>
-                    <IconButton onClick={toggleDrawer(true)}>
+                    <IconButton>
+                      {openActionRequird ?<KeyboardArrowDownIcon   sx={{ color: "red", fontSize: "30px" }}
+                        onClick={toggleActionRequird}/>: 
                       <KeyboardArrowRightIcon
-                        sx={{ color: "#000", fontSize: "30px" }}
+                        sx={{ color: "red", fontSize: "30px" }}
+                        onClick={toggleActionRequird}
                       />
+                  }
                     </IconButton>
-                    <Drawer
-                      open={open}
-                      onClose={toggleDrawer(false)}
-                      anchor="right"
-                      elevation={1}
-                      hideBackdrop={false}
-                      transitionDuration={{ enter: 1000, exit: 900 }}
-                      PaperProps={{
-                        sx: {
-                          backgroundColor: "lightblue",
-                          padding: 2,
-                          position: "absolute",
-                          top: "15%",
-                        },
-                      }}
-                      variant="temporary"
-                    >
-                      {DrawerList}
-                    </Drawer>
                   </Stack>
                 </Stack>
               </Stack>
+
+              {openActionRequird && (
+                <Stack
+                  sx={{
+                    borderRight: "1px  solid #c9c9c9",
+                    width: "90%",
+                    borderLeft: "1px  solid #c9c9c9",
+                    borderBottom: "1px  solid #c9c9c9",
+                  }}
+                >
+                  <Stack sx={{px:4, bgcolor:"#EEEEEE"}}>
+                    <Typography>hi</Typography>
+                  </Stack>
+                </Stack>
+              )}
             </Stack>
           </Stack>
         </Box>
       </Box>
-     
+      <TaskCard/>
     </Box>
   );
 };

@@ -1,17 +1,22 @@
-import { BrowserRouter, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import TaskCard from "./components/task/TaskCard";
+
 
 function App() {
   return (
     <BrowserRouter>
+
 <TaskCard/>
+{/* <HomePage/> */}
+      <Route/>
+    <TopBar/>
       <Routes>
-       
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashBoardComponent />} />
+
       </Routes>
     </BrowserRouter>
   );
 }
-
 
 export default App;
