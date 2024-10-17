@@ -9,6 +9,7 @@ const DashBoardComponent = () => {
 
       <Typography>Dashboard</Typography>
       <Typography>dashjkjh</Typography>
+      <Typography>hkhuyhiuyiyiuo</Typography>
        </Box>
     </div>
   )
