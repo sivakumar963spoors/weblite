@@ -46,7 +46,6 @@ const TopBar = () => {
       </Menu>
         </Toolbar>
       </Box>
-      <Typography>hiigit</Typography>
     </Box>
   )
 }
