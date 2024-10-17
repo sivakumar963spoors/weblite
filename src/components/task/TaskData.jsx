@@ -1,89 +1,124 @@
 export const cardData = [
+
     {
-        title: 'File Upload Work',
-        description: 'You need to do. Team needs to do. No progress past 10 days.',
-        isPrivateForm:true,
-        isPublicForm:false,
-        isForm:true,
-        isEmployee:false,
-        stats: [
-            { label: 'You', value: 0, color: 'green' },
-            { label: 'Team', value: 0, color: 'green' },
-            { label: 'Issues', value: 1, color: 'red' }
-        ],
-        additionalItems: ['Item 1', 'Item 2', 'Item 3'],
-        resposedata:[
-            {
-                count:0,
-                cardTitle:"filled yestarday",
-
-
-            },
-            {
-                count:0,
-                cardTitle:"filled today",
-                
-
-            },
-        ]
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "13775",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 246,
+      "formSpecAddPermission": false,
+      "formSpecId": 234810,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132420,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 36,
+      "moduleName": "30-08-203 Staging checklist",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": false,
+      "workSpecId": 0
+    
     },
-    {
-        title: 'Notifications Work22',
-        description: 'You need to do. Team needs to do. No progress past 10 days.',
-        isForm:true,
-
-        isPrivateForm:false,
-        isPublicForm:true,
-        isEmployee:false,
-        stats: [
-            { label: 'You', value: 0, color: 'green' },
-            { label: 'Team', value: 1, color: 'orange' },
-            { label: 'Issues', value: 2, color: 'red' }
-        ],
-        resposedata:[
-            {
-                count:0,
-                cardTitle:"Pending your manager approvals",
-
-
-            },
-            {
-                count:0,
-                cardTitle:"Awaiting your approval",
-                
-
-            },
-            {
-                count:0,
-                cardTitle:"Awaiting team approval",
-                
-
-            },
-        ]
-    },
-    {
-        title: 'Customer Location Updation',
-        description: 'Pending your manager approvals.',
-        isForm:false,
-        isEmployee:true,
-        isPrivateForm:false,
-        isPublicForm:false,
-        stats: [
-            { label: 'Manager', value: 0, color: 'green' },
-            { label: 'Team', value: 0, color: 'green' }
-        ]
-    },
-    {
-        title: 'Doc Download',
-        description: 'Filled yesterday. Filled today.',
-        isForm:false,
-
-          
-        isPrivateForm:false,
-        isPublicForm:false,
-        stats: [
-            { label: 'Filled yesterday', value: 0, color: 'red' },
-            { label: 'Filled today', value: 0, color: 'red' }
-        ]
+   {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "2ac97f5c-a161-4d39-90d0-2ceffa2719f0",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 434,
+      "formSpecAddPermission": true,
+      "formSpecId": 219245,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": 5,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132600,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 37,
+      "moduleName": "Daily Maintenance Log",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": false,
+      "workSpecId": 0
     }
+,
+     {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "0",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 7,
+      "formSpecAddPermission": false,
+      "formSpecId": 0,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132234,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 9,
+      "moduleName": "Customers",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": true,
+      "workSpecId": 0
+    }
+  ,
+    {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "0",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 17,
+      "formSpecAddPermission": false,
+      "formSpecId": 0,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132244,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 24,
+      "moduleName": "Lists",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": true,
+      "workSpecId": 0
+    }
+,
+    {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "0",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 11,
+      "formSpecAddPermission": false,
+      "formSpecId": 0,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132238,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 12,
+      "moduleName": "Knowledge Base",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": true,
+      "workSpecId": 0
+    }
+  
+    
 ];
