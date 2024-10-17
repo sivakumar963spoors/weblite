@@ -1,13 +1,33 @@
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import TopBar from "../navbar/TopBar";
-import WindowIcon from '@mui/icons-material/Window';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 const HomePage = () => {
   const [userName, setUserName] = useState("vishakha");
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <Divider />
+    </Box>
+  );
+
   return (
     <Box>
-      <TopBar />
+      <Box sx={{ position: "fixed" }}>
+        <TopBar />
+      </Box>
 
       <Box sx={{ mt: 15 }}>
         <Box>
@@ -22,7 +42,6 @@ const HomePage = () => {
             >
               <Stack
                 sx={{
-               
                   width: "90%",
                   zIndex: 999,
                   bgcolor: "#FFF",
@@ -34,7 +53,7 @@ const HomePage = () => {
                   <Typography sx={{ fontWeight: "bold" }}>
                     Hi, {userName}
                   </Typography>
-                  <Stack sx={{mt:2.5,mb:1, flexDirection:'row', gap:1}}>
+                  <Stack sx={{ mt: 2.5, mb: 1, flexDirection: "row", gap: 1 }}>
                     <Button variant="contained">sign in</Button>
                     <Button>sign out</Button>
                   </Stack>
@@ -46,7 +65,7 @@ const HomePage = () => {
                 </Stack>
               </Stack>
             </Stack>
-            <Stack  sx={{
+            {/* <Stack  sx={{
                 alignItems: "center",
                 justifyContent: "center",
                 zIndex: 1000,
@@ -69,27 +88,60 @@ const HomePage = () => {
                   </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-            <Stack  sx={{
+            </Stack> */}
+            <Stack
+              sx={{
                 alignItems: "center",
                 justifyContent: "center",
                 zIndex: 1000,
-              
-              }}>
-            <Stack
+              }}
+            >
+              <Stack
                 sx={{
                   border: "1px solid #c9c9c9",
                   width: "90%",
                   zIndex: 999,
                   bgcolor: "#FFF",
-                  
+
                   borderRadius: "4px",
                 }}
               >
                 <Stack sx={{ px: 4, py: 2.5 }}>
-                  <Stack sx={{flexDirection:'row', gap:2, alignItems:'center', justifyContent:"space-between"}}>
-                  <Typography sx={{fontWeight:'bold'}}>Action Required</Typography>
-                  <IconButton ><KeyboardArrowRightIcon sx={{color:'#000'}}/></IconButton>
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: "bold" }}>
+                      Action Required
+                    </Typography>
+                    <IconButton onClick={toggleDrawer(true)}>
+                      <KeyboardArrowRightIcon
+                        sx={{ color: "#000", fontSize: "30px" }}
+                      />
+                    </IconButton>
+                    <Drawer
+                      open={open}
+                      onClose={toggleDrawer(false)}
+                      anchor="right"
+                      elevation={1}
+                      hideBackdrop={false}
+                      transitionDuration={{ enter: 1000, exit: 900 }}
+                      PaperProps={{
+                        sx: {
+                          backgroundColor: "lightblue",
+                          padding: 2,
+                          position: "absolute",
+                          top: "15%",
+                        },
+                      }}
+                      variant="temporary"
+                    >
+                      {DrawerList}
+                    </Drawer>
                   </Stack>
                 </Stack>
               </Stack>
@@ -97,6 +149,7 @@ const HomePage = () => {
           </Stack>
         </Box>
       </Box>
+     
     </Box>
   );
 };
