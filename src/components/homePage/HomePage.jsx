@@ -46,7 +46,7 @@ const HomePage = () => {
                 alignItems: "center",
                 justifyContent: "center",
            
-                mt: -3.5,
+                mt: -8.5,
                 zIndex:{zIndex}
                
               }}
@@ -117,7 +117,7 @@ const HomePage = () => {
               sx={{
                 alignItems: "center",
                 justifyContent: "center",
-                // zIndex: 1000,
+               
               }}
             >
               <Stack
@@ -188,11 +188,12 @@ const HomePage = () => {
         </Box>
       </Box>
 
-      <TaskCard />
-     
-    </Box>
+     <Box sx={{mt:2}}>
+     <TaskCard />
+     </Box>
 
-      
+   
+
       
       
  

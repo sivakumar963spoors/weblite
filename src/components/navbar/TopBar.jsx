@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { menuItem } from "./TobarData";
+import { menuItem } from "./TopBarData";
 
 const TopBar = () => {
   const [menuTitle, setMenuTitle] = useState("Home");
@@ -23,6 +23,16 @@ const TopBar = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [menuTab, setMenuTab] = useState("");
   const open = Boolean(anchorEl);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const handleMouseEnter = (index) => {
+    setHoveredIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
+
   const nav = useNavigate();
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -65,6 +75,8 @@ const TopBar = () => {
             <ListItem
               key={i}
               onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
+              onMouseEnter={() => handleMouseEnter(i)}
+              onMouseLeave={handleMouseLeave}
             >
               <Stack
                 sx={{
@@ -80,14 +92,19 @@ const TopBar = () => {
                     "& .MuiTypography-root": {
                       color: "blue",
                     },
-                    "& .MuiSvgIcon-root": {
-                      color: "blue",
-                    },
                   },
                   width: "95%",
                 }}
               >
-                <Typography> {eachMenu.menuIcon}</Typography>
+                <Box
+                  component={"img"}
+                  src={
+                    hoveredIndex === i
+                      ? eachMenu.blueMenuIcon
+                      : eachMenu.menuIcon
+                  }
+                  sx={{ width: "20px" }}
+                />
                 <Typography sx={{ color: "#FFF" }}>
                   {eachMenu.menuTitle}
                 </Typography>
@@ -114,7 +131,7 @@ const TopBar = () => {
             "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
         }}
       >
-        <Toolbar variant="dense" sx={{ py: 4 }}>
+        <Toolbar variant="dense" sx={{ py: 1 }}>
           <Stack
             sx={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}
           >
@@ -166,7 +183,7 @@ const TopBar = () => {
               backgroundColor: "#2478FE",
               padding: 2,
               position: "absolute",
-              top: "14%",
+              top: "8%",
             },
           }}
         >
