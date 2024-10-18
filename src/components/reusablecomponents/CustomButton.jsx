@@ -14,7 +14,7 @@ const CustomButton = ({  title,
     py: 0.2,
     fontWeight: "bold",
     textTransform:'capitalize',
-    fontSize:{xs:'10px',sm:'15px'}
+    fontSize:{xs:'10px',sm:'13px'}
   };
   return (
     <Button
