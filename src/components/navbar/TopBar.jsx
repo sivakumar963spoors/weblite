@@ -2,6 +2,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {
   Avatar,
   Box,
+  Divider,
   Drawer,
   IconButton,
   List,
@@ -14,7 +15,8 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const menuItem = ["Home", "Dashboard", "Reset password "];
+import { menuItem } from "./TobarData";
+
 const TopBar = () => {
   const [menuTitle, setMenuTitle] = useState("Home");
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,31 +43,58 @@ const TopBar = () => {
     setMenuTab(menus);
     setOpenDrawer(false);
 
-    switch(menus) {
-        case 'Home':
-          nav('/');
-            break;
-        case 'Dashboard':
-            nav('/dashboard');
-            break;
-        
-        
-        default:
-            console.warn('No navigation defined for this menu item');
-            break;
+    switch (menus) {
+      case "Home":
+        nav("/");
+        break;
+      case "Dashboard":
+        nav("/dashboard");
+        break;
+
+      default:
+        console.warn("No navigation defined for this menu item");
+        break;
     }
-};
-
-
- 
+  };
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
         {menuItem.map((eachMenu, i) => (
-          <ListItem key={i} onClick={() => handlenavigateToMenuItem(eachMenu)}>
-            <Typography>{eachMenu}</Typography>
-          </ListItem>
+          <>
+            <ListItem
+              key={i}
+              onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
+            >
+              <Stack
+                sx={{
+                  flexDirection: "row",
+
+                  gap: 2,
+                  py: 0.5,
+                  px: 1,
+                  alignItems: "center",
+                  cursor: "pointer",
+                  "&: hover": {
+                    bgcolor: "#FFF",
+                    "& .MuiTypography-root": {
+                      color: "blue",
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: "blue",
+                    },
+                  },
+                  width: "95%",
+                }}
+              >
+                <Typography> {eachMenu.menuIcon}</Typography>
+                <Typography sx={{ color: "#FFF" }}>
+                  {eachMenu.menuTitle}
+                </Typography>
+              </Stack>
+            </ListItem>
+            <Divider sx={{ borderBottom: "1px solid solid #FFF" }} />
+          </>
         ))}
       </List>
     </Box>
@@ -78,6 +107,7 @@ const TopBar = () => {
           bgcolor: "#2478FE",
           position: "fixed",
           width: "100%",
+          zIndex: 1000,
           top: 0,
           color: "#FFF",
           boxShadow:
@@ -103,6 +133,7 @@ const TopBar = () => {
           </Stack>
 
           <Avatar
+            sx={{ width: "30px", height: "30px" }}
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
@@ -142,7 +173,6 @@ const TopBar = () => {
           {DrawerList}
         </Drawer>
       </Box>
-
     </Box>
   );
 };
