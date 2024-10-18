@@ -181,7 +181,11 @@ const TaskCard = () => {
                 </Stack>
               </Stack>
             </Stack>
+
           ))}
+
+          </Stack>
+        ))}
       </Stack>
     </>
   );
