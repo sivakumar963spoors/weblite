@@ -1,6 +1,9 @@
 import AddIcon from "@mui/icons-material/Add";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import EventNoteIcon from "@mui/icons-material/EventNote";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import PeopleIcon from "@mui/icons-material/People";
-import WorkIcon from "@mui/icons-material/Work"; // Import Work Icon
+import WorkIcon from "@mui/icons-material/Work";
 import { Divider, Stack, Typography } from "@mui/material";
 import React from "react";
 import CustomButton from "../reusablecomponents/CustomButton";
@@ -38,42 +41,58 @@ const TaskCard = () => {
                       alignItems: "center",
                     }}
                   >
-                  
-                    {data.moduleId === 37 &&data.formType === 1 ? (
-                      <Typography>
+                    <React.Fragment>
+                      {data.moduleId === 37 ? (
                         <WorkIcon />
+                      ) : data.moduleId === 34 ? (
+                        <AssignmentIcon />
+                      ) : data.moduleId === 9 ? (
+                        <PeopleIcon />
+                      ) : data.moduleId === 17 ? (
+                        <EventNoteIcon />
+                      ) : (
+                        <HelpOutlineIcon />
+                      )}
+
+                      <Typography
+                        sx={{
+                          fontWeight: { sm: 600, xs: 100 },
+                          fontSize: { xs: "13px" },
+                        }}
+                      >
+                        {data.moduleName}
                       </Typography>
-                    ) : (
-                      <>
-                        {data.moduleId === '9'  && (
-                          <Typography>
-                            <PeopleIcon />
-                          </Typography>
-                        )}
-                       
-                      </>
-                    )}
-                    <Typography
-                      sx={{
-                        fontWeight: { sm: 600, xs: 100 },
-                        fontSize: { xs: "13px" },
-                      }}
-                    >
-                      {data.moduleName}
-                    </Typography>
+                    </React.Fragment>
                   </Stack>
 
-               
-                  <Stack sx={{ flexDirection: "row", gap: 1 }}>
-                    <CustomButton title={"show all"} size={"small"} />
-                    {data.isForm && (
-                      <CustomButton title={"Add"} startIcon={<AddIcon />} />
+                  <Stack
+                    sx={{ flexDirection: "row", gap: 1, fontSize: "13px" }}
+                  >
+                    <CustomButton
+                      title={"show all"}
+                      size={"small"}
+                      sx={{
+                        fontSize: "13px",
+                        padding: "4px 8px",
+                        minWidth: "auto",
+                      }}
+                    />
+                    {[37, 36, 34, 9, 17].includes(data.moduleId) && (
+                      <CustomButton
+                        title={"Add"}
+                        startIcon={<AddIcon />}
+                        size={"small"}
+                        sx={{
+                          fontSize: "13px",
+                          padding: "4px 8px",
+                          minWidth: "auto",
+                        }}
+                      />
                     )}
                   </Stack>
                 </Stack>
                 <Divider sx={{ width: "100%", height: "10px" }} />
 
-       
                 {data.isForm && data.resposedata && (
                   <Stack
                     sx={{
@@ -130,24 +149,21 @@ const TaskCard = () => {
                             borderRadius: "4px",
                           }}
                         >
-                          <Typography sx={{ py: '1px' ,fontSize:'13px'}}>{stat.label}</Typography>
-                          <Typography sx={{ color: stat.color }}>  {stat.value} </Typography> 
+                          <Typography sx={{ py: "1px", fontSize: "13px" }}>
+                            {stat.label}
+                          </Typography>
+                          <Typography sx={{ color: stat.color }}>
+                            {" "}
+                            {stat.value}{" "}
+                          </Typography>
                         </Stack>
                       ))}
                     </Stack>
                   </Stack>
                 )}
-
-                {data.isEmployee && (
-                  <Stack sx={{ mt: 1 }}>
-                    <Typography variant="subtitle2">
-                      Employee Details
-                    </Typography>
-                  </Stack>
-                )}
               </Stack>
             </Stack>
-            
+
           </Stack>
         ))}
       </Stack>
@@ -156,20 +172,3 @@ const TaskCard = () => {
 };
 
 export default TaskCard;
-// import React from 'react'
-// import { cardData } from './TaskData'
-// import { Stack, Typography } from '@mui/material'
-
-// const TaskCard = () => {
-//   return (
-//     <div>
-//       {cardData.map((each)=>
-//       <Stack>
-//         {each.moduleId  === 36 && <Typography>form data</Typography>}
-//         {each.moduleId === 37 && <Typography>workSpe</Typography>}
-//       </Stack>)}
-//     </div>
-//   )
-// }
-
-// export default TaskCard

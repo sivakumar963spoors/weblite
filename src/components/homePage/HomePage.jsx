@@ -4,7 +4,9 @@ import WindowIcon from "@mui/icons-material/Window";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TaskCard from "../task/TaskCard";
+
+import TaskCard from '../task/TaskCard';
+
 const HomePage = () => {
   const [userName, setUserName] = useState("vishakha");
   const [openActionRequird, setOpenActionRequird] = useState(false);
@@ -185,9 +187,18 @@ const HomePage = () => {
           </Stack>
         </Box>
       </Box>
+
       <TaskCard />
      
     </Box>
+
+      <Box sx={{mt:4}}>
+
+      <TaskCard/>
+      </Box>
+      
+      
+    </Box >
   );
 };
 
