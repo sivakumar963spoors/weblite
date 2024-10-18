@@ -191,10 +191,12 @@ const HomePage = () => {
      <Box sx={{mt:2}}>
      <TaskCard />
      </Box>
-     
+
    
+
       
-    </Box >
+      
+ 
   );
 };
 
