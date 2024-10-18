@@ -24,6 +24,32 @@ export const cardData = [
       "workSpecId": 0
     
     },
+
+    {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "13775",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 246,
+      "formSpecAddPermission": false,
+      "formSpecId": 234810,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132420,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 17,
+      "moduleName": "30-08-203 Staging checklist",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": false,
+      "workSpecId": 0
+    
+    },
+
    {
       "createTime": "2024-10-16 10:08:28",
       "customEntitySpecAddPermission": false,
@@ -70,31 +96,7 @@ export const cardData = [
       "startUp": false,
       "visible": true,
       "workSpecId": 0
-    }
-  ,
-    {
-      "createTime": "2024-10-16 10:08:28",
-      "customEntitySpecAddPermission": false,
-      "customEntitySpecId": "0",
-      "customEntitySpecPermission": false,
-      "customEntitySpecViewPermission": false,
-      "displayOrder": 17,
-      "formSpecAddPermission": false,
-      "formSpecId": 0,
-      "formSpecPermission": false,
-      "formSpecViewPermission": false,
-      "formType": null,
-      "groupIdAndWorkspecIds": null,
-      "hmId": 1847,
-      "id": 7132244,
-      "modifiedTime": "2024-10-16 10:08:28",
-      "moduleId": 24,
-      "moduleName": "Lists",
-      "quickLinkUrl": null,
-      "startUp": false,
-      "visible": true,
-      "workSpecId": 0
-    }
+    }    
 ,
     {
       "createTime": "2024-10-16 10:08:28",
@@ -118,7 +120,32 @@ export const cardData = [
       "startUp": false,
       "visible": true,
       "workSpecId": 0
-    }
+    },
+
+    {
+      "createTime": "2024-10-16 10:08:28",
+      "customEntitySpecAddPermission": false,
+      "customEntitySpecId": "13775",
+      "customEntitySpecPermission": false,
+      "customEntitySpecViewPermission": false,
+      "displayOrder": 246,
+      "formSpecAddPermission": false,
+      "formSpecId": 234810,
+      "formSpecPermission": false,
+      "formSpecViewPermission": false,
+      "formType": null,
+      "groupIdAndWorkspecIds": null,
+      "hmId": 1847,
+      "id": 7132420,
+      "modifiedTime": "2024-10-16 10:08:28",
+      "moduleId": 34,
+      "moduleName": "30-08-203 Staging checklist",
+      "quickLinkUrl": null,
+      "startUp": false,
+      "visible": false,
+      "workSpecId": 0
+    
+    },
   
     
 ];
