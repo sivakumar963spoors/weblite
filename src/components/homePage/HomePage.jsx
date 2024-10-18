@@ -176,9 +176,10 @@ const HomePage = () => {
                     width: "90%",
                     borderLeft: "1px  solid #c9c9c9",
                     borderBottom: "1px  solid #c9c9c9",
+                    
                   }}
                 >
-                  <Stack sx={{ px: 4, bgcolor: "#EEEEEE" }}>
+                  <Stack sx={{ px: 4, bgcolor: "#EEEEEE" ,}}>
                     <Typography>hi</Typography>
                   </Stack>
                 </Stack>

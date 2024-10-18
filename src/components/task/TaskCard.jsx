@@ -12,7 +12,7 @@ import { cardData } from "./TaskData";
 const TaskCard = () => {
   return (
     <>
-      <Stack gap={2} sx={{ bgcolor: "##ffffff00" }}>
+      <Stack gap={2} sx={{  mt:"15px"}}>
         {cardData
           .sort((a, b) => a.displayOrder - b.displayOrder)
           .map((data, index) => (
@@ -22,7 +22,7 @@ const TaskCard = () => {
             >
               <Stack
                 sx={{
-                  width: { sm: "90%", xs: "95%" },
+                  width: { sm: "90%", xs: "91%" },
                   bgcolor: "#FFF",
                   borderRadius: "4px",
                   border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -144,7 +144,7 @@ const TaskCard = () => {
                   )}
 
                   {data.isWork && (
-                    <Stack sx={{ mt: 1 }}>
+                    <Stack sx={{ mt: 1}}>
                       <Stack
                         sx={{
                           flexDirection: "row",
