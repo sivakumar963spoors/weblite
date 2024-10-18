@@ -4,7 +4,6 @@ import WindowIcon from "@mui/icons-material/Window";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TopBar from "../navbar/TopBar";
 import TaskCard from '../task/TaskCard';
 const HomePage = () => {
   const [userName, setUserName] = useState("vishakha");
@@ -153,8 +152,13 @@ nav('/dashboard')
           </Stack>
         </Box>
       </Box>
+      <Box sx={{mt:4}}>
+
       <TaskCard/>
-    </Box>
+      </Box>
+      
+      
+    </Box >
   );
 };
 
