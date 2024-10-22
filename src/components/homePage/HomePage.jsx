@@ -11,13 +11,10 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-import TaskCard from '../task/TaskCard';
-=======
 
 import { useDispatch, useSelector } from "react-redux";
 import TaskCard from "../task/TaskCard";
->>>>>>> 2a10e131d94ff995c2b3f8bca49412a20caafd18
+
 
 const HomePage = () => {
   const [userName, setUserName] = useState("vishakha");
