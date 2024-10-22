@@ -4,7 +4,6 @@ import WindowIcon from "@mui/icons-material/Window";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import TaskCard from '../task/TaskCard';
 
 const HomePage = () => {
