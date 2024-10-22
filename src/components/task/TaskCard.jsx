@@ -1,21 +1,27 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { Divider, Stack, Typography } from "@mui/material";
-import axios from "axios";
-import React from "react";
-import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
-import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
-import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
+import { Divider, Stack, Typography } from "@mui/material"
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import BlueCustomersIcon from '../../assets/menu_svg_filled/Blue/Customers.svg';
+import KnowledgeBaseIcon from '../../assets/menu_svg_filled/Blue/Knowledge_Base.svg';
+import WorkActionFormIcon from '../../assets/menu_svg_filled/Blue/Work_Action_form.svg';
+
 import FormsIcon from "../../assets/menu_svg_filled/Forms.svg";
+import { getData } from "../../redux/slices/ActionRequiredSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData, workSpecsData } from "./TaskData";
 
 const TaskCard = () => {
 
 
+
+  
+
   return (
     <>
-      <Stack gap={2} sx={{ mt: "15px" }}>
+      <Stack gap={2} sx={{}}>
+
         {cardData
           .sort((a, b) => a.displayOrder - b.displayOrder)
           .map((data, index) => (
