@@ -60,7 +60,13 @@ const TopBar = () => {
       case "Dashboard":
         nav("/dashboard");
         break;
-
+        case "Customers":
+          nav("/Allcustomers");
+          break;
+          case "Day Plans":
+          nav("/dashboard");
+          break;
+  
       default:
         console.warn("No navigation defined for this menu item");
         break;
@@ -78,13 +84,16 @@ const TopBar = () => {
               onMouseEnter={() => handleMouseEnter(i)}
               onMouseLeave={handleMouseLeave}
             >
+              <Stack>
+                
+              </Stack>
               <Stack
                 sx={{
                   flexDirection: "row",
 
-                  gap: 2,
-                  py: 0.5,
-                  px: 1,
+                  gap: 1,
+                  px:0.2,
+                  py:0.4,
                   alignItems: "center",
                   cursor: "pointer",
                   "&: hover": {
@@ -93,24 +102,24 @@ const TopBar = () => {
                       color: "blue",
                     },
                   },
-                  width: "95%",
+                  width: "94%",textAlign:'center'
                 }}
               >
-                <Box
+                <Box><Box
                   component={"img"}
                   src={
                     hoveredIndex === i
                       ? eachMenu.blueMenuIcon
                       : eachMenu.menuIcon
                   }
-                  sx={{ width: "20px" }}
-                />
-                <Typography sx={{ color: "#FFF" }}>
+                  sx={{ width: "16px" }}
+                /></Box>
+                <Typography sx={{ color: "#FFF" , fontFamily: '"Poppins", sans-serif', fontWeight:'bold', fontSize:'12px'}}>
                   {eachMenu.menuTitle}
                 </Typography>
               </Stack>
             </ListItem>
-            <Divider sx={{ borderBottom: "1px solid solid #FFF" }} />
+            <Divider sx={{ background: " #EEEE" , width:'90%'}} />
           </>
         ))}
       </List>
@@ -131,7 +140,7 @@ const TopBar = () => {
             "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
         }}
       >
-        <Toolbar variant="dense" sx={{ py: 1 }}>
+        <Toolbar variant="dense" sx={{ py: 1.5 }}>
           <Stack
             sx={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}
           >
@@ -181,9 +190,10 @@ const TopBar = () => {
           PaperProps={{
             sx: {
               backgroundColor: "#2478FE",
-              padding: 2,
+        
               position: "absolute",
-              top: "8%",
+              top: "9%",
+              borderRadius:'10px'
             },
           }}
         >

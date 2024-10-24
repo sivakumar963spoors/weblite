@@ -64,21 +64,21 @@ const HomePage = () => {
   };
 
   return (
-    <Box>
-      <Box sx={{ mt: 15 }}>
+    <Box sx={{bgcolor:'#F0F3FA'}}>
+      <Box sx={{ mt: 8 }}>
         <Stack gap={1.5}>
           <Stack sx={{ position: "relative" }}>
             <Stack
               sx={{
                 alignItems: "center",
                 justifyContent: "center",
-                mt: -8.5,
+                mt: -1,
                 zIndex: zIndex,
               }}
             >
               <Stack
                 sx={{
-                  width: "90%",
+                  width: "95%",
                   bgcolor: "#FFF",
                   border: "1px solid #C9C9C9",
                   borderRadius: "4px",
@@ -110,7 +110,7 @@ const HomePage = () => {
             <Stack
               sx={{
                 border: "1px solid #c9c9c9",
-                width: "90%",
+                width: "95%",
                 bgcolor: "#FFF",
                 borderRadius: "4px",
               }}
@@ -128,7 +128,7 @@ const HomePage = () => {
                   <IconButton sx={{ border: "1px solid #4154f1" }}>
                     <WindowIcon sx={{ color: "#4154f1" }} />
                   </IconButton>
-                  <Typography sx={{ fontWeight: "bold" }}>Dashboard</Typography>
+                  <Typography sx={{ fontWeight:500 }}>Dashboard</Typography>
                 </Stack>
               </Stack>
             </Stack>
@@ -142,7 +142,7 @@ const HomePage = () => {
             <Stack
               sx={{
                 border: "1px solid #c9c9c9",
-                width: "90%",
+                width: "95%",
                 zIndex: 999,
                 bgcolor: "#FFF",
                 borderTopLeftRadius: "5px",
@@ -164,8 +164,8 @@ const HomePage = () => {
                     sx={{
                       color: "red",
                       fontFamily: '"Poppins", sans-serif',
-                      fontWeight: 600,
-                      letterSpacing: 0.3,
+                      fontWeight: 500,
+                      letterSpacing: 0.1,
                     }}
                   >
                     Action Required
@@ -189,11 +189,12 @@ const HomePage = () => {
               <Stack
                 sx={{
                   borderRight: "1px solid #c9c9c9",
-                  width: "90%",
+                  width: "95%",
                   borderLeft: "1px solid #c9c9c9",
                   borderBottom: "1px solid #c9c9c9",
                   maxHeight: "200px",
                   overflowY: "scroll",
+                  bgcolor:'#FFFF'
                 }}
               >
                 <Stack sx={{ width: "100%" }}>
@@ -263,7 +264,7 @@ const HomePage = () => {
                                         >
                                           {workSpecEach.count}
                                         </Typography>
-                                        <Typography sx={{py:1, color:'#225683'}}>
+                                        <Typography sx={{py:1, color:'#225683',fontFamily: '"Poppins", sans-serif',fontWeight:600, fontSize:{sm:'14px', xs:'12px'}}}>
                                           {workSpecEach.workSpecTitle}
                                         </Typography>
                                       </Stack>
