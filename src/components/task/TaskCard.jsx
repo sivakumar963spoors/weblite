@@ -1,20 +1,85 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
+import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
-import FormsIcon from "../../assets/menu_svg_filled/Forms.svg";
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData, workSpecsData } from "./TaskData";
 
 const TaskCard = () => {
+  const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const navigate = useNavigate();
+  const navigateToShowAlldModule = (moduleId) => {
+    switch (moduleId) {
+      case 12:
+        navigate(`/knowledgebase/id`);
+        break;
+      case 9:
+        navigate("/Allcustomers");
+        break;
 
+      default:
+        console.log("no data");
+    }
+  };
+  const handleNavigationForDatKnoweledgeBaseView = (id) => {
+    switch (id) {
+      case 0:
+        navigate(`/knowledgebase/${id}`);
 
+        break;
+      case 1:
+        navigate(`/knowledgebase/${id}`);
+        break;
+      case 2:
+        navigate(`/knowledgebase/${id}`);
+        break;
+      default:
+        console.log("no data");
+    }
+  };
+  const handlenavigationToCustomerModules = (id) => {
+    switch (id) {
+      case 0:
+        navigate(`/customers/viewtype/${id}`);
+
+        break;
+      case 1:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 2:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 3:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 4:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 5:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 6:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 7:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+        case 8:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      default:
+        console.log("no data");
+    }
+  };
   return (
-    <>
-      <Stack gap={2} sx={{ mt: "15px" }}>
+    <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
+      <Stack gap={2} sx={{ mt: "15px", pt: 1 }}>
         {cardData
           .sort((a, b) => a.displayOrder - b.displayOrder)
           .map((data, index) => (
@@ -24,9 +89,9 @@ const TaskCard = () => {
             >
               <Stack
                 sx={{
-                  width: { sm: "90%", xs: "91%" },
+                  width: { sm: "80%", xs: "95%" },
                   bgcolor: "#FFF",
-                  borderRadius: "4px",
+                  borderRadius: "8px",
                   border: "1px solid rgba(0, 0, 0, 0.12)",
                 }}
               >
@@ -48,25 +113,29 @@ const TaskCard = () => {
                     >
                       <React.Fragment>
                         {data.moduleId === 37 ? (
-                          <img
+                          <Box
+                            component={"img"}
                             src={FormsIcon}
                             alt="Forms Icon"
                             style={{ width: "24px", height: "24px" }}
                           />
                         ) : data.moduleId === 34 ? (
-                          <img
+                          <Box
+                            component={"img"}
                             src={WorkActionFormIcon}
                             alt="Work Action Form"
                             style={{ width: "24px", height: "24px" }}
                           />
                         ) : data.moduleId === 9 ? (
-                          <img
+                          <Box
+                            component={"img"}
                             src={BlueCustomersIcon}
                             alt="Customers Icon"
                             style={{ width: "24px", height: "24px" }}
                           />
                         ) : data.moduleId === 12 ? (
-                          <img
+                          <Box
+                            component={"img"}
                             src={KnowledgeBaseIcon}
                             alt="Knowledge Base Icon"
                             style={{ width: "24px", height: "24px" }}
@@ -76,7 +145,7 @@ const TaskCard = () => {
                         )}
                         <Typography
                           sx={{
-                            fontWeight: { sm: 600, xs: 100 },
+                            fontWeight: { sm: 600, xs: 400 },
                             fontSize: { xs: "13px" },
                           }}
                         >
@@ -86,7 +155,11 @@ const TaskCard = () => {
                     </Stack>
 
                     <Stack
-                      sx={{ flexDirection: "row", gap: 1, fontSize: "13px" }}
+                      sx={{
+                        flexDirection: { sm: "row", xs: "column" },
+                        gap: { sm: 1, xs: 0.5 },
+                        fontSize: "13px",
+                      }}
                     >
                       <CustomButton
                         title={"show all"}
@@ -96,8 +169,9 @@ const TaskCard = () => {
                           padding: "4px 8px",
                           minWidth: "auto",
                         }}
+                        onClick={() => navigateToShowAlldModule(data.moduleId)}
                       />
-                      {[37, 36, 34, 9, 17].includes(data.moduleId) && (
+                      {[37, 36, 34, 17].includes(data.moduleId) && (
                         <CustomButton
                           title={"Add"}
                           startIcon={<AddIcon />}
@@ -138,6 +212,7 @@ const TaskCard = () => {
                                 width: "100%",
                                 padding: 1,
                                 borderRadius: "4px",
+                                fontFamily: '"Poppins", sans-serif',
                               }}
                             >
                               <Stack
@@ -145,9 +220,16 @@ const TaskCard = () => {
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
+                                  fontFamily: '"Poppins", sans-serif',
                                 }}
                               >
-                                <Typography sx={{ flexGrow: 1 }}>
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: "13px",
+                                    fontFamily: '"Poppins", sans-serif',
+                                  }}
+                                >
                                   You need to do:
                                 </Typography>
                                 <Typography
@@ -167,9 +249,16 @@ const TaskCard = () => {
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
+                                  fontFamily: '"Poppins", sans-serif',
                                 }}
                               >
-                                <Typography sx={{ flexGrow: 1 }}>
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: "13px",
+                                    fontFamily: '"Poppins", sans-serif',
+                                  }}
+                                >
                                   Team needs to do:
                                 </Typography>
                                 <Typography
@@ -191,7 +280,13 @@ const TaskCard = () => {
                                   width: "100%",
                                 }}
                               >
-                                <Typography sx={{ flexGrow: 1 }}>
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: "13px",
+                                    fontFamily: '"Poppins", sans-serif',
+                                  }}
+                                >
                                   Invitations need your action:
                                 </Typography>
                                 <Typography
@@ -214,7 +309,13 @@ const TaskCard = () => {
                                   width: "100%",
                                 }}
                               >
-                                <Typography sx={{ flexGrow: 1 }}>
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: "13px",
+                                    fontFamily: '"Poppins", sans-serif',
+                                  }}
+                                >
                                   Team has invitations to process:
                                 </Typography>
                                 <Typography
@@ -239,10 +340,17 @@ const TaskCard = () => {
                                 width: "100%",
                                 padding: 1,
                                 borderRadius: "4px",
-                                // backgroundColor: '#f9f9f9',
+                                fontSize: "13px",
                               }}
                             >
-                              <Typography>No progress tasks:</Typography>
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: '"Poppins", sans-serif',
+                                }}
+                              >
+                                No progress tasks:
+                              </Typography>
                               <Typography
                                 sx={{
                                   color:
@@ -257,12 +365,144 @@ const TaskCard = () => {
                           </Stack>
                         </Stack>
                       ))}
+                  {data.moduleId === 12 && (
+                    <Stack
+                      sx={{
+                        width: "100%",
+                        flexDirection: { sm: "row", xs: "column" },
+                        alignItems: "center",
+                        justifyContent: "space-evenly",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      {["Total count", "Total viewed", "Total unviewed"].map(
+                        (label, index) => (
+                          <Stack
+                            key={index}
+                            sx={{
+                              border: "1px solid #EEEEEE",
+                              flexGrow: { sm: 1, xs: 12 },
+                              width: { xs: "250px", sm: "auto" },
+
+                              textAlign: "center",
+                              borderRadius: "5px",
+                              py: 4,
+                              cursor: "pointer",
+                            }}
+                            onClick={() =>
+                              handleNavigationForDatKnoweledgeBaseView(index)
+                            }
+                          >
+                            <Typography
+                              sx={{
+                                fontFamily: '"Poppins", sans-serif',
+                                fontSize: "14px",
+                              }}
+                            >
+                              {label}
+                            </Typography>
+                          </Stack>
+                        )
+                      )}
+                    </Stack>
+                  )}
+
+                  {data.moduleId === 9 && (
+                    <Stack>
+                      <Stack
+                        sx={{
+                          width: "100%",
+                          flexDirection: { sm: "row", xs: "column" },
+                          alignItems: "center",
+                          justifyContent: "space-evenly",
+                          gap: 1,
+                          mt: 1,
+                        }}
+                      >
+                        {CustomerModuleMenu.slice(0, 3).map((label, index) => (
+                          <>
+                            <Stack
+                              key={index}
+                              sx={{
+                                border: "1px solid #EEEEEE",
+                                flexGrow: { sm: 1, xs: 12 },
+                                width: { xs: "250px", sm: "auto" },
+
+                                textAlign: "center",
+                                borderRadius: "5px",
+                                py: 4,
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handlenavigationToCustomerModules(label.id)
+                              }
+                            >
+                              <Typography
+                                sx={{
+                                  color: label.count > 0 ? "green" : "red",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {label.count}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {label.title}
+                              </Typography>
+                            </Stack>
+                          </>
+                        ))}
+                      </Stack>
+                      <Stack>
+                        {CustomerModuleMenu.slice(3,9).map((label, index) => (
+                          <>
+                            <Stack
+                              key={index}
+                              sx={{
+                                width: { xs: "250px", sm: "auto" },
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                py: 0.9,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                px: 1,
+                              }}
+                              onClick={() =>
+                                handlenavigationToCustomerModules(label.id)
+                              }
+                            >
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: '"Poppins", sans-serif',
+                                }}
+                              >
+                                {label.title}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color: label.count > 0 ? "green" : "red",
+                                }}
+                              >
+                                {label.count}
+                              </Typography>
+                            </Stack>
+                          </>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  )}
                 </Stack>
               </Stack>
             </Stack>
           ))}
       </Stack>
-    </>
+    </Box>
   );
 };
 
