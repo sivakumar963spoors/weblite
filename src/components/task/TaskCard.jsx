@@ -2,31 +2,41 @@ import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
+import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData, workSpecsData } from "./TaskData";
 
+
 const TaskCard = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  // const  {currentMenuTitle} = useSelector((state) => state.menu)
+  // console.log(currentMenuTitle);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const navigateToShowAlldModule = (moduleId) => {
+    let title = "Show All";
     switch (moduleId) {
       case 12:
-        navigate('/knowledgebase');
+        title = "Knowledge Base";
+        dispatch(toggleMenuTitle(title));
+        navigate(`/knowledgebase/id`);
         break;
       case 9:
+        title = "All Customers";
+        dispatch(toggleMenuTitle(title));
         navigate("/Allcustomers");
         break;
-
       default:
-        console.log("no data");
+        console.log("No data");
     }
   };
+
   const handleNavigationForDatKnoweledgeBaseView = (id) => {
     switch (id) {
       case 0:
@@ -70,7 +80,7 @@ const TaskCard = () => {
       case 7:
         navigate(`/customers/viewtype/${id}`);
         break;
-        case 8:
+      case 8:
         navigate(`/customers/viewtype/${id}`);
         break;
       default:
@@ -162,8 +172,9 @@ const TaskCard = () => {
                       }}
                     >
                       <CustomButton
-                        title={"show all"}
-                        size={"small"}
+                        title="show all"
+                      
+                        size="small"
                         sx={{
                           fontSize: "13px",
                           padding: "4px 8px",
@@ -459,7 +470,7 @@ const TaskCard = () => {
                         ))}
                       </Stack>
                       <Stack>
-                        {CustomerModuleMenu.slice(3,9).map((label, index) => (
+                        {CustomerModuleMenu.slice(3, 9).map((label, index) => (
                           <>
                             <Stack
                               key={index}

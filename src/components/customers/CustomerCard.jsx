@@ -4,18 +4,17 @@ import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import CircleUnchecked from "@mui/icons-material/RadioButtonUnchecked";
 import { Button, Checkbox, Stack, Typography } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 
 const CustomerCard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); 
   const { customerData } = useSelector((state) => state.CustomerModule);
-  
   const navigateToCustomerDetails = (id) => {
-    alert(id)
-    navigate(`/customer/details/${id}`);
-  
+    dispatch(toggleMenuTitle("Customer Details"));
+    navigate(`customer/details/${id}`);
   };    
 
   return (

@@ -7,6 +7,8 @@ const CustomersViewTyped = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
   const [itemsPerRow, setItemsPerRow] = useState(3);
   const [count]=useState(100)
+  
+  
 
   const calculateItemsPerRow = () => {
     const width = window.innerWidth;
@@ -52,7 +54,7 @@ const CustomersViewTyped = () => {
 
           zIndex: 9999,
         }}
-      >
+      >menuitem
         <Carousel
           sx={{
             mt: 0.1,
@@ -103,7 +105,7 @@ const CustomersViewTyped = () => {
                   }}
                   onClick={() => getCarousalItem(menuitem)}
                 >
-                  {menuitem.title}
+                  
                 </Typography></Stack>
               ))}
             </Stack>

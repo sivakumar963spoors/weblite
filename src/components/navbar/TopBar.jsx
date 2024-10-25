@@ -13,17 +13,26 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { menuItem } from "./TopBarData";
+// import { menuItem } from "./TopBarData";
+import { useSelector } from "react-redux";
+import { useDispatch } from 'react-redux';
+import {toggleMenuTitle} from '../../redux/slices/MenuSlice' 
 
 const TopBar = () => {
-  const [menuTitle, setMenuTitle] = useState("Home");
+  const  {currentMenuTitle} = useSelector((state) => state.menu)
+  console.log(currentMenuTitle);
+ 
+  const dispatch = useDispatch();
+ 
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [menuTab, setMenuTab] = useState("");
   const open = Boolean(anchorEl);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const {menuItems}= useSelector((state)=>state.menu)
+
 
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
@@ -49,10 +58,10 @@ const TopBar = () => {
     setOpenDrawer(false);
   };
   const handlenavigateToMenuItem = (menus) => {
-    setMenuTitle(menus);
+ 
     setMenuTab(menus);
     setOpenDrawer(false);
-
+    dispatch(toggleMenuTitle(menus))
     switch (menus) {
       case "Home":
         nav("/");
@@ -75,8 +84,10 @@ const TopBar = () => {
   const DrawerList = (
     <Box sx={{ width: 250 , zIndex:1000}} role="presentation">
       <List>
-        {menuItem.map((eachMenu, i) => (
+        {menuItems && menuItems.length > 0 ?  
+        menuItems.map((eachMenu, i) => (
           <>
+         
             <ListItem
               key={i}
               onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
@@ -121,7 +132,7 @@ const TopBar = () => {
             </ListItem>
             <Divider sx={{ background: " #EEEE" , width:'90%'}} />
           </>
-        ))}
+        )) :<Typography>No data fount</Typography>}
       </List>
     </Box>
   );
@@ -154,7 +165,7 @@ const TopBar = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" component="div">
-              {menuTitle}
+              {currentMenuTitle}
             </Typography>
           </Stack>
           <Avatar
