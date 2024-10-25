@@ -69,13 +69,12 @@ const TopBar = () => {
       case "Dashboard":
         nav("/dashboard");
         break;
-        case "Customers":
+      case "Customers":
           nav("/Allcustomers");
           break;
-          case "Day Plans":
+      case "Day Plans":
           nav("/dashboard");
           break;
-  
       default:
         console.warn("No navigation defined for this menu item");
         break;
@@ -83,7 +82,7 @@ const TopBar = () => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box sx={{ width: 250 , zIndex:1000}} role="presentation">
       <List>
         {menuItems && menuItems.length > 0 ?  
         menuItems.map((eachMenu, i) => (
@@ -96,12 +95,12 @@ const TopBar = () => {
               onMouseLeave={handleMouseLeave}
             >
               <Stack>
-                
+ 
               </Stack>
               <Stack
                 sx={{
                   flexDirection: "row",
-
+                  zIndex:100000,
                   gap: 1,
                   px:0.2,
                   py:0.4,
@@ -116,7 +115,8 @@ const TopBar = () => {
                   width: "94%",textAlign:'center'
                 }}
               >
-                <Box><Box
+                <Box>
+                  <Box
                   component={"img"}
                   src={
                     hoveredIndex === i
@@ -168,7 +168,6 @@ const TopBar = () => {
               {currentMenuTitle}
             </Typography>
           </Stack>
-
           <Avatar
             sx={{ width: "30px", height: "30px" }}
             aria-controls={open ? "basic-menu" : undefined}
@@ -191,7 +190,6 @@ const TopBar = () => {
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
           </Menu>
         </Toolbar>
-
         <Drawer
           open={openDrawer}
           onClose={toggleDrawerClose}
@@ -201,7 +199,6 @@ const TopBar = () => {
           PaperProps={{
             sx: {
               backgroundColor: "#2478FE",
-        
               position: "absolute",
               top: "9%",
               borderRadius:'10px'
