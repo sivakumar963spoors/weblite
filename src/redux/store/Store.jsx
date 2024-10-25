@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import ActionRequiredReducer from '../slices/ActionRequiredSlice';
-import CustomerModuleReducer from '../slices/CustomerModule'
+import CustomerModuleReducer from '../slices/CustomerModule';
+import menuReducer from '../slices/MenuSlice';
+
+
 const Store = configureStore({
   reducer: {
     ActionRequired: ActionRequiredReducer, 
-    CustomerModule:CustomerModuleReducer
+    CustomerModule:CustomerModuleReducer,
+    menu: menuReducer,
   },
 });
 
