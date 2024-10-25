@@ -17,7 +17,7 @@ const TaskCard = () => {
   const navigateToShowAlldModule = (moduleId) => {
     switch (moduleId) {
       case 12:
-        navigate(`/knowledgebase/id`);
+        navigate('/knowledgebase');
         break;
       case 9:
         navigate("/Allcustomers");

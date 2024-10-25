@@ -13,7 +13,9 @@ const CustomerCard = () => {
   const { customerData } = useSelector((state) => state.CustomerModule);
   
   const navigateToCustomerDetails = (id) => {
-    navigate(`customer/details/${id}`);
+    alert(id)
+    navigate(`/customer/details/${id}`);
+  
   };    
 
   return (
