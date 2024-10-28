@@ -15,8 +15,6 @@ import { cardData, workSpecsData } from "./TaskData";
 
 const TaskCard = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
-  // const  {currentMenuTitle} = useSelector((state) => state.menu)
-  // console.log(currentMenuTitle);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const navigateToShowAlldModule = (moduleId) => {
@@ -25,7 +23,7 @@ const TaskCard = () => {
       case 12:
         title = "Knowledge Base";
         dispatch(toggleMenuTitle(title));
-        navigate(`/knowledgebase/id`);
+        navigate("knowledgebase");
         break;
       case 9:
         title = "All Customers";
@@ -41,7 +39,6 @@ const TaskCard = () => {
     switch (id) {
       case 0:
         navigate(`/knowledgebase/${id}`);
-
         break;
       case 1:
         navigate(`/knowledgebase/${id}`);
@@ -57,7 +54,6 @@ const TaskCard = () => {
     switch (id) {
       case 0:
         navigate(`/customers/viewtype/${id}`);
-
         break;
       case 1:
         navigate(`/customers/viewtype/${id}`);
