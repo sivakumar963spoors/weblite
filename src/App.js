@@ -1,17 +1,23 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-
+import { useState } from "react";
 import CustomerDetails from "./components/customers/CustomerDetails";
 import Customers from "./components/customers/Customers";
 import CustomersViewTyped from "./components/customers/CustomersViewTypedd";
 import DashBoardComponent from "./components/dashboard/DashBoardComponent";
 import HomePage from "./components/homePage/HomePage";
+import KnowledgeBaseAll from "./components/knoweldgebase/KnowledgeBaseAll";
 import KnowledgeBaseComponent from "./components/knoweldgebase/KnowledgeBaseComponent";
 import TopBar from "./components/navbar/TopBar";
-import KnowledgeBaseAll from "./components/knoweldgebase/KnowledgeBaseAll";
+
+
 
 
 function App() {
+  const [clickedSlice, setClickedSlice] = useState(null);
+
+  
+    
   return (
     <BrowserRouter>
       <TopBar />
@@ -24,8 +30,18 @@ function App() {
         <Route path="/Allcustomers" element={<Customers/>}/>
         <Route path="/customer/details/:id" element={<CustomerDetails/>}/>
       </Routes>
+     
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+
+
+
+
+
+
+

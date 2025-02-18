@@ -1,4 +1,4 @@
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Avatar,
@@ -17,7 +17,7 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
+import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,7 +25,7 @@ const TopBar = () => {
   const open = Boolean(anchorEl);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const dispatch = useDispatch();
-  const  {currentMenuTitle,menuItems} = useSelector((state) => state.menu) 
+  const { currentMenuTitle, menuItems } = useSelector((state) => state.menu);
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
   };
@@ -49,7 +49,7 @@ const TopBar = () => {
   };
   const handlenavigateToMenuItem = (menus) => {
     setOpenDrawer(false);
-    dispatch(toggleMenuTitle(menus))
+    dispatch(toggleMenuTitle(menus));
     switch (menus) {
       case "Home":
         nav("/");
@@ -58,11 +58,11 @@ const TopBar = () => {
         nav("/dashboard");
         break;
       case "Customers":
-          nav("/Allcustomers");
-          break;
+        nav("/Allcustomers");
+        break;
       case "Day Plans":
-          nav("/daaa");
-          break;
+        nav("/daaa");
+        break;
       default:
         console.warn("No navigation defined for this menu item");
         break;
@@ -70,93 +70,96 @@ const TopBar = () => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 , zIndex:1000}} role="presentation">
-      <Stack sx={{alignItems:'end', m:1}}>
-      <IconButton 
-      onClick={toggleDrawerClose}
-      sx={{
-        bgcolor:'#2475F7',
-        opacity:1,
-  ":hover": {
-    animation: 'spin 2s ',
-    
-  },
-  '@keyframes spin': {
-    from: {
-      transform: 'rotate(0deg)' 
-    },
-    to: {
-      transform: 'rotate(360deg)' 
-    }
-  }
-}}>
-  <CloseIcon sx={{ fontSize: '20px', color: '#FFF' }} />
-</IconButton>
-
+    <Box sx={{ width: 250, zIndex: 1000 }} role="presentation">
+      <Stack sx={{ alignItems: "end", m: 1 }}>
+        <IconButton
+          onClick={toggleDrawerClose}
+          sx={{
+            bgcolor: "#2475F7",
+            opacity: 1,
+            ":hover": {
+              animation: "spin 2s ",
+            },
+            "@keyframes spin": {
+              from: {
+                transform: "rotate(0deg)",
+              },
+              to: {
+                transform: "rotate(360deg)",
+              },
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: "20px", color: "#FFF" }} />
+        </IconButton>
       </Stack>
 
-      <List sx={{mt:-3}}>
-        {menuItems && menuItems.length > 0 ?  
-        menuItems.map((eachMenu, i) => (
-          <>
-           <ListItem
-           sx={{p:0,m:0}}
-              key={i} 
-            >
-              <Stack
-              onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
-              onMouseEnter={() => handleMouseEnter(i)}
+      <List sx={{ mt: -3 }}>
+        {menuItems && menuItems.length > 0 ? (
+          menuItems.map((eachMenu, i) => (
+            <>
+              <ListItem sx={{ p: 0, m: 0 }} key={i}>
+                <Stack
+                  sx={{
+                    width: "83%",
 
-              onMouseLeave={handleMouseLeave} sx={{
-                width:'83%',
-              
-                "&: hover": {
-                  bgcolor: "#FFF",
-                  "& .MuiTypography-root": {
-                    color: "blue",
-                  },
-                },
-              }}>
-              <Stack
-               
-                sx={{
-                  flexDirection: "row",
-                  zIndex:100000,
-                  ml:1,
-                  gap: 1,
-                  p:1.3,
-                  alignItems: "center",
-                  cursor: "pointer",
-                  "&: hover": {
-                    bgcolor: "#FFF",
-                    "& .MuiTypography-root": {
-                      color: "blue",
+                    "&: hover": {
+                      bgcolor: "#FFF",
+                      "& .MuiTypography-root": {
+                        color: "blue",
+                      },
                     },
-                  },
-                  width: "95%", 
-                 
-                }}
-              >
-           
-                  <Box
-                  component={"img"}
-                  src={
-                    hoveredIndex === i
-                      ? eachMenu.blueMenuIcon
-                      : eachMenu.menuIcon
-                  }
-                  sx={{ width: "16px" }}
-                />
-                <Typography sx={{ color: "#FFF" , fontFamily: '"Poppins", sans-serif', fontWeight:'bold', fontSize:'12px'}}>
-                  {eachMenu.menuTitle}
-                </Typography>
-              </Stack>
-              </Stack>
-             
-            </ListItem>
-            <Divider sx={{ background: " #EEEE" , width:'90%'}} />
-          </>
-        )) :<Typography>No data fount</Typography>}
+                  }}
+                >
+                  <Stack
+                    onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
+                    onMouseEnter={() => handleMouseEnter(i)}
+                    onMouseLeave={handleMouseLeave}
+                    sx={{
+                      flexDirection: "row",
+                      zIndex: 100000,
+                      ml: 1,
+                      gap: 1,
+                      p: 1.3,
+                      alignItems: "center",
+                      cursor: "pointer",
+                      "&: hover": {
+                        bgcolor: "#FFF",
+                        "& .MuiTypography-root": {
+                          color: "blue",
+                        },
+                      },
+                      width: "95%",
+                    }}
+                  >
+                    <Box
+                      component={"img"}
+                      src={
+                        hoveredIndex === i
+                          ? eachMenu.blueMenuIcon
+                          : eachMenu.menuIcon
+                      }
+                      sx={{ width: "16px" }}
+                    />
+                    <Typography
+                      sx={{
+                        color: "#FFF",
+                        fontFamily: '"Poppins", sans-serif',
+                        fontWeight: "bold",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {eachMenu.menuTitle}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </ListItem>
+              <Divider sx={{ background: " #EEEE", width: "90%" }} />
+            </>
+          ))
+        ) : (
+          <Typography>No data fount</Typography>
+        )}
       </List>
     </Box>
   );
@@ -225,7 +228,7 @@ const TopBar = () => {
               backgroundColor: "#2478FE",
               position: "absolute",
               top: "9%",
-              borderRadius:'10px'
+              borderRadius: "10px",
             },
           }}
         >
