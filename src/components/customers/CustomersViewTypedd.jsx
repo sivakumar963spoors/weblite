@@ -54,7 +54,7 @@ const CustomersViewTyped = () => {
 
           zIndex: 9999,
         }}
-      >menuitem
+      >
         <Carousel
           sx={{
             mt: 0.1,
@@ -92,7 +92,8 @@ const CustomersViewTyped = () => {
               }}
             >
               {group.map((menuitem, i) => (
-                <Stack sx={{}}><Typography sx={{fontSize:'15px', fontWeight:'bold'}}>{count}</Typography><Typography
+                <Stack sx={{}}><Typography sx={{fontSize:'15px', fontWeight:'bold'}}>{menuitem.count}</Typography>
+                <Typography
                   key={i}
                   sx={{
                     fontFamily: '"Poppins", sans-serif',
@@ -105,7 +106,7 @@ const CustomersViewTyped = () => {
                   }}
                   onClick={() => getCarousalItem(menuitem)}
                 >
-                  
+                  {menuitem.title}
                 </Typography></Stack>
               ))}
             </Stack>

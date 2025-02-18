@@ -5,13 +5,14 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
+import DayPlansIcon from "../../assets/menu_svg_filled/Blue/Day_Plans.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
+import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
+import DayPlans from "../dayplans/DayPlan";
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData, workSpecsData } from "./TaskData";
-
 
 const TaskCard = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
@@ -150,6 +151,13 @@ const TaskCard = () => {
                             alt="Knowledge Base Icon"
                             style={{ width: "24px", height: "24px" }}
                           />
+                        ) : data.moduleId === 17 ? (
+                          <Box
+                            component={"img"}
+                            src={DayPlansIcon}
+                            alt="Day Plans Icon"
+                            style={{ width: "24px", height: "24px" }}
+                          />
                         ) : (
                           <HelpOutlineIcon />
                         )}
@@ -173,7 +181,6 @@ const TaskCard = () => {
                     >
                       <CustomButton
                         title="show all"
-                      
                         size="small"
                         sx={{
                           fontSize: "13px",
@@ -182,7 +189,7 @@ const TaskCard = () => {
                         }}
                         onClick={() => navigateToShowAlldModule(data.moduleId)}
                       />
-                      {[37, 36, 34, 17].includes(data.moduleId) && (
+                      {[37, 36, 34].includes(data.moduleId) && (
                         <CustomButton
                           title={"Add"}
                           startIcon={<AddIcon />}
@@ -376,6 +383,7 @@ const TaskCard = () => {
                           </Stack>
                         </Stack>
                       ))}
+                  {data.moduleId === 17 && <DayPlans/>}
                   {data.moduleId === 12 && (
                     <Stack
                       sx={{

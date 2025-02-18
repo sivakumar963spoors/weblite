@@ -39,7 +39,7 @@ export const cardData = [
     id: 7132420,
     modifiedTime: "2024-10-16 10:08:28",
     moduleId: 17,
-    moduleName: "30-08-203 Staging checklist",
+    moduleName: "day plans",
     quickLinkUrl: null,
     startUp: false,
     visible: false,
@@ -163,5 +163,18 @@ export const workSpecsData = [
     },
   },
 ];
+const dayPlansData = [
+  {
+    id: 1,
+    plannedToday: 5,
+    visited: 3,
+    unplannedVisits: 2,
+    teamPlannedEmployees: 10,
+    teamUnplannedEmployees: 172,
+  },
+ 
+];
+
+export default dayPlansData;
 
 
