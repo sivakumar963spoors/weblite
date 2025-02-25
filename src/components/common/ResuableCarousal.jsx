@@ -1,12 +1,20 @@
 import { Stack, Typography } from "@mui/material";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
-import PropTypes from 'prop-types';
-
-const ResuableCarousal = ({ items }) => {
-  const getCarousalItem = (menuitem) => {
+import { useNavigate } from "react-router-dom";
+const ResuableCarousal = ({ items, isActiveViewType,isActiveLeaveMenu }) => {
   
-    alert(menuitem);
+  const [activecarousal, setIsActiveCarousal] = useState(0);
+  useEffect(() => {
+    if ([1, 2, 3, 4, 5].includes(isActiveViewType)) {
+      setIsActiveCarousal(isActiveViewType);
+    } else {
+      console.warn("No navigation defined for this menu item");
+    }
+  }, [isActiveViewType]);
+  const nav = useNavigate();
+  const handleViewTypeChange = (viewType, leaveMenuType) => {
+    nav(`/view/leaves/new?viewType=${viewType}&leaveMenuType=${leaveMenuType}`);
   };
 
   return (
@@ -22,11 +30,9 @@ const ResuableCarousal = ({ items }) => {
         autoPlay={true}
         indicators={false}
         navButtonsAlwaysVisible={true}
-        duration={1000}
+        duration={2000}
         animation="slide"
-        navButtonsWrapperProps={{
-          style: {},
-        }}
+        navButtonsWrapperProps={{ style: {} }}
         navButtonsProps={{
           style: { color: "#FFF", background: "#2478FE" },
         }}
@@ -43,12 +49,20 @@ const ResuableCarousal = ({ items }) => {
               justifyContent: { sm: "space-evenly", xs: "center" },
               gap: { sm: "auto", xs: 1 },
               textTransform: "capitalize",
-              pt: 3, pb: 3, height: '100px'
+              pt: 3,
+              pb: 3,
+              height: "100px",
             }}
           >
             {group.map((menuitem, i) => (
-              <Stack key={i}>
-                <Typography sx={{ fontSize: '15px', fontWeight: 'bold' }}>{menuitem.count}</Typography>
+              <Stack
+                key={i}
+                sx={{}}
+                onClick={() => handleViewTypeChange(menuitem.leaveMenuType, menuitem.menuType)}
+              >
+                <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>
+                  {menuitem.count}
+                </Typography>
                 <Typography
                   sx={{
                     fontFamily: '"Poppins", sans-serif',
@@ -56,10 +70,12 @@ const ResuableCarousal = ({ items }) => {
                     cursor: "pointer",
                     fontSize: { sm: "12px", xs: "10px" },
                     fontWeight: { sm: 600, xs: "bold" },
-                    width: { sm: '130px', xs: '90px' },
-                    textAlign: 'center'
+                    width: { sm: "130px", xs: "90px" },
+                    textAlign: "center",
+                    color: menuitem.leaveMenuType == isActiveViewType ? "#ffa00d" : "black",
+                    textDecoration:
+                      menuitem.leaveMenuType == isActiveViewType ? "underline" : "none",
                   }}
-                  onClick={() => getCarousalItem(menuitem.title)}
                 >
                   {menuitem.title}
                 </Typography>
@@ -72,11 +88,5 @@ const ResuableCarousal = ({ items }) => {
   );
 };
 
-ResuableCarousal.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape({
-    count: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-  }))).isRequired,
-};
 
 export default ResuableCarousal;

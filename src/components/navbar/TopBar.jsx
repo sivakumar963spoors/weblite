@@ -63,6 +63,9 @@ const TopBar = () => {
       case "Day Plans":
         nav("/daaa");
         break;
+      case "leaves":
+        nav("/view/leaves/new?viewType=2&leaveMenuType=2");
+        break;
       default:
         console.warn("No navigation defined for this menu item");
         break;
