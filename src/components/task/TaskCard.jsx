@@ -8,10 +8,9 @@ import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
+import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
 import { cardData, workSpecsData } from "./TaskData";
-
 
 const TaskCard = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
@@ -30,6 +29,12 @@ const TaskCard = () => {
         dispatch(toggleMenuTitle(title));
         navigate("/Allcustomers");
         break;
+
+      case 1000 :
+      title ="Leaves" ;
+      dispatch(toggleMenuTitle(title));
+      navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
+      
       default:
         console.log("No data");
     }
@@ -169,7 +174,6 @@ const TaskCard = () => {
                     >
                       <CustomButton
                         title="show all"
-                      
                         size="small"
                         sx={{
                           fontSize: "13px",
@@ -178,7 +182,7 @@ const TaskCard = () => {
                         }}
                         onClick={() => navigateToShowAlldModule(data.moduleId)}
                       />
-                      {[37, 36, 34, 17].includes(data.moduleId) && (
+                      {[37, 36, 34, 17, 1000].includes(data.moduleId) && (
                         <CustomButton
                           title={"Add"}
                           startIcon={<AddIcon />}
@@ -414,6 +418,66 @@ const TaskCard = () => {
                       )}
                     </Stack>
                   )}
+
+                  {data.moduleId === 1000 &&
+                    [
+                      { id: "pending your manager approval", count: 0 },
+                      { id: "awaiting your approval", count: 1 },
+                      { id: "awaiting team approval", count: 2 },
+                    ].map((eachWorkData, i) => (
+                      <Stack sx={{ mt: 1 }} key={i}>
+                        <Stack
+                          sx={{
+                            flexDirection: "row",
+                            gap: 2,
+                            flexWrap: "wrap",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Stack
+                            sx={{
+                              flexDirection: "column",
+                              alignItems: "flex-start",
+                              justifyContent: "space-between",
+                              gap: 1,
+                              width: "100%",
+                              padding: 1,
+                              borderRadius: "4px",
+                              fontFamily: '"Poppins", sans-serif',
+                            }}
+                          >
+                            <Stack
+                              sx={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: "100%",
+                                fontFamily: '"Poppins", sans-serif',
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  flexGrow: 1,
+                                  fontSize: "13px",
+                                  fontFamily: '"Poppins", sans-serif',
+                                }}
+                              >
+                              {eachWorkData.id}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color:
+                                    eachWorkData.count === 0 ? "green" : "red",
+                                }}
+                              >
+                                {eachWorkData.count}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+
+                       
+                        </Stack>
+                      </Stack>
+                    ))}
 
                   {data.moduleId === 9 && (
                     <Stack>

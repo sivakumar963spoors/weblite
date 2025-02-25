@@ -1,12 +1,14 @@
 import HttpsIcon from "@mui/icons-material/Https";
-import blueDashboard from "../../assets/menu_svg_filled/Blue/Dashboard.svg";
-import blueHomeIcon from "../../assets/menu_svg_filled/Blue/Home.svg";
-import dashboard from "../../assets/menu_svg_filled/Dashboard.svg";
-import home from "../../assets/menu_svg_filled/Home.svg";
-import customer from "../../assets/menu_svg_filled/Customers.svg";
 import bluecustomerIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
-import dayplan from "../../assets/menu_svg_filled/Day_Plans.svg";
+import blueDashboard from "../../assets/menu_svg_filled/Blue/Dashboard.svg";
 import bluedayplanIcon from "../../assets/menu_svg_filled/Blue/Day_Plans.svg";
+import blueHomeIcon from "../../assets/menu_svg_filled/Blue/Home.svg";
+import blueLeaves from '../../assets/menu_svg_filled/Blue/Leaves.svg';
+import customer from "../../assets/menu_svg_filled/Customers.svg";
+import dashboard from "../../assets/menu_svg_filled/Dashboard.svg";
+import dayplan from "../../assets/menu_svg_filled/Day_Plans.svg";
+import home from "../../assets/menu_svg_filled/Home.svg";
+import leaves from '../../assets/menu_svg_filled/Leaves.svg';
 export const menuItem = [
   {
     menuTitle: "Home",
@@ -23,6 +25,11 @@ export const menuItem = [
     menuTitle: "Customers",
     menuIcon: customer,
     blueMenuIcon: bluecustomerIcon,
+  },
+  {
+    menuTitle: "leaves",
+    menuIcon:leaves ,
+    blueMenuIcon: blueLeaves,
   },
   {
     menuTitle: "Day Plans",

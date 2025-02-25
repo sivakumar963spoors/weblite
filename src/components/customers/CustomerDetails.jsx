@@ -1,7 +1,7 @@
-import { Stack, Switch, Typography } from "@mui/material";
+import { Button, Stack, Switch, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const personalDetails = ["First Name", "Last Name", "Title", "Phone", "Email"];
 const otherDetails = [
   "Outstanding Amount",
@@ -42,15 +42,15 @@ const otherDetails = [
   "Number",
   "Email",
   "Location(Lat, Long)",
-  "Audio"
-]
+  "Audio",
+];
 
 const CustomerDetails = () => {
   const { id } = useParams();
   const { customerData } = useSelector((state) => state.CustomerModule);
   const label = { inputProps: { "aria-label": "Switch demo" } };
   const [zIndex, setZIndex] = useState(1000);
-
+  const navigation =useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +67,12 @@ const CustomerDetails = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
+const handleViewActivity =()=>{  
+navigation('/customer/viewactivity')
+}
+const handleActivity =()=>{ 
+  navigation('/customer/viewactivity/details')
+}
   return (
     <div>
       <Stack sx={{ mt: 8, bgcolor: "#F0F3FA" }}>
@@ -94,6 +99,7 @@ const CustomerDetails = () => {
                       border: "1px solid #EEEE",
                       alignItems: "center",
                       justifyContent: "space-between",
+                      fontFamily: '"Poppins", sans-serif',
                     }}
                   >
                     <Typography>{each.customerName}</Typography>
@@ -105,7 +111,6 @@ const CustomerDetails = () => {
                     width: "99%",
                     alignItems: "center",
                     justifyContent: "center",
-                   
                   }}
                 >
                   <Stack
@@ -140,43 +145,82 @@ const CustomerDetails = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Stack sx={{}}>
-                        <Stack >
-                          <Typography>Customer Id</Typography>
-                          <Typography>{each.customerIds}</Typography>
+                      <Stack sx={{ width: "100%" }}>
+                        <Stack
+                          sx={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            width: "100%",
+                            display: "flex",
+                            padding: "15px 0px",
+                            fontFamily: '"Poppins", sans-serif',
+
+                            "& > *": { width: "50%", marginBottom: "50px" },
+                          }}
+                        >
+                          <Stack
+                            sx={{
+                              "& > :first-child": {
+                                color: "#7A7A7A",
+                                fontWeight: "bold",
+                                fontSize: "14px",
+                              },
+                            }}
+                          >
+                            <Typography>Customer Id</Typography>
+                            <Typography>sukeshini</Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>Phone</Typography>
+                            <Typography>{each.customerPhone}</Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>Location(Lat)</Typography>
+                            <Typography>{each.customerLat}</Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>Location(Long)</Typography>
+                            <Typography>{each.customerLong}</Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>crated by</Typography>
+                            <Typography></Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>crated Time</Typography>
+                            <Typography></Typography>
+                          </Stack>
+                          <Stack>
+                            <Typography>Territory</Typography>
+                            <Typography></Typography>
+                          </Stack>
                         </Stack>
-                        <Stack>
-                          <Typography>Phone</Typography>
-                          <Typography>{each.customerPhone}</Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography>Location(Lat)</Typography>
-                          <Typography>{each.customerLat}</Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography>Location(Long)</Typography>
-                          <Typography>{each.customerLong}</Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography>crated by</Typography>
-                          <Typography></Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography>crated Time</Typography>
-                          <Typography></Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography>Territory</Typography>
-                          <Typography></Typography>
-                        </Stack>
-                        <Typography sx={{fontWeight:'bold', color:"#003366", fontFamily:'poppins'}}>Primary Contact</Typography>
-                        <Stack>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#003366",
+                            fontFamily: "poppins",
+                            margin: "20px 0",
+                          }}
+                        >
+                          Primary Contact
+                        </Typography>
+                        <Stack sx={{ gap: 3 }}>
                           {personalDetails.map((details, i) => (
                             <Typography key={i}>{details}</Typography>
                           ))}
                         </Stack>
-                        <Typography sx={{fontWeight:'bold', color:"#003366", fontFamily:'poppins'}}>Secondary Contact</Typography>
-                        <Stack>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#003366",
+                            fontFamily: "poppins",
+                            margin: "20px 0",
+                          }}
+                        >
+                          Secondary Contact
+                        </Typography>
+                        <Stack sx={{ gap: 3 }}>
                           {personalDetails.map((details, i) => (
                             <Typography key={i}>{details}</Typography>
                           ))}
@@ -190,7 +234,6 @@ const CustomerDetails = () => {
                     width: "99%",
                     alignItems: "center",
                     justifyContent: "center",
-                   
                   }}
                 >
                   <Stack
@@ -225,22 +268,51 @@ const CustomerDetails = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Stack sx={{}}>
-                      
-                       
-                        <Stack>
-                          {otherDetails.map((otherdetails, i) => (
-                            <Typography key={i}>{otherdetails}</Typography>
-                          ))}
+                      <Stack sx={{ width: "100%" }}>
+                        <Stack
+                          sx={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            width: "100%",
+                            display: "flex",
+                            padding: "15px 0px",
+                            fontFamily: '"Poppins", sans-serif',
+                          }}
+                        >
+                          <Stack sx={{width:'100%'}}>
+                            {otherDetails.map((otherdetails, i) => (
+                              <Stack sx={{flexDirection:'row', width:'100%',margin:'10px 0px'}}>
+                                <Typography key={i} sx={{width:{sm:'30%', xs:'55%'}}}>{otherdetails}</Typography>
+                                <Typography>null</Typography>
+                              </Stack>
+                            ))}
+                          </Stack>
                         </Stack>
-                        
-                       
                       </Stack>
                     </Stack>
                   </Stack>
                 </Stack>
-                
-              
+                <Stack
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "20px",
+                  }}
+                >
+                  <Stack sx={{ width: "95%" }}>
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        width: "100%",
+                        "& > *": { width: "50%", height: "45px", fontWeight:'600' },
+                        gap: 1,
+                      }}
+                    >
+                      <Button variant="outlined" onClick={handleViewActivity}>view activities</Button>
+                      <Button variant="contained" onClick={ handleActivity}>activity</Button>
+                    </Stack>
+                  </Stack>
+                </Stack>
               </Stack>
             ))
         ) : (
