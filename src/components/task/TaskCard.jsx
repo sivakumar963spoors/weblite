@@ -1,28 +1,46 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Box, Divider, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
+import { filterByModule, resetFilteredData } from "../../redux/slices/HomePageSlice";
 import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
-import { cardData, workSpecsData } from "./TaskData";
 
-const TaskCard = () => {
+const TaskCard = ({searchInput}) => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
+  const {  workSpecsDataMenu } = useSelector(
+    (state) => state.HomePageModule
+  );
+ 
+const filteredHomePageData = useSelector((state) => state.HomePageModule.filteredHomePageData);
+
+
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  useEffect(() => {
+    console.log(searchInput)
+    if (searchInput && searchInput.trim() !== "") {
+     
+        dispatch(filterByModule(searchInput));
+    } else {
+        dispatch(resetFilteredData());
+    }
+}, [dispatch, searchInput]);
   const navigateToShowAlldModule = (moduleId) => {
     let title = "Show All";
     switch (moduleId) {
       case 12:
-        title = "Knowledge Base";
+        title = "Knowledge ";
         dispatch(toggleMenuTitle(title));
-        navigate("knowledgebase");
+        navigate("/knowledgebase/manage");
         break;
       case 9:
         title = "All Customers";
@@ -30,11 +48,16 @@ const TaskCard = () => {
         navigate("/Allcustomers");
         break;
 
-      case 1000 :
-      title ="Leaves" ;
-      dispatch(toggleMenuTitle(title));
-      navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
-      
+      case 1000:
+        title = "Leaves";
+        dispatch(toggleMenuTitle(title));
+        navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
+        break;
+      case 1001:
+        title = "day planner";
+        dispatch(toggleMenuTitle(title));
+        navigate("/dayplanner/customers");
+        break;
       default:
         console.log("No data");
     }
@@ -43,13 +66,13 @@ const TaskCard = () => {
   const handleNavigationForDatKnoweledgeBaseView = (id) => {
     switch (id) {
       case 0:
-        navigate(`/knowledgebase/${id}`);
+        navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       case 1:
-        navigate(`/knowledgebase/${id}`);
+        navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       case 2:
-        navigate(`/knowledgebase/${id}`);
+        navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       default:
         console.log("no data");
@@ -88,12 +111,45 @@ const TaskCard = () => {
         console.log("no data");
     }
   };
+  const handleNavToAdd =(id)=>{
+    alert(id)
+    switch (id) {
+      case 1000:
+        navigate("/leave/my/create");
+        break;
+      case 1:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 2:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 3:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 4:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 5:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 6:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 7:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      case 8:
+        navigate(`/customers/viewtype/${id}`);
+        break;
+      default:
+        console.log("no data");
+    }
+  }
   return (
     <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
       <Stack gap={2} sx={{ mt: "15px", pt: 1 }}>
-        {cardData
-          .sort((a, b) => a.displayOrder - b.displayOrder)
-          .map((data, index) => (
+        {filteredHomePageData ? filteredHomePageData.map(
+          (data, index) => (
             <Stack
               key={index}
               sx={{ alignItems: "center", justifyContent: "center" }}
@@ -192,13 +248,14 @@ const TaskCard = () => {
                             padding: "4px 8px",
                             minWidth: "auto",
                           }}
+                          onClick={()=> handleNavToAdd(data.moduleId)}
                         />
                       )}
                     </Stack>
                   </Stack>
                   <Divider sx={{ width: "100%", height: "10px" }} />
                   {data.moduleId === 34 &&
-                    workSpecsData
+                    workSpecsDataMenu
                       .filter(
                         (eachWorkData) =>
                           eachWorkData.customEntitySpecId ===
@@ -461,7 +518,7 @@ const TaskCard = () => {
                                   fontFamily: '"Poppins", sans-serif',
                                 }}
                               >
-                              {eachWorkData.id}
+                                {eachWorkData.id}
                               </Typography>
                               <Typography
                                 sx={{
@@ -473,11 +530,92 @@ const TaskCard = () => {
                               </Typography>
                             </Stack>
                           </Stack>
-
-                       
                         </Stack>
                       </Stack>
                     ))}
+                  {data.moduleId === 1001 && (
+                    <Stack>
+                      <Stack
+                        sx={{
+                          width: "100%",
+                          flexDirection: { sm: "row", xs: "column" },
+                          alignItems: "center",
+                          justifyContent: "space-evenly",
+                          gap: 1,
+                          mt: 1,
+                        }}
+                      >
+                        {DayPlanModuleMenu.slice(0, 3).map((label, index) => (
+                          <>
+                            <Stack
+                              key={index}
+                              sx={{
+                                border: "1px solid #EEEEEE",
+                                flexGrow: { sm: 1, xs: 12 },
+                                width: { xs: "250px", sm: "auto" },
+
+                                textAlign: "center",
+                                borderRadius: "5px",
+                                py: 4,
+                                cursor: "pointer",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: label.count > 0 ? "green" : "red",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {label.count}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {label.title}
+                              </Typography>
+                            </Stack>
+                          </>
+                        ))}
+                      </Stack>
+                      <Stack>
+                        {DayPlanModuleMenu.slice(3, 9).map((label, index) => (
+                          <>
+                            <Stack
+                              key={index}
+                              sx={{
+                                width: { xs: "250px", sm: "auto" },
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                py: 0.9,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                px: 1,
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: '"Poppins", sans-serif',
+                                }}
+                              >
+                                {label.title}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color: label.count > 0 ? "green" : "red",
+                                }}
+                              >
+                                {label.count}
+                              </Typography>
+                            </Stack>
+                          </>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  )}
 
                   {data.moduleId === 9 && (
                     <Stack>
@@ -571,7 +709,8 @@ const TaskCard = () => {
                 </Stack>
               </Stack>
             </Stack>
-          ))}
+          )
+        ) :<Typography>No data found</Typography>}
       </Stack>
     </Box>
   );

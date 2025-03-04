@@ -1,8 +1,8 @@
+import { IconButton, InputAdornment, TextField } from '@mui/material';
 import React from 'react';
-import { TextField, IconButton } from '@mui/material';
 
 const ReusableTextfield = ({ 
-  placeholder,
+  placeholder, 
   value, 
   onChange, 
   icon, 
@@ -10,16 +10,17 @@ const ReusableTextfield = ({
 }) => {
   return (
     <TextField
+     autoComplete='off'
       variant="outlined"
       placeholder={placeholder}
       value={value}
       onChange={onChange}
       InputProps={{
-        endAdornment: icon && (
-          <IconButton>
-            {icon}
-          </IconButton>
-        ),
+        endAdornment: icon ? (
+          <InputAdornment position="end">
+            <IconButton>{icon}</IconButton>
+          </InputAdornment>
+        ) : null,
       }}
       sx={{
         '& .MuiOutlinedInput-root': {
@@ -39,7 +40,7 @@ const ReusableTextfield = ({
         '& .MuiInputBase-input': {
           padding: '10px',
           fontSize: '12px',
-          textTransform:'capitalize'
+          textTransform: 'capitalize'
         },
         '& .MuiInputAdornment-root': {
           color: 'green',

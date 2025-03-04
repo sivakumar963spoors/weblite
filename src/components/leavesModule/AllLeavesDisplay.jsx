@@ -22,7 +22,7 @@ const AllLeaves_display = () => {
   useEffect(() => {
     dispatch(getLeavesData());
   }, [dispatch]);
-  const {} = useSelector((state) => state.menu);
+ 
   const [searchParams] = useSearchParams();
   const viewType = searchParams.get("viewType");
   const leaveMenuType = searchParams.get("leaveMenuType");
@@ -57,7 +57,7 @@ const AllLeaves_display = () => {
   useEffect(() => {
     calculateItemsPerRow();
     window.addEventListener("resize", calculateItemsPerRow);
-    console.log(chunkArray);
+   
     return () => {
       window.removeEventListener("resize", calculateItemsPerRow);
     };
@@ -80,6 +80,7 @@ const AllLeaves_display = () => {
   };
   useEffect(() => {
     dispatch(getLeavesData());
+    console.log(data)
   }, [dispatch]);
 
   const openModalPopUp = (str, leavedetails) => {
@@ -107,6 +108,7 @@ const AllLeaves_display = () => {
         isActiveViewType={viewType}
         isActiveLeaveMenu={leaveMenuType}
       />
+    
       {status == "loading" ? (
         <Typography>loading ......</Typography>
       ) : (
@@ -116,6 +118,7 @@ const AllLeaves_display = () => {
             openModalPopUp("fullscreen", data);
           }}
         >
+          <Typography>  { data && data?.leaveViewType  }</Typography>
           {data.leaveViewType == 2 &&
             data.viewType == 2 &&
             viewType == 2 &&
@@ -236,7 +239,7 @@ const AllLeaves_display = () => {
                         pending
                       </Button>
                     )}
-                    {each.status == 1 || viewType == 5 && (
+                    {(each.status == 1 || viewType == 5) && (
                       <Button
                         variant="outlined"
                         sx={{
@@ -249,7 +252,7 @@ const AllLeaves_display = () => {
                         Approved
                       </Button>
                     )}
-                    {each.status == 2 || viewType == 5 && (
+                    {(each.status == 2 || viewType == 5) && (
                       <Button
                         variant="outlined"
                         sx={{
@@ -318,14 +321,14 @@ const AllLeaves_display = () => {
 
                       fontSize: { md: "14px", xs: "10px" },
                       fontWeight: 400,
-                      color: "#333", // Applies color only to the first Typography inside each Stack
+                      color: "#333", 
                     },
                     "& > * > :nth-of-type(2)": {
                       mb: 1,
                       width: { md: "100%", xs: "70%" },
                       fontSize: { md: "14px", xs: "10px" },
                       fontWeight: "bold",
-                      color: "#011D45 !important", // Applies color only to the second Typography inside each Stack
+                      color: "#011D45 !important", 
                     },
                   }}
                 >
