@@ -1,15 +1,22 @@
 import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const KnowledgeBaseComponent = () => {
-  const { id } = useParams();
+ const [searchParams] = useSearchParams();
+  const viewType = searchParams.get("viewType");
+  const navigation =useNavigate();
+ 
   const typographyStyle = {
     fontFamily: '"Poppins", sans-serif',
     fontWeight: 600,
     fontSize: "14px",
     textTransform: "capitalize",
   };
+  const handleNavTo =(id)=>{
+
+    navigation(`/manage/article/${id}`)
+  }
 
   return (
     <div>
@@ -22,12 +29,12 @@ const KnowledgeBaseComponent = () => {
         }}
       >
         <Stack sx={{ width: { sm: "90%", xs: "95%" } }}>
-          {id == 0 && (
+          {viewType == 0 && (
             <Stack>
               <Typography sx={typographyStyle}>total count</Typography>
             </Stack>
           )}
-          {id == 1 && (
+          {viewType && viewType == 1 && (
             <Stack sx={{}}>
               <Typography sx={typographyStyle}>total viewed</Typography>
               <Stack sx={{ flexDirection: "row", flexWrap: "wrap", gap: 1 }}>
@@ -59,6 +66,7 @@ const KnowledgeBaseComponent = () => {
                           bgcolor: "#EEEE",
                           borderRadius: "50%",
                         }}
+                        onClick ={()=>handleNavTo(viewType)}
                       >
                         12
                       </Typography>
@@ -70,7 +78,7 @@ const KnowledgeBaseComponent = () => {
               </Stack>
             </Stack>
           )}
-          {id == 2 && (
+          {viewType && viewType == 2 && (
             <Stack>
               <Typography sx={typographyStyle}>total unviewed</Typography>
             </Stack>

@@ -9,6 +9,8 @@ import dashboard from "../../assets/menu_svg_filled/Dashboard.svg";
 import dayplan from "../../assets/menu_svg_filled/Day_Plans.svg";
 import home from "../../assets/menu_svg_filled/Home.svg";
 import leaves from '../../assets/menu_svg_filled/Leaves.svg';
+import knowledgebase from '../../assets/menu_svg_filled/Knowledge_Base.svg'
+import blueknowledge from '../../assets/menu_svg_filled/Blue/Knowledge_Base.svg'
 export const menuItem = [
   {
     menuTitle: "Home",
@@ -30,6 +32,11 @@ export const menuItem = [
     menuTitle: "leaves",
     menuIcon:leaves ,
     blueMenuIcon: blueLeaves,
+  },
+  {
+    menuTitle: "Knowledge Base",
+    menuIcon: knowledgebase,
+    blueMenuIcon: blueknowledge,
   },
   {
     menuTitle: "Day Plans",

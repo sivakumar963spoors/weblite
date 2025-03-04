@@ -3,20 +3,20 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import SearchIcon from "@mui/icons-material/Search";
 import WindowIcon from "@mui/icons-material/Window";
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 import {
   Box,
   Button,
   CircularProgress,
   IconButton,
   Stack,
-  TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 
 import { useDispatch, useSelector } from "react-redux";
+import ReusableTextfield from "../common/ReusableTextfield";
 import TaskCard from "../task/TaskCard";
 
 const HomePage = () => {
@@ -28,9 +28,9 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const [spinnerOpen, setSpinnerOpen] = useState(true);
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const [searchText, setSearchText] = useState("");
   const nav = useNavigate();
 
-    
   const actionTypeMap = {
     1: "Work Invitations Type",
     2: "Works Type",
@@ -69,11 +69,14 @@ const HomePage = () => {
     setOpenLeaveCount(!openLeaveCount);
   };
   const navigateToDashBoard = () => {
-   var title = "Dashboard";
-   dispatch(toggleMenuTitle(title));        
-   nav("/dashboard");
+    var title = "Dashboard";
+    dispatch(toggleMenuTitle(title));
+    nav("/dashboard");
   };
-
+  const handleChange = (e) => {
+    const value = e.toLowerCase(); 
+    setSearchText(value);
+};
   return (
     <Box sx={{ bgcolor: "#F0F3FA" }}>
       <Box sx={{ mt: 8 }}>
@@ -211,11 +214,11 @@ const HomePage = () => {
                 <Stack sx={{ width: "100%" }}>
                   {actionReqireData.length > 0 ? (
                     <Stack sx={{ px: 3, gap: 1, py: 1 }}>
-                      {actionReqireData.map((each, index) => {
+                      {actionReqireData.map((each, i) => {
                         const displayText =
                           actionTypeMap[each.actionRequiredType];
                         return (
-                          <Box key={index}>
+                          <Box key={i}>
                             {spinnerOpen ? (
                               <Stack
                                 sx={{
@@ -425,12 +428,11 @@ const HomePage = () => {
           sx={{
             alignItems: "center",
             justifyContent: "center",
-            marginTop:"10px"
+            marginTop: "10px",
           }}
         >
           <Stack
             sx={{
-            
               width: "95%",
               zIndex: 999,
               bgcolor: "#FFF",
@@ -440,52 +442,19 @@ const HomePage = () => {
               borderBottomRightRadius: openActionRequird ? "0px" : "5px",
             }}
           >
-           <TextField
-      variant="outlined"
-      placeholder="Search"
-      InputProps={{
-        endAdornment: (
-          <IconButton>
-            <SearchIcon />
-          </IconButton>
-        ),
-        style: {
-           // You can adjust padding as needed
-        },
-      }}
-      sx={{
-        // Customize width if needed
-        '& .MuiOutlinedInput-root': {
-          height: '40px', // Set the height of the input field
-          '& fieldset': {
-            border: '1px solid #E3E3E3', // Border color
-            borderTop:"2px solid #E3E3E3 "
-          },
-          '&:hover fieldset': {
-            border: '1px solid #E3E3E3', // Border color on hover
-          },
-          '&.Mui-focused fieldset': {
-            border: '1px solid #E3E3E3', // Border color on focus
-            boxShadow: '0px 0px 10px 1px rgba(140, 210, 233, 0.63)', 
-          },
-        },
-        '& .MuiInputBase-input': {
-          padding: '10px', // Padding inside the input
-          fontSize: '12px', // Font size inside the input
-          // Adjust the height of the input text
-        },
-        '& .MuiInputAdornment-root': {
-          color: 'green', // Customize the icon button color
-        },
-      }}
-    />
-           
+            <ReusableTextfield
+            
+              placeholder={"search for customers"}
+              icon={<SearchIcon />}
+              value={searchText}
+              onChange={(e)=> handleChange(e.target.value)}
+            />
           </Stack>
         </Stack>
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <TaskCard />
+        <TaskCard  searchInput={searchText}/>
       </Box>
     </Box>
   );
