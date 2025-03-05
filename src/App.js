@@ -19,6 +19,7 @@ import LeaveApply from "./components/leavesModule/LeaveApply";
 import Leaves_details from "./components/leavesModule/Leaves_details";
 import TopBar from "./components/navbar/TopBar";
 import GetFormsData from "./getforms/GetFormsData";
+import AllApprovals from './components/myapprovals/AllApprovals';
 
 const theme = createTheme({
   typography: {
@@ -41,15 +42,10 @@ const theme = createTheme({
 
 
 function App() {
-
-
-
   return (
     <ThemeProvider theme={theme}>
    
-    <BrowserRouter>
-  
- 
+    <BrowserRouter> 
        <TopBar />  
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -74,6 +70,8 @@ function App() {
         <Route path="/leave/view/:id" element={<Leaves_details/>}/>
         <Route path='/dayplanner/customers' element={<DayPlanner/>}/>
         <Route path='/dayPlan/creation' element={<DayPlanCreation/>}/>
+
+        <Route path='/view/approvals' element={<AllApprovals/>}/>
       </Routes>
     </BrowserRouter>
 

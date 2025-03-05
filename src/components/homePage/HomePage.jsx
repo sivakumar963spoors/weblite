@@ -9,7 +9,7 @@ import {
   CircularProgress,
   IconButton,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -74,9 +74,9 @@ const HomePage = () => {
     nav("/dashboard");
   };
   const handleChange = (e) => {
-    const value = e.toLowerCase(); 
+    const value = e.toLowerCase();
     setSearchText(value);
-};
+  };
   return (
     <Box sx={{ bgcolor: "#F0F3FA" }}>
       <Box sx={{ mt: 8 }}>
@@ -165,7 +165,7 @@ const HomePage = () => {
                 borderBottomRightRadius: openActionRequird ? "0px" : "5px",
               }}
             >
-              <Stack sx={{ px: 4 }}>
+              <Stack sx={{ px: 2 }}>
                 <Stack
                   sx={{
                     flexDirection: "row",
@@ -180,6 +180,7 @@ const HomePage = () => {
                       fontFamily: '"Poppins", sans-serif',
                       fontWeight: 500,
                       letterSpacing: 0.1,
+                      fontSize:{sm:'13px', xs:'12px'}
                     }}
                   >
                     Action Required
@@ -187,11 +188,11 @@ const HomePage = () => {
                   <IconButton onClick={toggleActionRequird}>
                     {openActionRequird ? (
                       <KeyboardArrowDownIcon
-                        sx={{ color: "red", fontSize: "30px" }}
+                        sx={{ color: "red",  fontSize:{sm:'22px', xs:'20px'} }}
                       />
                     ) : (
                       <KeyboardArrowRightIcon
-                        sx={{ color: "red", fontSize: "30px" }}
+                        sx={{ color: "red", fontSize:{sm:'22px', xs:'20px'} }}
                       />
                     )}
                   </IconButton>
@@ -327,7 +328,7 @@ const HomePage = () => {
                 borderBottomRightRadius: openActionRequird ? "0px" : "5px",
               }}
             >
-              <Stack sx={{ px: 4 }}>
+              <Stack sx={{ px: 2 }}>
                 <Stack
                   sx={{
                     flexDirection: "row",
@@ -342,6 +343,7 @@ const HomePage = () => {
                       fontFamily: '"Poppins", sans-serif',
                       fontWeight: 500,
                       letterSpacing: 0.1,
+                      fontSize:{sm:'13px', xs:'12px'}
                     }}
                   >
                     on leave today ({leave_count})
@@ -349,11 +351,11 @@ const HomePage = () => {
                   <IconButton onClick={toggleLeaveCount}>
                     {openLeaveCount ? (
                       <KeyboardArrowDownIcon
-                        sx={{ color: "red", fontSize: "30px" }}
+                        sx={{ color: "red", fontSize:{sm:'23px', xs:'20px'} }}
                       />
                     ) : (
                       <KeyboardArrowRightIcon
-                        sx={{ color: "red", fontSize: "30px" }}
+                        sx={{ color: "red", fontSize:{sm:'23px', xs:'20px'} }}
                       />
                     )}
                   </IconButton>
@@ -443,18 +445,17 @@ const HomePage = () => {
             }}
           >
             <ReusableTextfield
-            
               placeholder={"search for customers"}
               icon={<SearchIcon />}
               value={searchText}
-              onChange={(e)=> handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
             />
           </Stack>
         </Stack>
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <TaskCard  searchInput={searchText}/>
+        <TaskCard searchInput={searchText} />
       </Box>
     </Box>
   );

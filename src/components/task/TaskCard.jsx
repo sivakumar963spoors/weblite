@@ -148,7 +148,7 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
   return (
     <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
       <Stack gap={2} sx={{ mt: "15px", pt: 1 }}>
-        {filteredHomePageData ? filteredHomePageData.map(
+        {filteredHomePageData &&filteredHomePageData.length > 0 ? filteredHomePageData.map(
           (data, index) => (
             <Stack
               key={index}
@@ -212,8 +212,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                         )}
                         <Typography
                           sx={{
-                            fontWeight: { sm: 600, xs: 400 },
-                            fontSize: { xs: "13px" },
+                            fontWeight: { sm: 500, xs: 400 },
+                            fontSize:{sm:'14px', xs:'12px'}
                           }}
                         >
                           {data.moduleName}
@@ -280,7 +280,7 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                 width: "100%",
                                 padding: 1,
                                 borderRadius: "4px",
-                                fontFamily: '"Poppins", sans-serif',
+                              
                               }}
                             >
                               <Stack
@@ -288,14 +288,14 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
-                                  fontFamily: '"Poppins", sans-serif',
+                               
                                 }}
                               >
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize: "13px",
-                                    fontFamily: '"Poppins", sans-serif',
+                                    fontSize:{sm:'14px', xs:'12px'},
+                                 
                                   }}
                                 >
                                   You need to do:
@@ -317,14 +317,14 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
-                                  fontFamily: '"Poppins", sans-serif',
+                                 
                                 }}
                               >
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize: "13px",
-                                    fontFamily: '"Poppins", sans-serif',
+                                    fontSize:{sm:'14px', xs:'12px'},
+                                   
                                   }}
                                 >
                                   Team needs to do:
@@ -352,7 +352,7 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                   sx={{
                                     flexGrow: 1,
                                     fontSize: "13px",
-                                    fontFamily: '"Poppins", sans-serif',
+                                  
                                   }}
                                 >
                                   Invitations need your action:
@@ -380,8 +380,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize: "13px",
-                                    fontFamily: '"Poppins", sans-serif',
+                                    fontSize:{sm:'14px', xs:'12px'},
+                                   
                                   }}
                                 >
                                   Team has invitations to process:
@@ -408,13 +408,13 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                 width: "100%",
                                 padding: 1,
                                 borderRadius: "4px",
-                                fontSize: "13px",
+                                fontSize:{sm:'14px', xs:'12px'},
                               }}
                             >
                               <Typography
                                 sx={{
-                                  fontSize: "13px",
-                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize:{sm:'14px', xs:'12px'},
+                                 
                                 }}
                               >
                                 No progress tasks:
@@ -464,8 +464,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                           >
                             <Typography
                               sx={{
-                                fontFamily: '"Poppins", sans-serif',
-                                fontSize: "14px",
+                               
+                                fontSize:{sm:'14px', xs:'12px'},
                               }}
                             >
                               {label}
@@ -500,7 +500,7 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                               width: "100%",
                               padding: 1,
                               borderRadius: "4px",
-                              fontFamily: '"Poppins", sans-serif',
+                            
                             }}
                           >
                             <Stack
@@ -508,14 +508,14 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 width: "100%",
-                                fontFamily: '"Poppins", sans-serif',
+                              
                               }}
                             >
                               <Typography
                                 sx={{
                                   flexGrow: 1,
-                                  fontSize: "13px",
-                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize:{sm:'14px', xs:'12px'},
+                               
                                 }}
                               >
                                 {eachWorkData.id}
@@ -570,8 +570,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                               </Typography>
                               <Typography
                                 sx={{
-                                  fontFamily: '"Poppins", sans-serif',
-                                  fontSize: "14px",
+                                 
+                                  fontSize:{sm:'14px', xs:'12px'},
                                 }}
                               >
                                 {label.title}
@@ -597,8 +597,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                             >
                               <Typography
                                 sx={{
-                                  fontSize: "13px",
-                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize:{sm:'14px', xs:'12px'},
+                               
                                 }}
                               >
                                 {label.title}
@@ -657,8 +657,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                               </Typography>
                               <Typography
                                 sx={{
-                                  fontFamily: '"Poppins", sans-serif',
-                                  fontSize: "14px",
+                                 
+                                  fontSize:{sm:'14px', xs:'12px'},
                                 }}
                               >
                                 {label.title}
@@ -687,8 +687,8 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
                             >
                               <Typography
                                 sx={{
-                                  fontSize: "13px",
-                                  fontFamily: '"Poppins", sans-serif',
+                                  fontSize:{sm:'14px', xs:'12px'},
+                               
                                 }}
                               >
                                 {label.title}
@@ -710,7 +710,7 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
               </Stack>
             </Stack>
           )
-        ) :<Typography>No data found</Typography>}
+        ) :<Typography sx={{textAlign:'center'}}>No data found</Typography>}
       </Stack>
     </Box>
   );

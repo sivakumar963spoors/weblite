@@ -11,6 +11,8 @@ import home from "../../assets/menu_svg_filled/Home.svg";
 import leaves from '../../assets/menu_svg_filled/Leaves.svg';
 import knowledgebase from '../../assets/menu_svg_filled/Knowledge_Base.svg'
 import blueknowledge from '../../assets/menu_svg_filled/Blue/Knowledge_Base.svg'
+import myapproval from '../../assets/menu_svg_filled/My_approvals.svg'
+import bluemyapproval from '../../assets/menu_svg_filled/Blue/My_approvals.svg'
 export const menuItem = [
   {
     menuTitle: "Home",
@@ -29,15 +31,21 @@ export const menuItem = [
     blueMenuIcon: bluecustomerIcon,
   },
   {
-    menuTitle: "leaves",
-    menuIcon:leaves ,
-    blueMenuIcon: blueLeaves,
+    menuTitle: "My Approvals",
+    menuIcon: myapproval,
+    blueMenuIcon: bluemyapproval,
   },
   {
     menuTitle: "Knowledge Base",
     menuIcon: knowledgebase,
     blueMenuIcon: blueknowledge,
   },
+  {
+    menuTitle: "leaves",
+    menuIcon:leaves ,
+    blueMenuIcon: blueLeaves,
+  },
+  
   {
     menuTitle: "Day Plans",
     menuIcon: dayplan,

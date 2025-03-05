@@ -50,7 +50,7 @@ const TopBar = () => {
   const handlenavigateToMenuItem = (menus) => {
     setOpenDrawer(false);
     dispatch(toggleMenuTitle(menus));
-    alert(menus)
+    alert(menus);
     switch (menus) {
       case "Home":
         nav("/");
@@ -67,11 +67,12 @@ const TopBar = () => {
       case "leaves":
         nav("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
-        case "Knowledge Base":
-        nav('knowledgebase/manage');
+      case "Knowledge Base":
+        nav("knowledgebase/manage");
         break;
-      case "Day plans":
-     
+      case "My Approvals":
+        nav('/view/approvals?sortBy=2');
+        break;
       default:
         console.warn("No navigation defined for this menu item");
         break;
