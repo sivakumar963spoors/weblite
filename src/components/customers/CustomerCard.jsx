@@ -3,25 +3,35 @@ import CircleChecked from "@mui/icons-material/CheckCircleOutline";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import CircleUnchecked from "@mui/icons-material/RadioButtonUnchecked";
 import { Button, Checkbox, Stack, Typography } from "@mui/material";
-import React from "react";
-import { useSelector,useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 
-const CustomerCard = () => {
+import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
+import { filterCustomer, resetCustomerData } from "../../redux/slices/CustomerModule";
+
+const CustomerCard = ({searchText}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch(); 
-  const { customerData } = useSelector((state) => state.CustomerModule);
+  const { filteredCustomerData } = useSelector((state) => state.CustomerModule);
   const navigateToCustomerDetails = (id) => {
     dispatch(toggleMenuTitle("Customer Details"));
     navigate(`/customer/details/${id}`);
   };    
-
+  useEffect(() => {
+    if (searchText && searchText.trim() !== "") {
+        dispatch(filterCustomer(searchText));
+    } else {
+        dispatch(resetCustomerData());
+    }
+}, [dispatch, searchText]);
   return (
     <div>
       <Stack sx={{ alignItems: "center", justifyContent: "center" , gap:1}}>
-        {customerData.length > 0 ? (
-          customerData.map((customer) => (
+
+     
+        {filteredCustomerData.length > 0 ? (
+          filteredCustomerData.map((customer) => (
             <Stack
               key={customer.customerId}
               sx={{
@@ -147,7 +157,7 @@ const CustomerCard = () => {
             </Stack>
           ))
         ) : (
-          <Typography>no data found</Typography>
+          <Typography style={{ color: "red", fontWeight: "bold" }}>No customers found</Typography>
         )}
       </Stack>
     </div>

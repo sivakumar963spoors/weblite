@@ -50,7 +50,7 @@ const TopBar = () => {
   const handlenavigateToMenuItem = (menus) => {
     setOpenDrawer(false);
     dispatch(toggleMenuTitle(menus));
-    alert(menus);
+ 
     switch (menus) {
       case "Home":
         nav("/");

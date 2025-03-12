@@ -5,16 +5,20 @@ const ReusableTextfield = ({
   placeholder, 
   value, 
   onChange, 
+  type,
   icon, 
+  onBlur,
   sx = {} 
 }) => {
   return (
     <TextField
+    type={ type}
      autoComplete='off'
       variant="outlined"
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       InputProps={{
         endAdornment: icon ? (
           <InputAdornment position="end">
@@ -24,7 +28,7 @@ const ReusableTextfield = ({
       }}
       sx={{
         '& .MuiOutlinedInput-root': {
-          height: '40px',
+          height: '35px',
           '& fieldset': {
             border: '1px solid #E3E3E3',
             borderTop: "2px solid #E3E3E3"

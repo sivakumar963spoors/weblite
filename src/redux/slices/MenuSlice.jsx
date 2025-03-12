@@ -4,7 +4,7 @@ import { menuItem } from '../../components/navbar/TopBarData';
 
 const initialState = {
   menuItems:menuItem,
-  currentMenuTitle: "Home",
+  currentMenuTitle: localStorage.getItem("menuTiles") || "Home",
 };
 
 const menuSlice = createSlice({
@@ -13,7 +13,7 @@ const menuSlice = createSlice({
   reducers: {
   toggleMenuTitle: (state, action) => {
       state.currentMenuTitle = action.payload;
-      
+      localStorage.setItem("menuTiles", action.payload);
     },
   },
 });
