@@ -6,18 +6,24 @@ import { Button, Checkbox, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 import { filterCustomer, resetCustomerData } from "../../redux/slices/CustomerModule";
+import { toggleMenuTitle } from '../../redux/slices/MenuSlice';
 
 const CustomerCard = ({searchText}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch(); 
   const { filteredCustomerData } = useSelector((state) => state.CustomerModule);
   const navigateToCustomerDetails = (id) => {
+ 
     dispatch(toggleMenuTitle("Customer Details"));
     navigate(`/customer/details/${id}`);
-  };    
+  };  
+ 
+  const addActivity  =()=>{
+   
+  navigate('/customer/viewactivity/details')
+
+  }
   useEffect(() => {
     if (searchText && searchText.trim() !== "") {
         dispatch(filterCustomer(searchText));
@@ -44,8 +50,8 @@ const CustomerCard = ({searchText}) => {
                 <Typography
                   sx={{
                     color: "GrayText",
-                    fontFamily: "'poppins', sans-serif",
-                    fontSize: "14px",
+               
+                    fontSize: {sm:'14px', xs:'12px'},
                   }}
                 >
                   Not checked in
@@ -68,10 +74,10 @@ const CustomerCard = ({searchText}) => {
                   />
                   <Typography
                     sx={{
-                      fontWeight: "bold",
+                      fontWeight: {sm:'bold',xs:500},
                       textTransform: "uppercase",
                       color: "#2375F7",
-                      fontFamily: '"poppins"',
+                      fontSize:{sm:'14px',xs:'12px'},
                       ml: -1,
                       cursor: "pointer",
                     }}
@@ -84,13 +90,13 @@ const CustomerCard = ({searchText}) => {
                   <Typography
                     sx={{
                       color: "GrayText",
-                      fontFamily: "'poppins', sans-serif",
-                      fontSize: "14px",
+                     
+                      fontSize: {sm:'14px',xs:'12px'},
                     }}
                   >
                     customer type 1
                   </Typography>
-                  <Typography sx={{ fontWeight: "bold" }}>
+                  <Typography sx={{ fontWeight:{sm:'bold',xs:500},  fontSize:{sm:'14px',xs:'12px'} }}>
                     not defined
                   </Typography>
                 </Stack>
@@ -106,8 +112,8 @@ const CustomerCard = ({searchText}) => {
                     <Typography
                       sx={{
                         color: "GrayText",
-                        fontFamily: "'poppins', sans-serif",
-                        fontSize: "14px",
+                       
+                        fontSize: {sm:'14px',xs:'12px'}
                       }}
                     >
                       Location
@@ -119,14 +125,15 @@ const CustomerCard = ({searchText}) => {
                     <Typography
                       sx={{
                         color: "GrayText",
-                        fontFamily: "'poppins', sans-serif",
-                        fontSize: "14px",
+                     
+
+                        fontSize: {sm:'14px',xs:'12px'}
                       }}
                     >
                       Phone
                     </Typography>
                     
-                    <Typography>{customer.customerPhone !== null ? customer.customerPhone : "--"}</Typography>
+                    <Typography sx={{  fontSize:{sm:'14px',xs:'10px'}}}>{customer.customerPhone !== null ? customer.customerPhone : "--"}</Typography>
                   </Stack>
                 </Stack>
                 <Stack sx={{ mt: 2, flexDirection: "row", gap: 1 }}>
@@ -136,8 +143,9 @@ const CustomerCard = ({searchText}) => {
                       color: "#FFF",
                       textTransform: "capitalize",
                       px: 2,
+                      fontSize:{sm:'14px',xs:'10px'}
                     }}
-                    startIcon={<DirectionsWalkIcon />}
+                    startIcon={<DirectionsWalkIcon sx={{  fontSize:{sm:'14px',xs:'10px'}}} />}
                   >
                     checkIn
                   </Button>
@@ -147,8 +155,10 @@ const CustomerCard = ({searchText}) => {
                       color: "#2375F7",
                       textTransform: "capitalize",
                       px: 2,
+                      fontSize:{sm:'14px',xs:'10px'}
                     }}
-                    startIcon={<AddCircleTwoToneIcon />}
+                    startIcon={<AddCircleTwoToneIcon sx={{  fontSize:{sm:'14px',xs:'10px'}}} />}
+                    onClick={addActivity}
                   >
                     activity
                   </Button>

@@ -18,11 +18,7 @@ const TaskCard = ({searchInput}) => {
   const {  workSpecsDataMenu } = useSelector(
     (state) => state.HomePageModule
   );
- 
-const filteredHomePageData = useSelector((state) => state.HomePageModule.filteredHomePageData);
-
-
-
+  const filteredHomePageData = useSelector((state) => state.HomePageModule.filteredHomePageData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -79,38 +75,18 @@ const filteredHomePageData = useSelector((state) => state.HomePageModule.filtere
     }
   };
   const handlenavigationToCustomerModules = (id) => {
-    switch (id) {
-      case 0:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 1:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 2:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 3:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 4:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 5:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 6:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 7:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      case 8:
-        navigate(`/customers/viewtype/${id}`);
-        break;
-      default:
-        console.log("no data");
+    console.log("Before Dispatch");
+    dispatch(toggleMenuTitle("customers"));
+    console.log("After Dispatch");
+  
+    if (id >= 0 && id <= 8) {
+      navigate(`/customers/viewtype/${id}`);
+    } else {
+      console.log("no data");
     }
   };
+  
+  
   const handleNavToAdd =(id)=>{
     alert(id)
     switch (id) {

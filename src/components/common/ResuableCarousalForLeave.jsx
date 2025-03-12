@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useNavigate } from "react-router-dom";
 const ResuableCarousal = ({ items, isActiveViewType,isActiveLeaveMenu }) => {
-  
   const [activecarousal, setIsActiveCarousal] = useState(0);
   useEffect(() => {
     if ([1, 2, 3, 4, 5].includes(isActiveViewType)) {

@@ -1,15 +1,20 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Stack } from '@mui/material';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReusableTextfield from '../common/ReusableTextfield';
 import CustomerCard from './CustomerCard';
 const Customers = () => {
+  const navigate =useNavigate();
   const [customerSearch,setCustomerSearch]=useState('');
   const handleChange =(event)=>{
-    
-    setCustomerSearch(event.target.value)
+    const newValue= event.target.value.trimStart();
+    setCustomerSearch(newValue)
 
   }
+  const navigationToAddActivity =()=>{
+    navigate('customer/viewactivity/details')
+  } 
   return (
     <> 
       <Box sx={{mt:10}}>
@@ -19,7 +24,7 @@ const Customers = () => {
 <ReusableTextfield placeholder={"search by customers"} icon={<SearchIcon/>} value={customerSearch} onChange={handleChange}/>
 </Stack>
   </Box>
-  <CustomerCard searchText={customerSearch}/>
+  <CustomerCard searchText={customerSearch} viewActivity={navigationToAddActivity}/>
 </Stack>
       </Box>
       

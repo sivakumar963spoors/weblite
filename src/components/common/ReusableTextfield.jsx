@@ -8,6 +8,8 @@ const ReusableTextfield = ({
   type,
   icon, 
   onBlur,
+  helperText,
+  error,
   sx = {} 
 }) => {
   return (
@@ -19,6 +21,8 @@ const ReusableTextfield = ({
       value={value}
       onChange={onChange}
       onBlur={onBlur}
+      helperText={helperText}
+      error={error}
       InputProps={{
         endAdornment: icon ? (
           <InputAdornment position="end">
