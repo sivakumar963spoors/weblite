@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getLeavesData } from "../../redux/slices/LeavesModule";
 import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
-import ResuableCarousal from "../common/ResuableCarousal";
+import ResuableCarousal from "../common/ResuableCarousalForLeave";
 const AllLeaves_display = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

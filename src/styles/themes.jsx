@@ -63,7 +63,14 @@ export const theme = createTheme({
             padding: 0,
             overflowX: "hidden",
           },
-        },}
+        },},
+        MuiFormHelperText: {
+          styleOverrides: {
+            root: {
+              color: "tomato", // Set helper text color globally to red
+            },
+          },
+        },
      
     }
     

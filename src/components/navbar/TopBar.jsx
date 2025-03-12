@@ -50,7 +50,6 @@ const TopBar = () => {
   const handlenavigateToMenuItem = (menus) => {
     setOpenDrawer(false);
     dispatch(toggleMenuTitle(menus));
- 
     switch (menus) {
       case "Home":
         nav("/");
@@ -206,7 +205,7 @@ const TopBar = () => {
             </Typography>
           </Stack>
           <Avatar
-            sx={{ width: "30px", height: "30px" }}
+            sx={{ width: "30px", height: "30px" ,cursor:'pointer'}}
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}

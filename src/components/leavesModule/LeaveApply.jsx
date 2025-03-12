@@ -7,23 +7,127 @@ import {
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import React, { useState } from "react";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { globalstyle } from "../../styles/GlobalCss";
 import ReusableTextfield from "../common/ReusableTextfield";
 const leavesType = ["sick", "casual"];
 const LeavesDuration = ["full day", "first half", "second half"];
 const Leave_apply = () => {
-  const [fromValue, setformValue] = useState("");
-  const [toValue, setToValue] = useState("");
-  const handleChangesetformValue = (event) => {
-    setformValue(event.target.value);
+  const [leaveData, setLeaveData] = useState({
+    fromDate: null,
+    toDate: null,
+    durationFrom: null,
+    durationTo: null,
+    leaveType: null,
+    noOfDays: "",
+    remark: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [OpenDatePicker, setOpenDatePicker] = useState(false);
+  const [OpenToDatePicker, setOpenToDatePicker] = useState(false);
+ 
+  const calculateDays = (startDate, endDate, startDuration, endDuration) => {
+    if (!startDate || !endDate) return "";
+
+    const start = dayjs(startDate).startOf("day");
+    const end = dayjs(endDate).startOf("day");
+
+    if (end.isBefore(start)) return ""; 
+
+    let totalDays = end.diff(start, "day") + 1;
+
+    const startDur = startDuration?.toLowerCase();
+    const endDur = endDuration?.toLowerCase();
+
+    if (startDur === "second half" && endDur === "first half" && totalDays === 1) {
+      totalDays = 0.5;
+    } else {
+      if (startDur === "second half") totalDays -= 0.5;
+      if (endDur === "first half") totalDays -= 0.5;
+    }
+
+    return totalDays;
   };
-  const handleChangesettoValue = (event) => {
-    setToValue(event.target.value);
+
+  useEffect(() => {
+    if (leaveData.fromDate && leaveData.toDate) {
+      setLeaveData((prev) => ({
+        ...prev,
+        noOfDays: calculateDays(prev.fromDate, prev.toDate, prev.durationFrom, prev.durationTo),
+      }));
+    }
+  }, [leaveData.fromDate, leaveData.toDate, leaveData.durationFrom, leaveData.durationTo]);
+
+  const handleChange = (field, value) => {
+    setLeaveData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    if (field === "fromDate") {
+      setLeaveData((prev) => ({
+        ...prev,
+        toDate: value, 
+        durationFrom: "Full Day",
+        durationTo: "Full Day",
+        noOfDays: calculateDays(value, value, "Full Day", "Full Day"),
+      }));
+    }
+
+    if (field === "toDate" && dayjs(value).isBefore(dayjs(leaveData.fromDate))) {
+      return;
+    }
+
+    if (field === "durationFrom" || field === "durationTo") {
+      setLeaveData((prev) => ({
+        ...prev,
+        noOfDays: calculateDays(prev.fromDate, prev.toDate, 
+          field === "durationFrom" ? value : prev.durationFrom,
+          field === "durationTo" ? value : prev.durationTo),
+      }));
+    }
   };
-  const [value, setValue] = useState();
+
+  const handleSubmit = () => {
+    let newErrors = {};
+    const today = dayjs().startOf("day");
+
+    if (!leaveData.fromDate) {
+      newErrors.fromDate = "From date is required";
+    } else if (dayjs(leaveData.fromDate).isBefore(today)) {
+      newErrors.fromDate = "You can't apply for past dates";
+    }
+
+    if (!leaveData.toDate) {
+      newErrors.toDate = "To date is required";
+    } else if (dayjs(leaveData.toDate).isBefore(dayjs(leaveData.fromDate))) {
+      newErrors.toDate = "To date cannot be before From date";
+    }
+
+    if (!leaveData.durationFrom) newErrors.durationFrom = "Duration is required";
+    if (!leaveData.durationTo) newErrors.durationTo = "Duration is required";
+    if (!leaveData.leaveType) newErrors.leaveType = "Leave type is required";
+    if (!leaveData.noOfDays || leaveData.noOfDays <= 0) newErrors.noOfDays = "Number of days must be greater than 0";
+    if (!leaveData.remark) newErrors.remark = "Remark is required";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Form submitted successfully", leaveData);
+      setLeaveData({
+        fromDate: null,
+        toDate: null,
+        durationFrom: null,
+        durationTo: null,
+        leaveType: null,
+        noOfDays: "",
+        remark: "",
+      });
+    }
+   
+  };
   return (
     <Stack sx={{ mt: 9 }}>
       <Stack
@@ -53,69 +157,55 @@ const Leave_apply = () => {
               }}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer
-                  components={["DatePicker"]}
-                  sx={{ width: { sm: "50%", xs: "100%" } }}
+                <Stack
+                  sx={{
+                    width: { sm: "50%", xs: "100%" },
+                    flexDirection: "column",
+                  }}
                 >
                   <DatePicker
-                    value={value}
-                    onChange={(newValue) => setValue(newValue)}
-                    label="Please Select date"
+                    value={leaveData.fromDate}
+                    onChange={(newValue) => handleChange("fromDate", newValue)}
+                    minDate={dayjs()} // Prevent selecting past dates
+                    open={OpenDatePicker}
+                    onOpen={() => setOpenDatePicker(true)}
+                    onClose={() => setOpenDatePicker(false)}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        onClick: () => setOpenDatePicker(true),
+                      },
+                    }}
+                    label="Please Select Date"
                     sx={globalstyle.datepicker}
                   />
-                </DemoContainer>
+
+                  {errors.fromDate && (
+                    <Typography
+                      
+                      sx={{ fontSize: "12px", mt: 0.5,pl:2 , color:'tomato'}}
+                    >
+                      {errors.fromDate}
+                    </Typography>
+                  )}
+                </Stack>
               </LocalizationProvider>
 
-              <Autocomplete
-                options={LeavesDuration.map((option) => option)}
-                renderInput={(params) => (
-                  <TextField {...params} label="Select Duration" />
-                )}
-                sx={{
-                  width: { sm: "50%", xs: "100%" },
-                  mt: 1,
-                  "& .MuiOutlinedInput-root": {
-                    display: "flex",
-                    alignItems: "center", // Centers text and icon
-                    height: "40px", // Ensures consistent height
-                    "& fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    // "& .MuiOutlinedInput-root": {
-                    //   height: 40,
-                    //   overflow: "hidden",
-                    //   border: "1px solid",
-                    // },
-                    "&:hover fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    fontSize: "14px",
-                    padding: "10px 12px", // Adjusts text padding
-                    lineHeight: "normal",
-                    textTransform: "capitalize",
-                  },
-                  "& .MuiAutocomplete-endAdornment": {
-                    display: "flex",
-                    alignItems: "center", // Centers the dropdown icon
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontSize: "12px",
-                    height: "100%",
-                    color: "gray",
-                    marginTop: "-5px",
-                  },
-                  "& .MuiInputLabel-shrink": {
-                    fontSize: "14px",
-                    marginTop: "3px",
-                    color: "gray",
-                  },
-                }}
-              />
+              <Stack sx={{ width: { sm: "50%", xs: "100%" } }}>
+                <Autocomplete
+                  options={LeavesDuration}
+                  value={leaveData.durationFrom}
+                  onChange={(event, newValue) => handleChange("durationFrom", newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Duration"
+                      helperText={errors.durationFrom}
+                    />
+                  )}
+                  sx={globalstyle.autoCompleteSelect}
+                />
+              </Stack>
             </Stack>
           </Stack>
           <Stack
@@ -135,61 +225,55 @@ const Leave_apply = () => {
               }}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer
-                  components={["DatePicker"]}
-                  sx={{ width: { sm: "50%", xs: "100%" } }}
+                <Stack
+                  sx={{
+                    width: { sm: "50%", xs: "100%" },
+                    flexDirection: "column",
+                  }}
                 >
                   <DatePicker
-                    label="Please Select date"
+                    label="Please Select Date"
+                    value={leaveData.toDate}
+                    onChange={(newValue) => handleChange("toDate", newValue)}
+                    minDate={leaveData.fromDate || dayjs()} 
                     sx={globalstyle.datepicker}
+                    open={OpenToDatePicker}
+                    onOpen={() => setOpenToDatePicker(true)}
+                    onClose={() => setOpenToDatePicker(false)}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        onClick: () => setOpenToDatePicker(true),
+                      },
+                    }}
                   />
-                </DemoContainer>
+
+                  {errors.toDate && (
+                    <Typography
+                      
+                      sx={{ fontSize: "12px", mb: 0.5,pl:2 ,color:'tomato'}}
+                    >
+                      {errors.toDate}
+                    </Typography>
+                  )}
+                </Stack>
               </LocalizationProvider>
-              <Autocomplete
-                options={LeavesDuration.map((option) => option)}
-                renderInput={(params) => (
-                  <TextField {...params} label="Select Duration" />
-                )}
-                sx={{
-                  width: { sm: "50%", xs: "100%" },
-                  mt: 1,
-                  "& .MuiOutlinedInput-root": {
-                    display: "flex",
-                    alignItems: "center",
-                    height: "40px",
-                    "& fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    fontSize: "14px",
-                    padding: "10px 12px",
-                    lineHeight: "normal",
-                    textTransform: "capitalize",
-                  },
-                  "& .MuiAutocomplete-endAdornment": {
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontSize: "12px",
-                    height: "100%",
-                    color: "gray",
-                    marginTop: "-5px",
-                  },
-                  "& .MuiInputLabel-shrink": {
-                    fontSize: "14px",
-                    marginTop: "3px",
-                    color: "gray",
-                  },
-                }}
-              />
+
+              <Stack sx={{ width: { sm: "50%", xs: "100%" } }}>
+                <Autocomplete
+                  options={LeavesDuration}
+                  value={leaveData.durationTo}
+                  onChange={(event, newValue) => handleChange("durationTo", newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Duration"
+                      helperText={errors.durationTo}
+                    />
+                  )}
+                  sx={globalstyle.autoCompleteSelect}
+                />
+              </Stack>
             </Stack>
           </Stack>
           <Stack
@@ -198,12 +282,20 @@ const Leave_apply = () => {
               py: 1,
             }}
           >
-            <Typography sx={{ fontSize: { sm: "15px", xs: "12px" } }}>
+            <Typography
+              sx={{ fontSize: { sm: "15px", xs: "12px" } }}
+              InputProps={{ readOnly: true }}
+            >
               No of days
             </Typography>
 
             <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
-              <ReusableTextfield type="number" />
+              <ReusableTextfield
+                type="number"
+                value={leaveData.noOfDays}
+             
+                helperText={errors.noOfDays}
+              />
             </Stack>
           </Stack>
           <Stack
@@ -218,46 +310,17 @@ const Leave_apply = () => {
 
             <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
               <Autocomplete
-                options={leavesType.map((option) => option)}
+                options={leavesType}
+                value={leaveData.leaveType}
+                onChange={(event, newValue) => handleChange("leaveType", newValue)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Leave Type" />
+                  <TextField
+                    {...params}
+                    label="Select Leave Type"
+                    helperText={errors.leaveType}
+                  />
                 )}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    display: "flex",
-                    alignItems: "center",
-                    height: "40px",
-                    "& fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    fontSize: "14px",
-                    padding: "10px 12px",
-                    lineHeight: "normal",
-                  },
-                  "& .MuiAutocomplete-endAdornment": {
-                    display: "flex",
-                    alignItems: "center",
-                  },
-                  "& .MuiInputLabel-root": {
-                    fontSize: "12px",
-                    height: "100%",
-                    color: "gray",
-                    marginTop: "-5px",
-                  },
-                  "& .MuiInputLabel-shrink": {
-                    fontSize: "14px",
-                    marginTop: "3px",
-                    color: "gray",
-                  },
-                }}
+                sx={globalstyle.autoCompleteSelect}
               />
             </Stack>
           </Stack>
@@ -271,14 +334,12 @@ const Leave_apply = () => {
               Remark
             </Typography>
 
-         
             <Stack sx={{ width: { sm: "50%", xs: "100%" } }}>
               <TextField
                 fullWidth
                 rows={5}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                  
                     "& fieldset": {
                       border: "1px solid #ccc",
                     },
@@ -290,10 +351,12 @@ const Leave_apply = () => {
                     },
                   },
                   "& .MuiInputBase-input": {
-                    fontSize: "12px",
-                    lineHeight: "1.5", 
+                    lineHeight: "1.5",
                   },
                 }}
+                value={leaveData.remark}
+                onChange={(e) => handleChange("remark", e.target.value)}
+                helperText={errors.remark}
               />
             </Stack>
           </Stack>
@@ -326,7 +389,9 @@ const Leave_apply = () => {
           }}
         >
           <Button variant="outlined">cancel</Button>
-          <Button variant="contained">submit </Button>
+          <Button variant="contained" onClick={handleSubmit}>
+            submit{" "}
+          </Button>
         </Stack>
       </Stack>
     </Stack>

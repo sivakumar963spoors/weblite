@@ -1,7 +1,8 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ResuableCarousal from "../common/ResuableCarousal";
+import ResuableCarousal from "../common/ResuableCarousalForCustomer";
+import CustomerCard from "./CustomerCard";
 
 const CustomersViewTyped = () => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
@@ -34,11 +35,18 @@ const CustomersViewTyped = () => {
   useEffect(() => {
     calculateItemsPerRow();
     window.addEventListener("resize", calculateItemsPerRow);
-console.log(chunkArray)
+
     return () => {
       window.removeEventListener("resize", calculateItemsPerRow);
     };
   }, []);
+  const [activeTile, setActiveTile] = useState(""); // Store active tile title
+
+  // Function to update active tile
+  const handleActiveTileChange = (title) => {
+    setActiveTile(title);
+  };
+
 
   return (
     <Box sx={{ mt: 10 }}>
@@ -49,7 +57,14 @@ console.log(chunkArray)
           zIndex: 9999,
         }}
       >
-        <ResuableCarousal items={carousalItems}/>
+        <ResuableCarousal items={carousalItems} onActiveTileChange={handleActiveTileChange}  />
+
+<Stack sx={{width:'100%', mt:2}}>
+<Typography  sx={{ color: "#333", pl:2 }}>
+   {activeTile || ""}
+        </Typography>
+  <CustomerCard/>
+</Stack>
       </Stack>
     </Box>
   );

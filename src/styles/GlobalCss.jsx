@@ -43,5 +43,48 @@ export const globalstyle ={
           color: "#555 ",
           fontWeight: "500",
         },
-      }
+      },
+      autoCompleteSelect:{
+       
+       width:'100%',
+          mt: 1,
+          "& .MuiOutlinedInput-root": {
+            display: "flex",
+            alignItems: "center", // Centers text and icon
+            height: "40px", // Ensures consistent height
+            "& fieldset": {
+              borderColor: "#E5E5E5",
+            },
+           
+            "&:hover fieldset": {
+              borderColor: "#E5E5E5",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#E5E5E5",
+            },
+          },
+          "& .MuiInputBase-input": {
+            fontSize: "12px",
+            color:'#333',
+            padding: "10px 12px", 
+            lineHeight: "normal",
+            textTransform: "capitalize",
+          },
+          "& .MuiAutocomplete-endAdornment": {
+            display: "flex",
+            alignItems: "center", 
+          },
+          "& .MuiInputLabel-root": {
+            fontSize: "12px",
+            height: "100%",
+            color: "gray",
+            marginTop: "-5px",
+          },
+          "& .MuiInputLabel-shrink": {
+            fontSize: "14px",
+            marginTop: "3px",
+            color: "gray",
+          },
+        }
+      
 }
