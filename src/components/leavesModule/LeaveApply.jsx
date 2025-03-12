@@ -10,6 +10,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React, { useState } from "react";
+import { globalstyle } from "../../styles/GlobalCss";
+import ReusableTextfield from "../common/ReusableTextfield";
 const leavesType = ["sick", "casual"];
 const LeavesDuration = ["full day", "first half", "second half"];
 const Leave_apply = () => {
@@ -21,15 +23,16 @@ const Leave_apply = () => {
   const handleChangesettoValue = (event) => {
     setToValue(event.target.value);
   };
-  const[value,setValue]=useState()
+  const [value, setValue] = useState();
   return (
-    <Stack sx={{ mt: 8 , }}>
+    <Stack sx={{ mt: 9 }}>
       <Stack
         sx={{
           background: "#F0F3FA",
           justifyContent: "center",
           alignItems: "center",
-          pt: 1.4,pb:1
+          pt: 1.4,
+          pb: 1,
         }}
       >
         <Stack sx={{ background: "#FFF", width: { sm: "95%", xs: "99%" } }}>
@@ -50,73 +53,17 @@ const Leave_apply = () => {
               }}
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-               
+                <DemoContainer
+                  components={["DatePicker"]}
+                  sx={{ width: { sm: "50%", xs: "100%" } }}
+                >
                   <DatePicker
-                   value={value}
-                   onChange={(newValue) => setValue(newValue)}
-                 
-                 
+                    value={value}
+                    onChange={(newValue) => setValue(newValue)}
                     label="Please Select date"
-                    sx={{
-                      mt:1,
-                      width: {sm:'50%', xs:'100%'},
-                      "& .MuiOutlinedInput-root": {
-                        display: "flex",
-                        alignItems: "center", 
-                        height: "40px", 
-                        "& fieldset": {
-                          borderColor: "#E5E5E5",
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#E5E5E5",
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#E5E5E5",
-                        },
-                      },
-                   
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E5E5 !important",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E5E5",
-                      },
-                      "& .MuiInputLabel-root": {
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        left: 9.5,
-                        fontSize: "12px",
-                        textTransform: "capitalize",
-                        color: "gray",
-                      },
-                      "& .MuiInputLabel-shrink": {
-                        top: 0,
-                        left: 15,
-                        transform: "translateY(-40%)",
-                        color: "gray",
-                      },
-                      "& .MuiInputBase-input": {
-                        fontSize: "14px",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#E5E5E5",
-                      },
-                      "& .MuiPickersDay-root": {
-      color: "#000", // Normal text color
-      fontWeight: "bold", // Make text bold
-    },
-    "& .Mui-selected": {
-      backgroundColor: "#098FAF !important", // Custom selected date color
-      color: "#FFF !important", // Selected text color
-    },
-    "& .MuiPickersDay-root:hover": {
-      backgroundColor: "#f0f0f0", // Hover effect
-    },
-                    }}
-                   
-                    desktopModeMediaQuery="(min-width: 0px)" 
+                    sx={globalstyle.datepicker}
                   />
-               
+                </DemoContainer>
               </LocalizationProvider>
 
               <Autocomplete
@@ -194,56 +141,7 @@ const Leave_apply = () => {
                 >
                   <DatePicker
                     label="Please Select date"
-                    sx={{
-                      width: "100%",
-                      "& .MuiOutlinedInput-root": {
-                        display: "flex",
-                        alignItems: "center", 
-                        height: "40px",
-                        "& fieldset": {
-                          borderColor: "#E5E5E5 !important",
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#E5E5E5 !important",
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#E5E5E5",
-                        },
-                      },
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E5E5 !important", 
-                      },
-                      "& .MuiOutlinedInput-root": {
-                        height: 40,
-                        overflow: "hidden",
-                      },
-
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#E5E5E5",
-                      },
-                      "& .MuiInputLabel-root": {
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        left: 9.5,
-                        fontSize: "12px",
-                        textTransform: "capitalize",
-                        color: "gray",
-                      },
-                      "& .MuiInputLabel-shrink": {
-                        top: 0,
-                        left: 15,
-                        transform: "translateY(-40%)",
-                        color: "gray",
-                      },
-                      "& .MuiInputBase-input": {
-                        fontSize: "14px",
-                        textTransform: "capitalize",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#E5E5E5",
-                      },
-                    }}
-                    desktopModeMediaQuery="(min-width: 0px)" 
+                    sx={globalstyle.datepicker}
                   />
                 </DemoContainer>
               </LocalizationProvider>
@@ -304,32 +202,8 @@ const Leave_apply = () => {
               No of days
             </Typography>
 
-            <Stack sx={{ width: { sm: "50%", xs: "100%" } ,py:1}}>
-              <TextField
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    display: "flex",
-                    alignItems: "center",
-                    "& fieldset": {
-                      borderColor: "#E5E5E5",
-                      height: "40px",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E5E5E5",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    fontSize: "14px",
-
-                    height: "100%",
-                    padding: "10px 12px",
-                    lineHeight: "normal",
-                  },
-                }}
-              />
+            <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
+              <ReusableTextfield type="number" />
             </Stack>
           </Stack>
           <Stack
@@ -342,7 +216,7 @@ const Leave_apply = () => {
               Leave Type
             </Typography>
 
-            <Stack sx={{ width: { sm: "50%", xs: "100%" }, py:1 }}>
+            <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
               <Autocomplete
                 options={leavesType.map((option) => option)}
                 renderInput={(params) => (
@@ -397,12 +271,14 @@ const Leave_apply = () => {
               Remark
             </Typography>
 
+         
             <Stack sx={{ width: { sm: "50%", xs: "100%" } }}>
               <TextField
-                multiline
-                rows={4}
+                fullWidth
+                rows={5}
                 sx={{
                   "& .MuiOutlinedInput-root": {
+                  
                     "& fieldset": {
                       border: "1px solid #ccc",
                     },
@@ -414,7 +290,8 @@ const Leave_apply = () => {
                     },
                   },
                   "& .MuiInputBase-input": {
-                    fontSize: "16px",
+                    fontSize: "12px",
+                    lineHeight: "1.5", 
                   },
                 }}
               />
@@ -422,6 +299,9 @@ const Leave_apply = () => {
           </Stack>
         </Stack>
       </Stack>
+      <br></br>
+      <br></br>
+      <br></br>
       <Stack
         sx={{
           boxShadow: "2px -4px 14px -10px rgb(0 0 0 / 65%)",
@@ -430,6 +310,7 @@ const Leave_apply = () => {
           bottom: 0,
           width: "100%",
           zIndex: 9999,
+
           background: "#FFF",
         }}
       >
