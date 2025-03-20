@@ -79,7 +79,6 @@ const HomePage = () => {
   };
   return (
     <Box sx={{ bgcolor: "#F0F3FA" }}>
-      <Typography>hii</Typography>
       <Box sx={{ mt: 8 }}>
         <Stack gap={1.5}>
           <Stack sx={{ position: "relative" }}>

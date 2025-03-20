@@ -1,7 +1,22 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-import React from "react";
-
+import {useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {  useParams} from "react-router-dom";
+import { getLeavesData } from "../../redux/slices/LeavesModule";
 const Leaves_details = () => {
+  const entityId=useParams();
+const dispatch =useDispatch();
+  const { LeavesModuleMenu, status, data } = useSelector(
+    (state) => state.LeavesModule
+  );  useEffect(() => {
+      dispatch(getLeavesData(entityId));
+    }, [dispatch,entityId]);
+    const detailedLeaves = data?.leaves?.filter(leave => leave.empId == entityId);
+    console.log("Filtered Leaves for Employee:", detailedLeaves)
+//     const leavesMap = JSON.parse(data?.leavesMap || "{}");
+// const detailedLeaves = Object.values(leavesMap).filter(leave => leave.empId === entityId);
+// console.log("Detailed Leaves:", detailedLeaves);
+
   return (
     <Box sx={{ mt: 10 }}>
       <Stack sx={{ alignItems: "center" }}>
@@ -16,6 +31,8 @@ const Leaves_details = () => {
           <Typography sx={{ color: "#244f64", fontWeight: "bold", my: 2 }}>
             Leave Deatils
           </Typography>
+          {detailedLeaves.length > 0 ? (
+  detailedLeaves.map((leave) => (
           <Stack
             sx={{
               "& > *": {
@@ -38,23 +55,23 @@ const Leaves_details = () => {
           >
             <Stack sx={{ flexDirection: { md: "row", sm: "column" } }}>
               <Typography>Employee :</Typography>
-              <Typography>kishore kutaplaii</Typography>
+              <Typography>{leave.empName}</Typography>
             </Stack>
             <Stack>
               <Typography>Applied on :</Typography>
-              <Typography>12/10/1999</Typography>
+              <Typography>{leave.createTime}</Typography>
             </Stack>{" "}
             <Stack>
               <Typography> from :</Typography>
-              <Typography></Typography>
+              <Typography>{leave.formDateTime}</Typography>
             </Stack>{" "}
             <Stack>
               <Typography>To :</Typography>
-              <Typography></Typography>
+              <Typography>{leave.toDateTime}</Typography>
             </Stack>{" "}
             <Stack>
               <Typography> leave type :</Typography>
-              <Typography></Typography>
+              <Typography>{leave.leaveTypeName}</Typography>
             </Stack>{" "}
             <Stack>
               <Typography>actual quota</Typography>
@@ -74,17 +91,21 @@ const Leaves_details = () => {
             </Stack>
             <Stack>
               <Typography>status</Typography>
-              <Typography></Typography>
+              <Typography>{leave.leaveStatus || "Pending"}</Typography>
             </Stack>
             <Stack>
-              <Typography>Employee kiran remark</Typography>
+              <Typography>Employee {leave.empName} remark</Typography>
               <TextField multiline rows={3} />
             </Stack>
             <Stack>
               <Typography>manager remark</Typography>
               <TextField multiline rows={3} />
             </Stack>
-          </Stack>
+          </Stack> ))
+) : (
+  <Typography>No leaves found for this employee.</Typography>
+)}
+
         </Stack>
       </Stack>
       <Stack

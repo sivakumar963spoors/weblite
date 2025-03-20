@@ -32,6 +32,46 @@ const KnowledgeBaseComponent = () => {
           {viewType == 0 && (
             <Stack>
               <Typography sx={typographyStyle}>total count</Typography>
+              <Stack sx={{ flexDirection: "row", flexWrap: "wrap", gap: 1 }}>
+                <Stack
+                  sx={{
+                    mt: 2,
+                    width: "300px",
+                    border: "1px solid #EEEE",
+                    py: 1,
+                    px: 2,
+                    borderRadius: "7px",
+                  }}
+                >
+                  <Stack>
+                    <Typography>other</Typography>
+                    <Box
+                      sx={{
+                        textAlign: "center",
+
+                        alignItems: "center",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          p: 1,
+                          width: "30px",
+                          bgcolor: "#EEEE",
+                          borderRadius: "50%",
+                          cursor:'pointer'
+                        }}
+                        onClick ={()=>handleNavTo(viewType)}
+                      >
+                        5
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Stack>
+               
+                
+              </Stack>
             </Stack>
           )}
           {viewType && viewType == 1 && (
@@ -65,6 +105,7 @@ const KnowledgeBaseComponent = () => {
                           width: "30px",
                           bgcolor: "#EEEE",
                           borderRadius: "50%",
+                          cursor:'pointer'
                         }}
                         onClick ={()=>handleNavTo(viewType)}
                       >
