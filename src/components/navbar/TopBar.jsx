@@ -48,6 +48,7 @@ const TopBar = () => {
     setOpenDrawer(false);
   };
   const handlenavigateToMenuItem = (menus) => {
+
     setOpenDrawer(false);
     dispatch(toggleMenuTitle(menus));
     switch (menus) {
@@ -72,6 +73,10 @@ const TopBar = () => {
       case "My Approvals":
         nav('/view/approvals?sortBy=2');
         break;
+       case "Reset password":
+         
+          nav('/password/update');
+          break;
       default:
         console.warn("No navigation defined for this menu item");
         break;
@@ -110,7 +115,7 @@ const TopBar = () => {
               <ListItem sx={{ p: 0, m: 0 }} key={i}>
                 <Stack
                   sx={{
-                    width: "83%",
+                    width: "90%",
 
                     "&: hover": {
                       bgcolor: "#FFF",

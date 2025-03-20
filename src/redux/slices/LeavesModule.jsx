@@ -12,28 +12,28 @@ const initialState ={
 
 export const getLeavesData = createAsyncThunk(
   "leaves/fetchLeavesData",
-  async (_, { rejectWithValue }) => {
-    const url =
-"https://react.spoors.dev/webliteleaves/reactrest/api/view/leaves/new?leaveMenuType=2&viewType=2&teamLeaves=1&leaveViewType=2";
-    try {
-      // const response = await  fetch(url, {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      const response =await fetch(url);
+  async (_viewType, { rejectWithValue }) => {
+ 
+    let url = "http://localhost:8000/view/leaves/new/manager"; 
+    const viewType = Number(_viewType); 
+    if (viewType === 4) {
+      url = "http://localhost:8000/approve/api"; // URL for viewType 3
+    }
+    else if (viewType === 2){
+      url ="http://localhost:8000/view/leaves/new/manager"
+    }
 
+    try {
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to fetch leaves data: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      return data; // Return parsed JSON data
-
+      return data; 
     } catch (error) {
       console.error("Error fetching leaves data:", error);
-      return rejectWithValue(error.message); // Return error message for Redux state
+      return rejectWithValue(error.message); 
     }
   }
 );

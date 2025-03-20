@@ -18,6 +18,9 @@ import Leaves_details from "../../components/leavesModule/Leaves_details";
 import AllApprovals from '../../components/myapprovals/AllApprovals';
 import FormApprovals from '../../components/myapprovals/formapprovals/FormApprovals';
 import { Route, Routes } from 'react-router-dom';
+import DayPlanViewEmp from '../dayplanner/DayPlanViewEmp';
+import ChangePassword from '../password/ChangePassword';
+import AddedLeavesDisplay from '../leavesModule/AddedLeavesDisplay';
 const AllRoutes = () => {
   return (
     <>
@@ -40,13 +43,15 @@ const AllRoutes = () => {
         />
         <Route path="/getForm" element={<AllFormDataTypes/>} />
         <Route path="/view/leaves/new" element={<AllLeavesDisplay />} />
+        <Route path='/view/leaves' element={<AddedLeavesDisplay/>}/>
         <Route path="/leave/my/create" element={<LeaveApply />} />
         <Route path="/leave/view/:id" element={<Leaves_details/>}/>
         <Route path='/dayplanner/customers' element={<DayPlanner/>}/>
         <Route path='/dayPlan/creation' element={<DayPlanCreation/>}/>
-
+<Route path='/view/all/employee' element={<DayPlanViewEmp/>}/>
         <Route path='/view/approvals' element={<AllApprovals/>}/>
         <Route path='/status/view/:id' element={<FormApprovals/>}/>
+        <Route path='/password/update' element={<ChangePassword/>}/>
       </Routes>
      
     </>

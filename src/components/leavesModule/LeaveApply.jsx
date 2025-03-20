@@ -61,9 +61,10 @@ const Leave_apply = () => {
   }, [leaveData.fromDate, leaveData.toDate, leaveData.durationFrom, leaveData.durationTo]);
 
   const handleChange = (field, value) => {
+  //  alert(field)
     setLeaveData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: field === "remark" ? value.trimStart() : value, 
     }));
 
     if (field === "fromDate") {
@@ -73,6 +74,7 @@ const Leave_apply = () => {
         durationFrom: "Full Day",
         durationTo: "Full Day",
         noOfDays: calculateDays(value, value, "Full Day", "Full Day"),
+        
       }));
     }
 
@@ -115,8 +117,7 @@ const Leave_apply = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted successfully", leaveData);
-      setLeaveData({
+ setLeaveData({
         fromDate: null,
         toDate: null,
         durationFrom: null,
@@ -291,9 +292,9 @@ const Leave_apply = () => {
 
             <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
               <ReusableTextfield
+              
                 type="number"
                 value={leaveData.noOfDays}
-             
                 helperText={errors.noOfDays}
               />
             </Stack>
@@ -337,6 +338,7 @@ const Leave_apply = () => {
             <Stack sx={{ width: { sm: "50%", xs: "100%" } }}>
               <TextField
                 fullWidth
+                multiline
                 rows={5}
                 sx={{
                   "& .MuiOutlinedInput-root": {

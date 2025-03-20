@@ -60,6 +60,8 @@ const TaskCard = ({searchInput}) => {
   };
 
   const handleNavigationForDatKnoweledgeBaseView = (id) => {
+   
+
     switch (id) {
       case 0:
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
@@ -76,7 +78,7 @@ const TaskCard = ({searchInput}) => {
   };
   const handlenavigationToCustomerModules = (id) => {
     console.log("Before Dispatch");
-    dispatch(toggleMenuTitle("customers"));
+    
     console.log("After Dispatch");
   
     if (id >= 0 && id <= 8) {
@@ -119,6 +121,18 @@ const TaskCard = ({searchInput}) => {
         break;
       default:
         console.log("no data");
+    }
+  }
+  const navToLeaveModule =(view)=>{
+    if(view ==2 ){
+
+      navigate(`/view/leaves/new?viewType=2&leaveMenuType=2`)
+    }
+    else if(view == 3){
+      navigate(`/view/leaves/new?viewType=3&leaveMenuType=3`)
+    }
+    else{
+      navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`)
     }
   }
   return (
@@ -454,9 +468,9 @@ const TaskCard = ({searchInput}) => {
 
                   {data.moduleId === 1000 &&
                     [
-                      { id: "pending your manager approval", count: 0 },
-                      { id: "awaiting your approval", count: 1 },
-                      { id: "awaiting team approval", count: 2 },
+                      { id: "pending your manager approval", count: 0,view:1 },
+                      { id: "awaiting your approval", count: 1,view:2 },
+                      { id: "awaiting team approval", count: 2,view:3 },
                     ].map((eachWorkData, i) => (
                       <Stack sx={{ mt: 1 }} key={i}>
                         <Stack
@@ -466,6 +480,7 @@ const TaskCard = ({searchInput}) => {
                             flexWrap: "wrap",
                             justifyContent: "space-between",
                           }}
+
                         >
                           <Stack
                             sx={{
@@ -484,8 +499,9 @@ const TaskCard = ({searchInput}) => {
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 width: "100%",
-                              
+                               cursor:'pointer'
                               }}
+                              onClick={()=>navToLeaveModule(eachWorkData.view)}
                             >
                               <Typography
                                 sx={{

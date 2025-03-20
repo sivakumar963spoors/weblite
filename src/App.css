@@ -4,10 +4,85 @@
 .e-rte-container{
 margin-top: 100px;
 }
-.ql-divider {
-  display: inline-block;
-  width: 1px;
-  height: 24px;
-  background-color: #ccc;
-  margin: 0 8px;
+
+.custom-uploader {
+  border: 1px dashed #B6B6B6 !important;
+  min-width: 20% !important;
+  max-width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers text vertically */
+  align-items: center; /* Centers text horizontally */
+  text-align: center;
+  height: auto; /* Adjusts height dynamically */
+  min-height: 50px; /* Ensures a minimum height */
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  
+ 
+}
+
+.file-uploader-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Optional: Change hover effect */
+.custom-uploader:hover {
+  border: 1px dashed #aaaaaa !important; 
+}
+
+
+/* Target the label inside FileUploader */
+.custom-uploader .fileuploader-label {
+  color: #F06E70 !important; /* Change to any color */
+  font-weight: bold;
+  text-align: center;
+  
+}
+/* Target the text inside the FileUploader label */
+.custom-uploader span {
+  color: #F06E70 !important;  /* Change this to any color you like */
+  font-weight: bold;   
+  font-size: 10px !important;    /* Optional: Make it bold */
+  margin-top: 10px !important;
+}
+
+/* Optional: Adjust height */
+.custom-uploader div {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+/* Hide the SVG inside the FileUploader */
+.custom-uploader svg {
+  display: none !important;
+}
+/* Style the label text */
+.sc-dVBluf {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers label text */
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Center "Drag & drop or click here to upload" */
+.sc-fLDLck {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* Position file types at the bottom */
+.file-types {
+  font-size: 14px;
+  color: gray;
+  align-self: flex-start; /* Moves to bottom left */
+  margin-top: 10px;
 }

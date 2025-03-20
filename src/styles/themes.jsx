@@ -1,6 +1,14 @@
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { createTheme } from "@mui/material";
 export const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#1976d2",
+    },
+    background: {
+      default: "#f4f6f8",
+    },
+  },
     typography: {
       allVariants: {
         fontFamily: '"Poppins", sans-serif !important',
