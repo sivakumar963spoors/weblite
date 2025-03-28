@@ -19,9 +19,9 @@ const CustomerCard = ({searchText}) => {
     navigate(`/customer/details/${id}`);
   };  
  
-  const addActivity  =()=>{
+  const addActivity  =(id)=>{
    
-  navigate('/customer/viewactivity/details')
+    navigate(`/customer/viewactivity/forms?customerId=${id}`);
 
   }
   useEffect(() => {
@@ -158,7 +158,7 @@ const CustomerCard = ({searchText}) => {
                       fontSize:{sm:'14px',xs:'10px'}
                     }}
                     startIcon={<AddCircleTwoToneIcon sx={{  fontSize:{sm:'14px',xs:'10px'}}} />}
-                    onClick={addActivity}
+                    onClick={()=>addActivity(customer.customerId)}
                   >
                     activity
                   </Button>

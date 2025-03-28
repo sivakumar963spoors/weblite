@@ -14,8 +14,8 @@ import React, { useEffect, useState } from "react";
 import { List, arrayMove } from "react-movable";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ReusableTextfield from "../common/ReusableTextfield";
 import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
+import ReusableTextfield from "../common/ReusableTextfield";
 
 const AllApprovals = () => {
   const formData = useSelector((state) => state.ApprovalModule.formData);
@@ -30,17 +30,19 @@ const AllApprovals = () => {
   const dispatch = useDispatch();
   const [param] = useSearchParams();
   let viewType = param.get("viewType");
+  const [active, setActive] = useState(viewType);
   const nav = useNavigate();
+  const [isDragging, setIsDragging] = useState(false);
   useEffect(() => {
+   
     if (formData) {
       setData(formData);
     }
-  }, [formData]);
-  useEffect(() => {
     const sortedData = [...formData].sort((a, b) => a.id - b.id);
-    setData(sortedData);
-  }, []);
+    setData(sortedData); setActive(viewType)
+  }, [active,formData]);
   const handleNavToViewTypes = (val) => {
+    setActive(val);
     nav(`/view/approvals?viewType=${val}`);
     setFilterClick(false);
     setClickSort(false);
@@ -94,7 +96,10 @@ const AllApprovals = () => {
     if (!formId) return;
     var menu = "form approvals";
     dispatch(toggleMenuTitle(menu));
-    nav(`/status/view/${formId}`);
+    if(!isDragging){
+
+      nav(`/status/view/${formId}`);
+    }
   };
   return (
     <Box sx={{ mt: 10 }}>
@@ -146,7 +151,14 @@ const AllApprovals = () => {
                   <Typography onClick={() => handleNavToViewTypes(viewType)}>
                     {count}
                   </Typography>
-                  <Typography>{label}</Typography>
+                  <Typography
+                 
+                    sx={{ textDecoration: active == viewType ? "underline" : "none", 
+                      color:active == viewType ? "orange !important ":'#000'
+                     }}
+                  >
+                    {label}
+                  </Typography>
                 </Stack>
               ))}
             </Stack>
@@ -343,12 +355,12 @@ const AllApprovals = () => {
                           backgroundColor: "white",
                           boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
                         }}
-                        // onPointerUp={(e) => {
-                        //   e.stopPropagation();
-                        //   if (value?.id) {
-                        //     handleNavToFormApprovalView(value.id);
-                        //   }
-                        // }}
+                        onPointerDown={() => setIsDragging(false)} // Reset drag flag
+            onPointerMove={() => setIsDragging(true)} // Detect drag
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              handleNavToFormApprovalView(value.id);
+            }}
                         
                       >
                         <Stack

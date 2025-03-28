@@ -7,9 +7,6 @@ const initialState ={
     data:{}
 
 }
-
-
-
 export const getLeavesData = createAsyncThunk(
   "leaves/fetchLeavesData",
   async (_viewType, { rejectWithValue }) => {
@@ -17,7 +14,7 @@ export const getLeavesData = createAsyncThunk(
     let url = "http://localhost:8000/view/leaves/new/manager"; 
     const viewType = Number(_viewType); 
     if (viewType === 4) {
-      url = "http://localhost:8000/approve/api"; // URL for viewType 3
+      url = "http://localhost:8000/approve/api"; 
     }
     else if (viewType === 2){
       url ="http://localhost:8000/view/leaves/new/manager"
@@ -52,13 +49,14 @@ const LeavesModule = createSlice({
           .addCase(getLeavesData.fulfilled, (state, action) => {
             state.status = "succeeded";
             state.data = action.payload;
-            console.log(action.payload)
+          
           })
           .addCase(getLeavesData.rejected, (state, action) => {
             state.status = "failed";
             state.error = action.error.message;
-            console.log(action.error.message)
+           
           });
       },
 })
+
 export default LeavesModule.reducer

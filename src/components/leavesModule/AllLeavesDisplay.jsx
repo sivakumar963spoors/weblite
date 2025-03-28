@@ -196,8 +196,8 @@ const AllLeaves_display = () => {
                           borderRadius: "100%",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "52px",
-                          height: "52px",
+                          width:{sm:'50px', xs:'46px'},
+                          height: {sm:'50px', xs:'46px'},
                           color: "#FFF",
                           "& > *": {
                             fontSize: "10px",
@@ -225,7 +225,7 @@ const AllLeaves_display = () => {
                             "& > *": {
                               color: "#2e2e2e",
 
-                              fontSize: "10px",
+                              fontSize: {sm:'10px', xs:'8px'},
                             },
                           }}
                         >
@@ -261,7 +261,7 @@ const AllLeaves_display = () => {
                           textTransform: "capitalize",
                           borderColor: "orange",
                           color: "orange",
-                          fontSize: { md: "14px", xs: "12px", fontWeight: 400 },
+                          fontSize: { md: "14px", xs: "10px", fontWeight: 400 },
                         }}
                       >
                         pending
@@ -274,7 +274,7 @@ const AllLeaves_display = () => {
                           textTransform: "capitalize",
                           borderColor: "#4BA78A",
                           color: "#4BA78A",
-                          fontSize: { md: "14px", xs: "12px", fontWeight: 400 },
+                          fontSize: { md: "14px", xs: "10px", fontWeight: 400 },
                         }}
                       >
                         Approved
@@ -340,8 +340,8 @@ const AllLeaves_display = () => {
                           borderRadius: "100%",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "52px",
-                          height: "52px",
+                          width:{sm:'50px', xs:'46px'},
+                          height: {sm:'50px', xs:'46px'},
                           color: "#FFF",
                           "& > *": {
                             fontSize: "10px",
@@ -369,7 +369,7 @@ const AllLeaves_display = () => {
                             "& > *": {
                               color: "#2e2e2e",
 
-                              fontSize: "10px",
+                              fontSize: {sm:'10px', xs:'9px'},
                             },
                           }}
                         >
@@ -418,7 +418,7 @@ const AllLeaves_display = () => {
                           textTransform: "capitalize",
                           borderColor: "#4BA78A",
                           color: "#4BA78A",
-                          fontSize: { md: "14px", xs: "12px", fontWeight: 400 },
+                          fontSize: { md: "14px", xs: "10px", fontWeight: 400 },
                         }}
                       >
                         Approved

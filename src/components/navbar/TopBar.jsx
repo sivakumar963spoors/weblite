@@ -48,7 +48,6 @@ const TopBar = () => {
     setOpenDrawer(false);
   };
   const handlenavigateToMenuItem = (menus) => {
-
     setOpenDrawer(false);
     dispatch(toggleMenuTitle(menus));
     switch (menus) {
@@ -71,12 +70,11 @@ const TopBar = () => {
         nav("knowledgebase/manage");
         break;
       case "My Approvals":
-        nav('/view/approvals?sortBy=2');
+        nav("/view/approvals?sortBy=2");
         break;
-       case "Reset password":
-         
-          nav('/password/update');
-          break;
+      case "Reset password":
+        nav("/password/update");
+        break;
       default:
         console.warn("No navigation defined for this menu item");
         break;
@@ -84,7 +82,7 @@ const TopBar = () => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250, zIndex: 1000 }} role="presentation">
+    <Box sx={{ width: 250, zIndex: 100000000 }} role="presentation">
       <Stack sx={{ alignItems: "end", m: 1 }}>
         <IconButton
           onClick={toggleDrawerClose}
@@ -110,9 +108,9 @@ const TopBar = () => {
 
       <List sx={{ mt: -3 }}>
         {menuItems && menuItems.length > 0 ? (
-          menuItems.map((eachMenu, i) => (
+          menuItems.map((eachMenu, index) => (
             <>
-              <ListItem sx={{ p: 0, m: 0 }} key={i}>
+              <ListItem sx={{ p: 0, m: 0 }} key={index}>
                 <Stack
                   sx={{
                     width: "90%",
@@ -127,7 +125,7 @@ const TopBar = () => {
                 >
                   <Stack
                     onClick={() => handlenavigateToMenuItem(eachMenu.menuTitle)}
-                    onMouseEnter={() => handleMouseEnter(i)}
+                    onMouseEnter={() => handleMouseEnter(index)}
                     onMouseLeave={handleMouseLeave}
                     sx={{
                       flexDirection: "row",
@@ -149,7 +147,7 @@ const TopBar = () => {
                     <Box
                       component={"img"}
                       src={
-                        hoveredIndex === i
+                        hoveredIndex === index
                           ? eachMenu.blueMenuIcon
                           : eachMenu.menuIcon
                       }
@@ -210,7 +208,7 @@ const TopBar = () => {
             </Typography>
           </Stack>
           <Avatar
-            sx={{ width: "30px", height: "30px" ,cursor:'pointer'}}
+            sx={{ width: "30px", height: "30px", cursor: "pointer" }}
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
@@ -224,11 +222,27 @@ const TopBar = () => {
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
+           
           >
-            <MenuItem onClick={handleMenuClose}>Switch To web</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Light mode</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Reset password</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem
+              onClick={handleMenuClose}
+              sx={{ fontSize: { sm: "14px", xs: "12px"} ,     minHeight: "0px !important"}}
+            >
+              Switch To web
+            </MenuItem>
+           
+            <MenuItem
+              onClick={handleMenuClose}
+              sx={{ fontSize: { sm: "14px", xs: "12px" }, minHeight: "0px !important" }}
+            >
+              Reset password
+            </MenuItem>
+            <MenuItem
+              onClick={handleMenuClose}
+              sx={{ fontSize: { sm: "14px", xs: "12px" } , minHeight: "0px !important"}}
+            >
+              Logout
+            </MenuItem>
           </Menu>
         </Toolbar>
         <Drawer

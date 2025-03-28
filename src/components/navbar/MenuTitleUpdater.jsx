@@ -18,7 +18,7 @@ const MenuTitleUpdater = () => {
       "/Allcustomers": "All Customers",
       "/customer/details/:id": "Customer Details",
       "/customer/viewactivity": "View Activity",
-      "/customer/viewactivity/details": "Activity Details",
+      "/customer/viewactivity/forms": "Activity Details",
       "/getForm": "Forms",
       "/view/leaves/new": "Leave Requests",
       "/leave/my/create": "Apply Leave",
@@ -27,24 +27,25 @@ const MenuTitleUpdater = () => {
       "/dayPlan/creation": "Create Day Plan",
       "/view/approvals": "Approvals",
       "/status/view/:id": "Approval Details",
-      "/view/all/employee":'employee',
+      "/view/all/employees":'employees',
+      "/view/all/customers":'customers',
       '/password/update':'change password'
     };
 
-    // **1️⃣ Extract Path Without Query Params**
+    
     const pathname = location.pathname.split("?")[0];
 
-    // **2️⃣ Match Static & Dynamic Routes**
+   
     const matchedPath = Object.keys(pathToTitleMap).find((pattern) => {
-      if (pattern === pathname) return true; // Exact match
+      if (pattern === pathname) return true;
 
-      const regexPattern = `^${pattern.replace(/:\w+/g, "[^/]+")}$`; // Replace dynamic params with regex
+      const regexPattern = `^${pattern.replace(/:\w+/g, "[^/]+")}$`; 
       return new RegExp(regexPattern).test(pathname);
     });
 
     let newTitle = pathToTitleMap[matchedPath] || "Home";
 
-    // **3️⃣ Handle Query Parameters for Knowledge Base & Leaves**
+
     const urlParams = new URLSearchParams(location.search);
     const viewType = urlParams.get("viewType");
     const leaveMenuType = urlParams.get("leaveMenuType");
@@ -63,11 +64,15 @@ const MenuTitleUpdater = () => {
       } else if (leaveMenuType) {
         newTitle = `Leave Requests `;
       }
+    
+    }
+    else if(pathname === "/view/all/employees"){
+      newTitle=`Employee`
     }
 
-    console.log("Setting menu title:", newTitle); // Debug log
+  
 
-    // **4️⃣ Dispatch Updated Title**
+   
     dispatch(toggleMenuTitle(newTitle));
   }, [location, dispatch]);
 

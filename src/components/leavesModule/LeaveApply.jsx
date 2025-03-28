@@ -184,7 +184,7 @@ const Leave_apply = () => {
                   {errors.fromDate && (
                     <Typography
                       
-                      sx={{ fontSize: "12px", mt: 0.5,pl:2 , color:'tomato'}}
+                      sx={{ fontSize: {sm:'12px' ,xs:'10px'}, mt: 0.5,pl:2 , color:'tomato'}}
                     >
                       {errors.fromDate}
                     </Typography>
@@ -199,6 +199,11 @@ const Leave_apply = () => {
                   onChange={(event, newValue) => handleChange("durationFrom", newValue)}
                   renderInput={(params) => (
                     <TextField
+                    sx={{ "& .MuiFormHelperText-root": {
+                  
+                      fontSize: {sm:'12px',xs:'10px'}, 
+                      
+                    },}}
                       {...params}
                       label="Select Duration"
                       helperText={errors.durationFrom}
@@ -252,7 +257,7 @@ const Leave_apply = () => {
                   {errors.toDate && (
                     <Typography
                       
-                      sx={{ fontSize: "12px", mb: 0.5,pl:2 ,color:'tomato'}}
+                      sx={{ fontSize: {sm:'12px' ,xs:'10px'},mb: 0.5,pl:2 ,color:'tomato'}}
                     >
                       {errors.toDate}
                     </Typography>
@@ -267,6 +272,11 @@ const Leave_apply = () => {
                   onChange={(event, newValue) => handleChange("durationTo", newValue)}
                   renderInput={(params) => (
                     <TextField
+                    sx={{ "& .MuiFormHelperText-root": {
+                  
+                      fontSize: {sm:'12px',xs:'10px'}, 
+                      
+                    },}}
                       {...params}
                       label="Select Duration"
                       helperText={errors.durationTo}
@@ -292,7 +302,11 @@ const Leave_apply = () => {
 
             <Stack sx={{ width: { sm: "50%", xs: "100%" }, py: 1 }}>
               <ReusableTextfield
-              
+              sx={{ "& .MuiFormHelperText-root": {
+                  
+                fontSize: {sm:'12px',xs:'10px'}, 
+                
+              },}}
                 type="number"
                 value={leaveData.noOfDays}
                 helperText={errors.noOfDays}
@@ -316,6 +330,11 @@ const Leave_apply = () => {
                 onChange={(event, newValue) => handleChange("leaveType", newValue)}
                 renderInput={(params) => (
                   <TextField
+                  sx={{ "& .MuiFormHelperText-root": {
+                  
+                    fontSize: {sm:'12px',xs:'10px'}, 
+                    
+                  },}}
                     {...params}
                     label="Select Leave Type"
                     helperText={errors.leaveType}
@@ -354,6 +373,11 @@ const Leave_apply = () => {
                   },
                   "& .MuiInputBase-input": {
                     lineHeight: "1.5",
+                  },
+                  "& .MuiFormHelperText-root": {
+                   
+                    fontSize: {sm:'12px',xs:'10px'}, 
+                   
                   },
                 }}
                 value={leaveData.remark}

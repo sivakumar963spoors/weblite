@@ -11,9 +11,10 @@ function App() {
     <BrowserRouter> 
     <ScrollToTop/>
     <MenuTitleUpdater /> 
-{/* <Drag/> */}
        <TopBar/>
     <AllRoutes/>
+{/* <Drag/> */}
+{/* <DummyRest/> */}
     </BrowserRouter>
    
   );

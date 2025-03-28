@@ -11,6 +11,7 @@ import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_fo
 import { filterByModule, resetFilteredData } from "../../redux/slices/HomePageSlice";
 import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
+import { toggleMenuTitleDayPlan } from "../../redux/slices/DayPalneModule";
 
 const TaskCard = ({searchInput}) => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
@@ -22,7 +23,7 @@ const TaskCard = ({searchInput}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(searchInput)
+    
     if (searchInput && searchInput.trim() !== "") {
      
         dispatch(filterByModule(searchInput));
@@ -55,7 +56,7 @@ const TaskCard = ({searchInput}) => {
         navigate("/dayplanner/customers");
         break;
       default:
-        console.log("No data");
+       
     }
   };
 
@@ -73,13 +74,11 @@ const TaskCard = ({searchInput}) => {
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       default:
-        console.log("no data");
+      
     }
   };
   const handlenavigationToCustomerModules = (id) => {
-    console.log("Before Dispatch");
-    
-    console.log("After Dispatch");
+  
   
     if (id >= 0 && id <= 8) {
       navigate(`/customers/viewtype/${id}`);
@@ -124,7 +123,7 @@ const TaskCard = ({searchInput}) => {
     }
   }
   const navToLeaveModule =(view)=>{
-    if(view ==2 ){
+    if(view == 2 ){
 
       navigate(`/view/leaves/new?viewType=2&leaveMenuType=2`)
     }
@@ -134,6 +133,32 @@ const TaskCard = ({searchInput}) => {
     else{
       navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`)
     }
+  }
+  const handleDyaPlan =(label)=>{
+      if (!label) return;
+    
+        dispatch(toggleMenuTitleDayPlan(label.title));
+        
+        localStorage.setItem("activeMenuTitle", label.title); 
+        switch (label.id) {
+          case 1:
+            navigate(`/view/all/customers?viewType=4&customerViewType=1&customerView=2`);
+            break;
+          case 2:
+           navigate(`/view/all/customers?viewType=5&customerView=2&customerViewType=2`);
+            break;
+          case 3:
+            navigate(`/view/all/customers?viewType=6&customerView=2&customerViewType=3`);
+             break;
+          case 4:
+            navigate(`/view/all/employees?viewType=7&customerViewType=2&customerView=4`);
+            break;
+          case 5:
+            navigate(`/view/all/employees?viewType=8&customerViewType=5&customerView=2`);
+            break;
+          default:
+            break;
+        }
   }
   return (
     <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
@@ -146,7 +171,7 @@ const TaskCard = ({searchInput}) => {
             >
               <Stack
                 sx={{
-                  width: { sm: "80%", xs: "95%" },
+                  width: { sm: "80%", xs: "97%" },
                   bgcolor: "#FFF",
                   borderRadius: "8px",
                   border: "1px solid rgba(0, 0, 0, 0.12)",
@@ -202,8 +227,8 @@ const TaskCard = ({searchInput}) => {
                         )}
                         <Typography
                           sx={{
-                            fontWeight: { sm: 500, xs: 400 },
-                            fontSize:{sm:'14px', xs:'12px'}
+                            fontWeight: { sm: 500, xs: 500 },
+                            fontSize:{sm:'14px', xs:'10px'}
                           }}
                         >
                           {data.moduleName}
@@ -551,6 +576,7 @@ const TaskCard = ({searchInput}) => {
                                 py: 4,
                                 cursor: "pointer",
                               }}
+                              onClick={()=> handleDyaPlan(label)}
                             >
                               <Typography
                                 sx={{
@@ -586,6 +612,7 @@ const TaskCard = ({searchInput}) => {
                                 justifyContent: "space-between",
                                 px: 1,
                               }}
+                              onClick={()=> handleDyaPlan(label)}
                             >
                               <Typography
                                 sx={{
