@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
@@ -7,14 +6,10 @@ import {
   InputAdornment,
   Stack,
   TextField,
-  Typography,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  Typography
 } from "@mui/material";
+import React, { useState } from "react";
 import { globalstyle } from "../../styles/GlobalCss";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icon for bullet point
 const ChangePassword = () => {
   const requirements = [
     "Password should be at least seven alphanumeric characters",
@@ -111,11 +106,11 @@ const ChangePassword = () => {
             sx={globalstyle.textFieldPassword}
           />
         </Stack>
-        <Stack sx={{ p: 0.6 }}>
+        <Stack sx={{ p: 0.3 }}>
           <Typography sx={{ mb: 1, color: "blue" }}>
             Password Requirements:
           </Typography>
-          <ul style={{ margin: 0 }}>
+          <ul style={{ margin: 0 , fontSize:'12px'}}>
             <li>Password should be at least seven alphanumeric characters</li>
             <li>Must contain at least one uppercase letter (A-Z)</li>
             <li>Must contain at least one lowercase letter (a-z)</li>

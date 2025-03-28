@@ -41,6 +41,7 @@ const KnowledgeBaseComponent = () => {
                     py: 1,
                     px: 2,
                     borderRadius: "7px",
+                    bgcolor:'#FFF'
                   }}
                 >
                   <Stack>
@@ -85,7 +86,7 @@ const KnowledgeBaseComponent = () => {
                     border: "1px solid #EEEE",
                     py: 1,
                     px: 2,
-                    borderRadius: "7px",
+                    borderRadius: "7px",  bgcolor:'#FFF'
                   }}
                 >
                   <Stack>

@@ -26,7 +26,7 @@ const HomePageModule = createSlice({
       );
 
       if (state.filteredHomePageData.length === 0) {
-        console.log("No matching modules found for:", searchText);
+       
       }
     },
     resetFilteredData: (state) => {

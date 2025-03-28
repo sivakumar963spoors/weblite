@@ -3,7 +3,20 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import PrintIcon from "@mui/icons-material/Print";
-import { Backdrop, Box, Fade, Modal, Stack, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Fade,
+  Modal,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 const style = {
@@ -27,6 +40,7 @@ const FormApprovals = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [requisitionStatus, setRequisitions] = useState(false);
   const formData = useSelector((state) => state.ApprovalModule.formData);
   const myapprovalData = useSelector(
     (state) => state.ApprovalModule.myapprovalData
@@ -42,6 +56,9 @@ const FormApprovals = () => {
   };
   const handleApprovalHistory = () => {
     setApprovalHistory(!approvalHistory);
+  };
+  const handleRequisitions = () => {
+    setRequisitions(!requisitionStatus);
   };
   return (
     <Box sx={{ mt: 10, display: "flex", justifyContent: "center" }}>
@@ -97,15 +114,17 @@ const FormApprovals = () => {
               py: 0.5,
               alignItems: "center",
               gap: 0.5,
+              cursor: "pointer",
             },
 
             "& > * > * >:first-of-type": {
-              fontSize: { sm: "15px", xs: "12px" },
+              fontSize: { sm: "15px", xs: "10px" },
               color: "#777",
+            
             },
             "& > * > *>:nth-of-type(2)": {
               fontSize: { sm: "12px", xs: "10px" },
-              fontWeight: "500",
+              fontWeight: "600",
             },
           }}
         >
@@ -122,9 +141,9 @@ const FormApprovals = () => {
             </Stack>
             {accordianClick && (
               <Stack
-                sx={{ background: "#FFF !important", alignItems: "start" }}
+                sx={{ background: "#FFF !important", textAlign: "center" }}
               >
-                ok
+                <Typography>form data</Typography>
               </Stack>
             )}
           </Stack>{" "}
@@ -265,43 +284,121 @@ const FormApprovals = () => {
               <Typography>approval history</Typography>
             </Stack>
             {approvalHistory && (
-              <Stack sx={{background:'#FFF !important', alignItems:'flex-start', width:'100%'}}>
-                <Stack sx={{
-                  width:'100%',
-                  p:1,gap:2,
-                  border:'',
-                  '&>*':{
-      
-
-                    flexDirection:'row', alignItems:'center', justifyContent:'space-between'
-                  }
-                }}>
-                  <Stack >
-                    <Typography>stage :</Typography>
-                    <Typography>bootstrap approval</Typography>
-                  </Stack>
-                  <Stack>
-                    <Stack>
-                      <Typography>approved by :</Typography>
-                      <Typography>avula venkatesh</Typography>
-                    </Stack>{" "}
-                    <Stack>
-                      <Typography>approved on :</Typography>
-                      <Typography>2025-02-14 12:22:14 PM</Typography>
-                    </Stack>
-                  </Stack>
-                  <Stack>
-                    <Typography>remarks</Typography>
-                    <Typography>submitted for reason</Typography>
-                  </Stack>
+              <Stack
+                sx={{
+                  background: "#FFF !important",
+                  alignItems: "flex-start",
+                  width: "100%",
+                }}
+              >
+                <Stack
+                  sx={{
+                    width: "100%",
+                    p: 1,
+                    gap: 2,
+                    border: "",
+                    "&>*": {
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    },
+                  }}
+                >
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow sx={{ border: "1px solid #ddd" }}>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "8px" },
+                              width: "50%",
+                              lineHeight: "10px",
+                            }}
+                          >
+                            <Stack>
+                              <Typography>stage :</Typography>
+                              <Typography> approval</Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "10px" },
+                            }}
+                          >
+                            <Stack>
+                              <Typography>bootstrap approval</Typography>
+                              <Typography>ok</Typography>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                      <TableRow sx={{ border: "1px solid #ddd" }}>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "8px" },
+                              width: "50%",
+                              lineHeight: "10px",
+                            }}
+                          >
+                            <Stack>
+                            <Typography>approved by :</Typography>
+                            <Typography>avula venkatesh</Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "10px" },
+                            }}
+                          >
+                            <Stack>
+                            <Typography>approved on :</Typography>
+                            <Typography>2025-02-14 12:22:14 PM</Typography>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow sx={{ border: "1px solid #ddd" }}>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "8px" },
+                              width: "50%",
+                              lineHeight: "10px",
+                            }}
+                          >
+                            <Stack>
+                            <Typography>Remark :</Typography>
+                            <Typography></Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              border: "1px solid #ddd",
+                              fontSize: { sm: "12px", xs: "10px" },
+                            }}
+                          >
+                            <Stack>
+                            <Typography>submitted for reason:</Typography>
+                            <Typography></Typography>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                 
                 </Stack>
               </Stack>
             )}
           </Stack>{" "}
           <Stack>
-            <Stack>
+            <Stack onClick={handleRequisitions}>
               <Typography>
-                {accordianClick ? (
+                {requisitionStatus ? (
                   <KeyboardArrowUpIcon />
                 ) : (
                   <KeyboardArrowDownIcon />
@@ -309,6 +406,36 @@ const FormApprovals = () => {
               </Typography>
               <Typography>requisition status</Typography>
             </Stack>
+            {requisitionStatus && (
+              <Stack>
+                <TableContainer sx={{ p: 1 }}>
+                  <Table sx={{ border: "1px solid #000", p: 1 }}>
+                    <TableHead>
+                      <TableRow sx={{ border: "1px solid #ddd" }}>
+                        <TableCell
+                          sx={{
+                            border: "1px solid #ddd",
+                            fontSize: { sm: "12px", xs: "8px" },
+                            width: "50%",
+                            lineHeight: "10px",
+                          }}
+                        >
+                          workflow form approval status
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            border: "1px solid #ddd",
+                            fontSize: { sm: "12px", xs: "10px" },
+                          }}
+                        >
+                          Approved
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                  </Table>
+                </TableContainer>
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Stack>

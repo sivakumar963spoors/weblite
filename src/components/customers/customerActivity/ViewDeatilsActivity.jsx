@@ -1,7 +1,8 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 const arrayList = [
   "111",
   "11qwdsdc",
@@ -13,6 +14,13 @@ const arrayList = [
 ];
 
 const ViewDeatilsActivity = () => {
+  const [searchParams] = useSearchParams();
+  const currentUser = searchParams.get('customerId'); 
+  const { customerData } = useSelector((state) => state.CustomerModule);
+  const currentUserExits = customerData.filter((each)=> each.customerId == currentUser);
+    useEffect(()=>{
+  console.log(currentUserExits)
+    },[])
     const nav =useNavigate();
     const handleOnClickgetForm =()=>{
 nav('/getForm');
@@ -25,7 +33,9 @@ nav('/getForm');
             alignItems: "center",
             height: "100vh",
           }}
-        >
+        >  {
+          currentUserExits && currentUserExits.map((each)=>
+         
           <Stack
             sx={{
               width: "95%",
@@ -35,15 +45,15 @@ nav('/getForm');
               justifyContent: "space-between",
               py: 1,
               px: 1,
-              marginTop: -1,
-              zIndex: 100000,
+              marginTop: -2,
+              zIndex: 1000,
               border: "1px solid #C9C9C9",
-              "& > *": { fontSize: "11px" },
+              "& > *": { fontSize: {sm:'14px', xs:'12px'}, fontWeight:{sm:600, xs:500} },
               position: "fixed",
             }}
           >
-            <Typography>complete Mahindra activity</Typography>
-          </Stack>
+            <Typography>complete {each.customerName} activity</Typography>
+          </Stack>)}
           <Stack
             sx={{
               width: "97%",
@@ -66,10 +76,10 @@ nav('/getForm');
                   py: 4,
                 }}
               >
-                <Button startIcon={<AddCircleOutlineIcon />} variant="outlined"   onClick={handleOnClickgetForm}
+                <Button startIcon={<AddCircleOutlineIcon sx={{fontSize: {sm:'14px', xs:'12px'}}} />} variant="outlined"   onClick={handleOnClickgetForm} sx={{fontSize: {sm:'14px', xs:'12px'}}}
 >                 Add
                 </Button>
-                <Typography sx={{mt:2,textTransform:'capitalize'}}
+                <Typography sx={{mt:2,textTransform:'capitalize',   fontSize: {sm:'14px', xs:'12px'}, fontWeight:{sm:500, xs:500} }}
                 >{each}</Typography>
               </Stack>
             ))}

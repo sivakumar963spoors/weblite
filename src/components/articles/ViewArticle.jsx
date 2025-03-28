@@ -66,15 +66,15 @@ const ViewArticle = () => {
           <Typography>Title</Typography>
           <Typography> :&nbsp;1</Typography>{" "}
         </Stack>{" "}
-        <Stack>
-          <Typography>Preview</Typography>
-          :&nbsp;
+        <Stack sx={{flexDirection:{xs:'column !important', sm:'row !important'}}}>
+          <Typography>Preview &nbsp;</Typography>
+          
           <Typography> <Box component={'img'} src={fileUrl} sx={{width:'150px', height:'150px'}}  onError={handleOnError}/></Typography>{" "}
         </Stack>{" "}
         <Stack>
           <Typography>Download</Typography>:&nbsp;
           <Typography   onClick={() => download(fileUrl)} >
-            <ArrowDownwardIcon/>
+            <ArrowDownwardIcon />
           </Typography>{" "}
         </Stack>
         <Stack>
@@ -129,18 +129,23 @@ const ViewArticle = () => {
           <Typography>Title</Typography>
           <Typography> :&nbsp;1</Typography>{" "}
         </Stack>{" "}
-        <Stack>
+        <Stack sx={{flexDirection:{xs:'column !important', sm:'row !important'}}}>
+
           <Typography>Preview</Typography>
-          :&nbsp;
-          <Typography>
-          <audio src={fileUrlAudio} controls autoPlay/>
+         
+          <Typography >
+            <Typography component={'span'}>:</Typography>
+          <audio src={fileUrlAudio} controls autoPlay  style={{
+    width: "270px",
+    height: "35px"
+  }} />
           </Typography>
 
         </Stack>{" "}
         <Stack>
           <Typography>Download</Typography>:&nbsp;
           <Typography   onClick={() => download(fileUrlAudio)} >
-            <ArrowDownwardIcon/>
+              <ArrowDownwardIcon sx={{fontSize:{sx:'25px', xs:'15px'}}}/>
           </Typography>{" "}
         </Stack>
         <Stack>
@@ -195,7 +200,7 @@ const ViewArticle = () => {
           <Typography>Title</Typography>
           <Typography> :&nbsp;1</Typography>{" "}
         </Stack>{" "}
-        <Stack>
+       <Stack sx={{flexDirection:{xs:'column !important', sm:'row !important'}}}>
           <Typography>Preview</Typography>
           :&nbsp;
           <Typography> <Box component={'img'} src={fileUrl} sx={{width:'150px', height:'150px'}}  onError={handleOnError}/></Typography>{" "}
@@ -203,7 +208,7 @@ const ViewArticle = () => {
         <Stack>
           <Typography>Download</Typography>:&nbsp;
           <Typography   onClick={() => download(fileUrl)} >
-            <ArrowDownwardIcon/>
+              <ArrowDownwardIcon sx={{fontSize:{sx:'25px', xs:'15px'}}}/>
           </Typography>{" "}
         </Stack>
         <Stack>
@@ -258,7 +263,7 @@ const ViewArticle = () => {
           <Typography>Title</Typography>
           <Typography> :&nbsp;1</Typography>{" "}
         </Stack>{" "}
-        <Stack>
+        <Stack sx={{flexDirection:{xs:'column !important', sm:'row !important'}}}>
           <Typography>Preview</Typography>
           :&nbsp;
           <Typography> <Box component={'img'} src={fileUrl} sx={{width:'150px', height:'150px'}}  onError={handleOnError}/></Typography>{" "}
@@ -266,7 +271,7 @@ const ViewArticle = () => {
         <Stack>
           <Typography>Download</Typography>:&nbsp;
           <Typography   onClick={() => download(fileUrl)} >
-            <ArrowDownwardIcon/>
+            <ArrowDownwardIcon sx={{fontSize:{sx:'25px', xs:'15px'}}}/>
           </Typography>{" "}
         </Stack>
         <Stack>

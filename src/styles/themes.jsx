@@ -13,6 +13,9 @@ export const theme = createTheme({
       allVariants: {
         fontFamily: '"Poppins", sans-serif !important',
         textTransform: "capitalize",
+        fontSize:{
+          sm:'14px', xs:'12px'
+        }
       },
     },
     breakpoints: {
@@ -76,6 +79,7 @@ export const theme = createTheme({
           styleOverrides: {
             root: {
               color: "tomato", // Set helper text color globally to red
+              fontSize:{sm:'12px',xs:'10px' }
             },
           },
         },

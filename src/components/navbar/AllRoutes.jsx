@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 import ViewArticle from "../../components/articles/ViewArticle";
 import ViewActivity from "../../components/customers/customerActivity/ViewActivity";
 import ViewDeatilsActivity from "../../components/customers/customerActivity/ViewDeatilsActivity";
@@ -17,10 +18,11 @@ import LeaveApply from "../../components/leavesModule/LeaveApply";
 import Leaves_details from "../../components/leavesModule/Leaves_details";
 import AllApprovals from '../../components/myapprovals/AllApprovals';
 import FormApprovals from '../../components/myapprovals/formapprovals/FormApprovals';
-import { Route, Routes } from 'react-router-dom';
+import ReusableCarousalDayPlan from '../common/ReusableCarousalDayPlan';
+import DayPlanViewCustomer from '../dayplanner/DayPlanViewCustomer';
 import DayPlanViewEmp from '../dayplanner/DayPlanViewEmp';
-import ChangePassword from '../password/ChangePassword';
 import AddedLeavesDisplay from '../leavesModule/AddedLeavesDisplay';
+import ChangePassword from '../password/ChangePassword';
 const AllRoutes = () => {
   return (
     <>
@@ -38,7 +40,7 @@ const AllRoutes = () => {
         <Route path="/customer/details/:id" element={<CustomerDetails />} />
         <Route path="/customer/viewactivity" element={<ViewActivity />} />
         <Route
-          path="/customer/viewactivity/details"
+          path="/customer/viewactivity/forms"
           element={<ViewDeatilsActivity />}
         />
         <Route path="/getForm" element={<AllFormDataTypes/>} />
@@ -48,10 +50,12 @@ const AllRoutes = () => {
         <Route path="/leave/view/:id" element={<Leaves_details/>}/>
         <Route path='/dayplanner/customers' element={<DayPlanner/>}/>
         <Route path='/dayPlan/creation' element={<DayPlanCreation/>}/>
-<Route path='/view/all/employee' element={<DayPlanViewEmp/>}/>
+        <Route path='/view/all/employees' element={<DayPlanViewEmp/>}/>
         <Route path='/view/approvals' element={<AllApprovals/>}/>
         <Route path='/status/view/:id' element={<FormApprovals/>}/>
         <Route path='/password/update' element={<ChangePassword/>}/>
+        <Route path='/view/all/customers' element={<DayPlanViewCustomer/>}/>
+        <Route path='/dyaplanroute' element={<ReusableCarousalDayPlan/>}/>
       </Routes>
      
     </>

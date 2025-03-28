@@ -1,7 +1,8 @@
 import { Button, Stack, Switch, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 const personalDetails = ["First Name", "Last Name", "Title", "Phone", "Email"];
 const otherDetails = [
   "Outstanding Amount",
@@ -50,9 +51,12 @@ const CustomerDetails = () => {
   const { customerData } = useSelector((state) => state.CustomerModule);
   const label = { inputProps: { "aria-label": "Switch demo" } };
   const [zIndex, setZIndex] = useState(1000);
-  const navigation =useNavigate()
+  const navigation = useNavigate();
+ 
+  const dispatch = useDispatch();
 
   useEffect(() => {
+  
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setZIndex(500);
@@ -67,12 +71,19 @@ const CustomerDetails = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-const handleViewActivity =()=>{  
-navigation('/customer/viewactivity')
-}
-const handleActivity =()=>{ 
-  navigation('/customer/viewactivity/details')
-}
+  const handleViewActivity = (id) => {
+    navigation(`/customer/viewactivity?customerId=${id}`);
+  };
+  const handleActivity = (id, menus) => {
+  
+    
+    dispatch(toggleMenuTitle(menus));  // 🔹 Update Redux store
+  
+    setTimeout(() => { // 🔹 Ensure Redux update happens before navigation
+      navigation(`/customer/viewactivity/forms?customerId=${id}`);
+    }, 100); 
+  };
+  
   return (
     <div>
       <Stack sx={{ mt: 8, bgcolor: "#F0F3FA" }}>
@@ -91,18 +102,17 @@ const handleActivity =()=>{
                 >
                   <Stack
                     sx={{
-                      width: { sm: "95%", xs: "90%" },
+                      width: { sm: "95%", xs: "95%" },
                       flexDirection: "row",
                       bgcolor: "#FFFF",
-                      p: { sm: 1.5, xs: 1 },
+                      p: { sm: 1, xs: 1 },
                       borderRadius: "10px",
                       border: "1px solid #EEEE",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      fontFamily: '"Poppins", sans-serif',
                     }}
                   >
-                    <Typography>{each.customerName}</Typography>
+                    <Typography sx={{fontSize:{xs:'12px', sm:'14px'}}}>{each.customerName}</Typography>
                     <Switch {...label} />
                   </Stack>
                 </Stack>
@@ -127,7 +137,7 @@ const handleActivity =()=>{
                         sx={{
                           fontWeight: "bold",
                           fontFamily: "poppins",
-                          fontSize: "13px",
+                          fontSize: { sm: "12px", xs: "10px" },
                         }}
                       >
                         customer details
@@ -135,7 +145,7 @@ const handleActivity =()=>{
                     </Stack>
                     <Stack
                       sx={{
-                        width: { sm: "95%", xs: "90%" },
+                        width: { sm: "97%", xs: "100%" },
                         flexDirection: "row",
                         bgcolor: "#FFFF",
                         p: { sm: 1.5, xs: 1 },
@@ -153,20 +163,20 @@ const handleActivity =()=>{
                             width: "100%",
                             display: "flex",
                             padding: "15px 0px",
-                            fontFamily: '"Poppins", sans-serif',
 
                             "& > *": { width: "50%", marginBottom: "50px" },
+                            "& > *> :first-child": {
+                              color: "#7A7A7A",
+                              fontWeight: "bold",
+                              fontSize: { sm: "12px", xs: "10px" },
+                            },
+                            "& > * >: nth-child(2)": {
+                              fontWeight: "bold",
+                              fontSize: { sm: "12px", xs: "10px" },
+                            },
                           }}
                         >
-                          <Stack
-                            sx={{
-                              "& > :first-child": {
-                                color: "#7A7A7A",
-                                fontWeight: "bold",
-                                fontSize: "14px",
-                              },
-                            }}
-                          >
+                          <Stack sx={{}}>
                             <Typography>Customer Id</Typography>
                             <Typography>sukeshini</Typography>
                           </Stack>
@@ -199,31 +209,109 @@ const handleActivity =()=>{
                           sx={{
                             fontWeight: "bold",
                             color: "#003366",
-                            fontFamily: "poppins",
+
                             margin: "20px 0",
+                            fontSize:{sm:'12px', xs:'10px'}
                           }}
                         >
                           Primary Contact
                         </Typography>
-                        <Stack sx={{ gap: 3 }}>
-                          {personalDetails.map((details, i) => (
-                            <Typography key={i}>{details}</Typography>
-                          ))}
+                        <Stack
+                          sx={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            width: "100%",
+                            display: "flex",
+                            padding: "10px 0px",
+                          }}
+                        >
+                          <Stack
+                            sx={{
+                              width: "100%",
+                              "& > *> :first-child": {
+                                color: "#7A7A7A",
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                              "& > * >: nth-child(2)": {
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                            }}
+                          >
+                            {personalDetails.map((otherdetails, i) => (
+                              <Stack 
+                              key={i}
+                                sx={{
+                                  flexDirection: "row",
+                                  width: "100%",
+                                  margin: "10px 0px",
+                                }}
+                              >
+                                <Typography
+                                  key={i}
+                                  sx={{ width: { sm: "30%", xs: "55%" } }}
+                                >
+                                  {otherdetails}
+                                </Typography>
+                                <Typography>null</Typography>
+                              </Stack>
+                            ))}
+                          </Stack>
                         </Stack>
+                       
                         <Typography
                           sx={{
                             fontWeight: "bold",
                             color: "#003366",
-                            fontFamily: "poppins",
+
                             margin: "20px 0",
+                            fontSize:{sm:'12px',xs:'10px'}
                           }}
                         >
                           Secondary Contact
                         </Typography>
-                        <Stack sx={{ gap: 3 }}>
-                          {personalDetails.map((details, i) => (
-                            <Typography key={i}>{details}</Typography>
-                          ))}
+                        <Stack
+                          sx={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            width: "100%",
+                            display: "flex",
+                            padding: "10px 0px",
+                          }}
+                        >
+                          <Stack
+                            sx={{
+                              width: "100%",
+                              "& > *> :first-child": {
+                                color: "#7A7A7A",
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                              "& > * >: nth-child(2)": {
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                            }}
+                          >
+                            {personalDetails.map((otherdetails, i) => (
+                              <Stack
+                                sx={{
+                                  flexDirection: "row",
+                                  width: "100%",
+                                  margin: "10px 0px",
+                                }}
+                              >
+                                <Typography
+                                  key={i}
+                                  sx={{ width: { sm: "30%", xs: "55%" } }}
+                                >
+                                  {otherdetails}
+                                </Typography>
+                                <Typography>null</Typography>
+                              </Stack>
+                            ))}
+                          </Stack>
                         </Stack>
                       </Stack>
                     </Stack>
@@ -250,7 +338,7 @@ const handleActivity =()=>{
                         sx={{
                           fontWeight: "bold",
                           fontFamily: "poppins",
-                          fontSize: "13px",
+                          fontSize: { sm: "12px", xs: "10px" },
                         }}
                       >
                         other details
@@ -258,7 +346,7 @@ const handleActivity =()=>{
                     </Stack>
                     <Stack
                       sx={{
-                        width: { sm: "95%", xs: "90%" },
+                        width: { sm: "97%", xs: "100%" },
                         flexDirection: "row",
                         bgcolor: "#FFFF",
                         p: { sm: 1.5, xs: 1 },
@@ -276,13 +364,36 @@ const handleActivity =()=>{
                             width: "100%",
                             display: "flex",
                             padding: "15px 0px",
-                            fontFamily: '"Poppins", sans-serif',
                           }}
                         >
-                          <Stack sx={{width:'100%'}}>
+                          <Stack
+                            sx={{
+                              width: "100%",
+                              "& > *> :first-child": {
+                                color: "#7A7A7A",
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                              "& > * >: nth-child(2)": {
+                                fontWeight: "bold",
+                                fontSize: { sm: "12px", xs: "10px" },
+                              },
+                            }}
+                          >
                             {otherDetails.map((otherdetails, i) => (
-                              <Stack sx={{flexDirection:'row', width:'100%',margin:'10px 0px'}}>
-                                <Typography key={i} sx={{width:{sm:'30%', xs:'55%'}}}>{otherdetails}</Typography>
+                              <Stack
+                                sx={{
+                                  flexDirection: "row",
+                                  width: "100%",
+                                  margin: "10px 0px",
+                                }}
+                              >
+                                <Typography
+                                  key={i}
+                                  sx={{ width: { sm: "30%", xs: "55%" } }}
+                                >
+                                  {otherdetails}
+                                </Typography>
                                 <Typography>null</Typography>
                               </Stack>
                             ))}
@@ -304,12 +415,23 @@ const handleActivity =()=>{
                       sx={{
                         flexDirection: "row",
                         width: "100%",
-                        "& > *": { width: "50%", height: "45px", fontWeight:'600' },
+                        "& > *": {
+                          width: "50%",
+                          height: {sm:'45px', xs:'30px'},
+                          fontWeight: "600",
+                          fontSize:{
+                            sm:'14px', xs:'10px'
+                          }
+                        },
                         gap: 1,
                       }}
                     >
-                      <Button variant="outlined" onClick={handleViewActivity}>view activities</Button>
-                      <Button variant="contained" onClick={ handleActivity}>activity</Button>
+                      <Button variant="outlined" onClick={()=>handleViewActivity(each.customerId)}>
+                        view activities
+                      </Button>
+                      <Button variant="contained" onClick={()=>handleActivity(each.customerId, each.customerName)}>
+                        activity
+                      </Button>
                     </Stack>
                   </Stack>
                 </Stack>

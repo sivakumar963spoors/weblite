@@ -163,19 +163,19 @@ const AllFormDataTypes = () => {
   const handleChange =
     (setter, isMultiple = false) =>
     (files) => {
-      console.log("Raw files:", files);
+ 
 
       if (!files) return;
 
       // If it's already a FileList, convert to an array, otherwise wrap the single file in an array
       let filesArray = files instanceof FileList ? Array.from(files) : [files];
 
-      console.log("Converted to array:", filesArray);
+     
 
       // Ensure only valid File objects
       filesArray = filesArray.filter((f) => f instanceof File);
 
-      console.log("Filtered valid files:", filesArray);
+     
 
       // Set state correctly
       setter((prevFiles) =>
