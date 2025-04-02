@@ -445,7 +445,7 @@ const HomePage = () => {
             }}
           >
             <ReusableTextfield
-              placeholder={"search for customers"}
+              placeholder={"search "}
               icon={<SearchIcon />}
               value={searchText}
               onChange={(e) => handleChange(e.target.value)}

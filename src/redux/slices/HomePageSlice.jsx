@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { cardData, workSpecsData } from "../../components/task/TaskData";
 
 const initialState = {
-    HomePageData: [...cardData].sort((a, b) => a.displayOrder - b.displayOrder), // Sort initial data
+    HomePageData: [...cardData].sort((a, b) => a.displayOrder - b.displayOrder), 
     workSpecsDataMenu: workSpecsData,
-    filteredHomePageData: [...cardData].sort((a, b) => a.displayOrder - b.displayOrder), // Sorted filtered data
+    filteredHomePageData: [...cardData].sort((a, b) => a.displayOrder - b.displayOrder), 
   };
   
 const HomePageModule = createSlice({

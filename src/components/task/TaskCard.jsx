@@ -8,31 +8,33 @@ import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
-import { filterByModule, resetFilteredData } from "../../redux/slices/HomePageSlice";
+import { toggleMenuTitleDayPlan } from "../../redux/slices/DayPalneModule";
+import {
+  filterByModule,
+  resetFilteredData,
+} from "../../redux/slices/HomePageSlice";
 import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
-import { toggleMenuTitleDayPlan } from "../../redux/slices/DayPalneModule";
 
-const TaskCard = ({searchInput}) => {
+const TaskCard = ({ searchInput }) => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
   const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
-  const {  workSpecsDataMenu } = useSelector(
-    (state) => state.HomePageModule
+  const { workSpecsDataMenu } = useSelector((state) => state.HomePageModule);
+  const filteredHomePageData = useSelector(
+    (state) => state.HomePageModule.filteredHomePageData
   );
-  const filteredHomePageData = useSelector((state) => state.HomePageModule.filteredHomePageData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    
     if (searchInput && searchInput.trim() !== "") {
-     
-        dispatch(filterByModule(searchInput));
+      dispatch(filterByModule(searchInput));
     } else {
-        dispatch(resetFilteredData());
+      dispatch(resetFilteredData());
     }
-}, [dispatch, searchInput]);
+  }, [dispatch, searchInput]);
   const navigateToShowAlldModule = (moduleId) => {
     let title = "Show All";
+    alert(moduleId);
     switch (moduleId) {
       case 12:
         title = "Knowledge ";
@@ -50,19 +52,21 @@ const TaskCard = ({searchInput}) => {
         dispatch(toggleMenuTitle(title));
         navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
+        case 17:
+          title = "Forms";
+          dispatch(toggleMenuTitle(title));
+          navigate("/view/forms?empId=136947&viewType=2&formSpecId=245583");
+          break;
       case 1001:
         title = "day planner";
         dispatch(toggleMenuTitle(title));
         navigate("/dayplanner/customers");
         break;
       default:
-       
     }
   };
 
   const handleNavigationForDatKnoweledgeBaseView = (id) => {
-   
-
     switch (id) {
       case 0:
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
@@ -74,22 +78,18 @@ const TaskCard = ({searchInput}) => {
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       default:
-      
     }
   };
   const handlenavigationToCustomerModules = (id) => {
-  
-  
     if (id >= 0 && id <= 8) {
       navigate(`/customers/viewtype/${id}`);
     } else {
       console.log("no data");
     }
   };
-  
-  
-  const handleNavToAdd =(id)=>{
-    alert(id)
+
+  const handleNavToAdd = (id) => {
+    alert(id);
     switch (id) {
       case 1000:
         navigate("/leave/my/create");
@@ -121,50 +121,58 @@ const TaskCard = ({searchInput}) => {
       default:
         console.log("no data");
     }
-  }
-  const navToLeaveModule =(view)=>{
-    if(view == 2 ){
+  };
+  const navToLeaveModule = (view) => {
+    if (view === 2) {
+      navigate(`/view/leaves/new?viewType=2&leaveMenuType=2`);
+    } else if (view === 3) {
+      navigate(`/view/leaves/new?viewType=3&leaveMenuType=3`);
+    } else {
+      navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`);
+    }
+  };
+  
+  const handleDyaPlan = (label) => {
+    if (!label) return;
 
-      navigate(`/view/leaves/new?viewType=2&leaveMenuType=2`)
+    dispatch(toggleMenuTitleDayPlan(label.title));
+
+    localStorage.setItem("activeMenuTitle", label.title);
+    switch (label.id) {
+      case 1:
+        navigate(
+          `/view/all/customers?viewType=4&customerViewType=1&customerView=2`
+        );
+        break;
+      case 2:
+        navigate(
+          `/view/all/customers?viewType=5&customerView=2&customerViewType=2`
+        );
+        break;
+      case 3:
+        navigate(
+          `/view/all/customers?viewType=6&customerView=2&customerViewType=3`
+        );
+        break;
+      case 4:
+        navigate(
+          `/view/all/employees?viewType=7&customerViewType=2&customerView=4`
+        );
+        break;
+      case 5:
+        navigate(
+          `/view/all/employees?viewType=8&customerViewType=5&customerView=2`
+        );
+        break;
+      default:
+        break;
     }
-    else if(view == 3){
-      navigate(`/view/leaves/new?viewType=3&leaveMenuType=3`)
-    }
-    else{
-      navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`)
-    }
-  }
-  const handleDyaPlan =(label)=>{
-      if (!label) return;
-    
-        dispatch(toggleMenuTitleDayPlan(label.title));
-        
-        localStorage.setItem("activeMenuTitle", label.title); 
-        switch (label.id) {
-          case 1:
-            navigate(`/view/all/customers?viewType=4&customerViewType=1&customerView=2`);
-            break;
-          case 2:
-           navigate(`/view/all/customers?viewType=5&customerView=2&customerViewType=2`);
-            break;
-          case 3:
-            navigate(`/view/all/customers?viewType=6&customerView=2&customerViewType=3`);
-             break;
-          case 4:
-            navigate(`/view/all/employees?viewType=7&customerViewType=2&customerView=4`);
-            break;
-          case 5:
-            navigate(`/view/all/employees?viewType=8&customerViewType=5&customerView=2`);
-            break;
-          default:
-            break;
-        }
-  }
+  };
   return (
     <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
       <Stack gap={2} sx={{ mt: "15px", pt: 1 }}>
-        {filteredHomePageData &&filteredHomePageData.length > 0 ? filteredHomePageData.map(
-          (data, index) => (
+        {filteredHomePageData && filteredHomePageData.length > 0 ? (
+          filteredHomePageData.map((data, index) => (
             <Stack
               key={index}
               sx={{ alignItems: "center", justifyContent: "center" }}
@@ -228,7 +236,7 @@ const TaskCard = ({searchInput}) => {
                         <Typography
                           sx={{
                             fontWeight: { sm: 500, xs: 500 },
-                            fontSize:{sm:'14px', xs:'10px'}
+                            fontSize: { sm: "14px", xs: "10px" },
                           }}
                         >
                           {data.moduleName}
@@ -263,7 +271,7 @@ const TaskCard = ({searchInput}) => {
                             padding: "4px 8px",
                             minWidth: "auto",
                           }}
-                          onClick={()=> handleNavToAdd(data.moduleId)}
+                          onClick={() => handleNavToAdd(data.moduleId)}
                         />
                       )}
                     </Stack>
@@ -295,7 +303,6 @@ const TaskCard = ({searchInput}) => {
                                 width: "100%",
                                 padding: 1,
                                 borderRadius: "4px",
-                              
                               }}
                             >
                               <Stack
@@ -303,14 +310,12 @@ const TaskCard = ({searchInput}) => {
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
-                               
                                 }}
                               >
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize:{sm:'14px', xs:'12px'},
-                                 
+                                    fontSize: { sm: "14px", xs: "12px" },
                                   }}
                                 >
                                   You need to do:
@@ -332,14 +337,12 @@ const TaskCard = ({searchInput}) => {
                                   flexDirection: "row",
                                   justifyContent: "space-between",
                                   width: "100%",
-                                 
                                 }}
                               >
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize:{sm:'14px', xs:'12px'},
-                                   
+                                    fontSize: { sm: "14px", xs: "12px" },
                                   }}
                                 >
                                   Team needs to do:
@@ -366,8 +369,7 @@ const TaskCard = ({searchInput}) => {
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize: "13px",
-                                  
+                                    fontSize: { sm: "14px", xs: "12px" },
                                   }}
                                 >
                                   Invitations need your action:
@@ -395,8 +397,7 @@ const TaskCard = ({searchInput}) => {
                                 <Typography
                                   sx={{
                                     flexGrow: 1,
-                                    fontSize:{sm:'14px', xs:'12px'},
-                                   
+                                    fontSize: { sm: "14px", xs: "12px" },
                                   }}
                                 >
                                   Team has invitations to process:
@@ -412,38 +413,32 @@ const TaskCard = ({searchInput}) => {
                                   {eachWorkData.tasks.invitations.team}
                                 </Typography>
                               </Stack>
-                            </Stack>
 
-                            <Stack
-                              sx={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: 1,
-                                width: "100%",
-                                padding: 1,
-                                borderRadius: "4px",
-                                fontSize:{sm:'14px', xs:'12px'},
-                              }}
-                            >
-                              <Typography
+                              <Stack
                                 sx={{
-                                  fontSize:{sm:'14px', xs:'12px'},
-                                 
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  width: "100%",
                                 }}
                               >
-                                No progress tasks:
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  color:
-                                    eachWorkData.tasks.noProgress === 0
-                                      ? "green"
-                                      : "red",
-                                }}
-                              >
-                                {eachWorkData.tasks.noProgress}
-                              </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                  No progress tasks:
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    color:
+                                      eachWorkData.tasks.noProgress === 0
+                                        ? "green"
+                                        : "red",
+                                  }}
+                                >
+                                  {eachWorkData.tasks.noProgress}
+                                </Typography>
+                              </Stack>
                             </Stack>
                           </Stack>
                         </Stack>
@@ -479,8 +474,7 @@ const TaskCard = ({searchInput}) => {
                           >
                             <Typography
                               sx={{
-                               
-                                fontSize:{sm:'14px', xs:'12px'},
+                                fontSize: { sm: "14px", xs: "12px" },
                               }}
                             >
                               {label}
@@ -493,9 +487,13 @@ const TaskCard = ({searchInput}) => {
 
                   {data.moduleId === 1000 &&
                     [
-                      { id: "pending your manager approval", count: 0,view:1 },
-                      { id: "awaiting your approval", count: 1,view:2 },
-                      { id: "awaiting team approval", count: 2,view:3 },
+                      {
+                        id: "pending your manager approval",
+                        count: 0,
+                        view: 1,
+                      },
+                      { id: "awaiting your approval", count: 1, view: 2 },
+                      { id: "awaiting team approval", count: 2, view: 3 },
                     ].map((eachWorkData, i) => (
                       <Stack sx={{ mt: 1 }} key={i}>
                         <Stack
@@ -505,7 +503,6 @@ const TaskCard = ({searchInput}) => {
                             flexWrap: "wrap",
                             justifyContent: "space-between",
                           }}
-
                         >
                           <Stack
                             sx={{
@@ -514,9 +511,9 @@ const TaskCard = ({searchInput}) => {
                               justifyContent: "space-between",
                               gap: 1,
                               width: "100%",
-                              padding: 1,
+                              px: 1,
+                              py: 0.4,
                               borderRadius: "4px",
-                            
                             }}
                           >
                             <Stack
@@ -524,15 +521,16 @@ const TaskCard = ({searchInput}) => {
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 width: "100%",
-                               cursor:'pointer'
+                                cursor: "pointer",
                               }}
-                              onClick={()=>navToLeaveModule(eachWorkData.view)}
+                              onClick={() =>
+                                navToLeaveModule(eachWorkData.view)
+                              }
                             >
                               <Typography
                                 sx={{
                                   flexGrow: 1,
-                                  fontSize:{sm:'14px', xs:'12px'},
-                               
+                                  fontSize: { sm: "14px", xs: "12px" },
                                 }}
                               >
                                 {eachWorkData.id}
@@ -576,7 +574,7 @@ const TaskCard = ({searchInput}) => {
                                 py: 4,
                                 cursor: "pointer",
                               }}
-                              onClick={()=> handleDyaPlan(label)}
+                              onClick={() => handleDyaPlan(label)}
                             >
                               <Typography
                                 sx={{
@@ -588,8 +586,7 @@ const TaskCard = ({searchInput}) => {
                               </Typography>
                               <Typography
                                 sx={{
-                                 
-                                  fontSize:{sm:'14px', xs:'12px'},
+                                  fontSize: { sm: "14px", xs: "12px" },
                                 }}
                               >
                                 {label.title}
@@ -612,12 +609,11 @@ const TaskCard = ({searchInput}) => {
                                 justifyContent: "space-between",
                                 px: 1,
                               }}
-                              onClick={()=> handleDyaPlan(label)}
+                              onClick={() => handleDyaPlan(label)}
                             >
                               <Typography
                                 sx={{
-                                  fontSize:{sm:'14px', xs:'12px'},
-                               
+                                  fontSize: { sm: "14px", xs: "12px" },
                                 }}
                               >
                                 {label.title}
@@ -659,7 +655,7 @@ const TaskCard = ({searchInput}) => {
 
                                 textAlign: "center",
                                 borderRadius: "5px",
-                                py: 4,
+                                py: 3,
                                 cursor: "pointer",
                               }}
                               onClick={() =>
@@ -676,8 +672,7 @@ const TaskCard = ({searchInput}) => {
                               </Typography>
                               <Typography
                                 sx={{
-                                 
-                                  fontSize:{sm:'14px', xs:'12px'},
+                                  fontSize: { sm: "14px", xs: "12px" },
                                 }}
                               >
                                 {label.title}
@@ -692,10 +687,8 @@ const TaskCard = ({searchInput}) => {
                             <Stack
                               key={index}
                               sx={{
-                                width: { xs: "250px", sm: "auto" },
-                                borderRadius: "5px",
                                 cursor: "pointer",
-                                py: 0.9,
+                                py: 0.8,
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 px: 1,
@@ -706,8 +699,7 @@ const TaskCard = ({searchInput}) => {
                             >
                               <Typography
                                 sx={{
-                                  fontSize:{sm:'14px', xs:'12px'},
-                               
+                                  fontSize: { sm: "14px", xs: "12px" },
                                 }}
                               >
                                 {label.title}
@@ -725,11 +717,316 @@ const TaskCard = ({searchInput}) => {
                       </Stack>
                     </Stack>
                   )}
+                  {data.moduleId === 37 &&
+                    workSpecsDataMenu
+                      .filter(
+                        (eachWorkData) =>
+                          eachWorkData.customEntitySpecId ===
+                          data.customEntitySpecId
+                      )
+                      .map((eachWorkData) => (
+                        <Stack sx={{ mt: 1 }} key={eachWorkData.id}>
+                          <Stack
+                            sx={{
+                              flexDirection: "row",
+                              gap: 2,
+                              flexWrap: "wrap",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Stack
+                              sx={{
+                                flexDirection: "column",
+                                alignItems: "flex-start",
+                                justifyContent: "space-between",
+                                gap: 1,
+                                width: "100%",
+                                padding: 1,
+                                borderRadius: "4px",
+                              }}
+                            >
+                              <Stack
+                                sx={{
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                  You need to do:
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    color:
+                                      eachWorkData.tasks.todo.personal === 0
+                                        ? "green"
+                                        : "red",
+                                  }}
+                                >
+                                  {eachWorkData.tasks.todo.personal}
+                                </Typography>
+                              </Stack>
+
+                              <Stack
+                                sx={{
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    flexGrow: 1,
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                  Team needs to do:
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    color:
+                                      eachWorkData.tasks.todo.team === 0
+                                        ? "green"
+                                        : "red",
+                                  }}
+                                >
+                                  {eachWorkData.tasks.todo.team}
+                                </Typography>
+                              </Stack>
+
+                              <Stack
+                                sx={{
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                  No progress tasks:
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    color:
+                                      eachWorkData.tasks.noProgress === 0
+                                        ? "green"
+                                        : "red",
+                                  }}
+                                >
+                                  {eachWorkData.tasks.noProgress}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          </Stack>
+                        </Stack>
+                      ))}
+                      {
+                        data.moduleId === 17&& 
+                        <Stack>
+                        <Stack
+                          sx={{
+                            width: "100%",
+                            flexDirection: { sm: "row", xs: "column" },
+                            alignItems: "center",
+                            justifyContent: "space-evenly",
+                            gap: 1,
+                            mt: 1,
+                          }}
+                        >
+                        
+                        
+                              <Stack
+                                key={index}
+                                sx={{
+                                  border: "1px solid #EEEEEE",
+                                  flexGrow: { sm: 1, xs: 12 },
+                                  width: { xs: "250px", sm: "auto" },
+  
+                                  textAlign: "center",
+                                  borderRadius: "5px",
+                                  py: 2,
+                                
+                                }}
+                               
+                              >
+                                <Typography
+                                  sx={{
+                               
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                0
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                 filled today
+                                </Typography>
+                              </Stack>
+                              <Stack
+                                key={index}
+                                sx={{
+                                  border: "1px solid #EEEEEE",
+                                  flexGrow: { sm: 1, xs: 12 },
+                                  width: { xs: "250px", sm: "auto" },
+  
+                                  textAlign: "center",
+                                  borderRadius: "5px",
+                                  py: 2,
+                                 
+                                }}
+                               
+                              >
+                                <Typography
+                                  sx={{
+                               
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                0
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: { sm: "14px", xs: "12px" },
+                                  }}
+                                >
+                                 filled Yestarday
+                                </Typography>
+                              </Stack>
+                        
+                        </Stack>
+                        </Stack>
+                        
+                      }
+                      {
+                         data.moduleId === 36&&       <Stack>
+                         <Stack
+                           sx={{
+                             width: "100%",
+                             flexDirection: { sm: "row", xs: "column" },
+                             alignItems: "center",
+                             justifyContent: "space-evenly",
+                             gap: 1,
+                             mt: 1,
+                           }}
+                         >
+                         
+                         
+                               <Stack
+                                 key={index}
+                                 sx={{
+                                   border: "1px solid #EEEEEE",
+                                   flexGrow: { sm: 1, xs: 12 },
+                                   width: { xs: "250px", sm: "auto" },
+   
+                                   textAlign: "center",
+                                   borderRadius: "5px",
+                                   py: 2,
+                                   cursor: "pointer",
+                                 }}
+                                
+                               >
+                                 <Typography
+                                   sx={{
+                                
+                                     fontWeight: "bold",
+                                   }}
+                                 >
+                                 0
+                                 </Typography>
+                                 <Typography
+                                   sx={{
+                                     fontSize: { sm: "14px", xs: "12px" },
+                                   }}
+                                 >
+                                
+
+                                 Pending your
+                                 manager approvals
+                                 </Typography>
+                               </Stack>
+                               <Stack
+                                 key={index}
+                                 sx={{
+                                   border: "1px solid #EEEEEE",
+                                   flexGrow: { sm: 1, xs: 12 },
+                                   width: { xs: "250px", sm: "auto" },
+   
+                                   textAlign: "center",
+                                   borderRadius: "5px",
+                                   py: 2,
+                                   cursor: "pointer",
+                                 }}
+                                
+                               >
+                                 <Typography
+                                   sx={{
+                                
+                                     fontWeight: "bold",
+                                   }}
+                                 >
+                                 0
+                                 </Typography>
+                                 <Typography
+                                   sx={{
+                                     fontSize: { sm: "14px", xs: "12px" },
+                                   }}
+                                 >
+                                Awaiting your approval
+                                 </Typography>
+                               </Stack>
+                               <Stack
+                                 key={index}
+                                 sx={{
+                                   border: "1px solid #EEEEEE",
+                                   flexGrow: { sm: 1, xs: 12 },
+                                   width: { xs: "250px", sm: "auto" },
+   
+                                   textAlign: "center",
+                                   borderRadius: "5px",
+                                   py: 2,
+                                   cursor: "pointer",
+                                 }}
+                                
+                               >
+                                 <Typography
+                                   sx={{
+                                
+                                     fontWeight: "bold",
+                                   }}
+                                 >
+                                 0
+                                 </Typography>
+                                 <Typography
+                                   sx={{
+                                     fontSize: { sm: "14px", xs: "12px" },
+                                   }}
+                                 >
+                               Awaiting
+                               team approval
+                                 </Typography>
+                               </Stack>
+                         
+                         </Stack>
+                         </Stack>
+                      }
                 </Stack>
               </Stack>
             </Stack>
-          )
-        ) :<Typography sx={{textAlign:'center'}}>No data found</Typography>}
+          ))
+        ) : (
+          <Typography sx={{ textAlign: "center" }}>No data found</Typography>
+        )}
       </Stack>
     </Box>
   );

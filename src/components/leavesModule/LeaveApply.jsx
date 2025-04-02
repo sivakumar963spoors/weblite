@@ -398,7 +398,7 @@ const Leave_apply = () => {
           right: 0,
           bottom: 0,
           width: "100%",
-          zIndex: 9999,
+          zIndex: 999,
 
           background: "#FFF",
         }}
@@ -411,7 +411,7 @@ const Leave_apply = () => {
             justifyContent: "flex-end",
             py: 1,
             px: 1,
-            zIndex: 9999,
+            
           }}
         >
           <Button variant="outlined">cancel</Button>
