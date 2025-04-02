@@ -29,7 +29,9 @@ const MenuTitleUpdater = () => {
       "/status/view/:id": "Approval Details",
       "/view/all/employees":'employees',
       "/view/all/customers":'customers',
-      '/password/update':'change password'
+      '/password/update':'change password',
+      '/view/forms':'forms',
+      '/view/forms/new':'forms'
     };
 
     

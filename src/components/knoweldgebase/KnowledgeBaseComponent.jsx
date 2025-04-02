@@ -123,6 +123,7 @@ const KnowledgeBaseComponent = () => {
           {viewType && viewType == 2 && (
             <Stack>
               <Typography sx={typographyStyle}>total unviewed</Typography>
+              <Typography sx={{textAlign:'center', background:'#FFF', py:2, my:1}}>No data found</Typography>
             </Stack>
           )}
         </Stack>

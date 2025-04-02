@@ -23,6 +23,8 @@ import DayPlanViewCustomer from '../dayplanner/DayPlanViewCustomer';
 import DayPlanViewEmp from '../dayplanner/DayPlanViewEmp';
 import AddedLeavesDisplay from '../leavesModule/AddedLeavesDisplay';
 import ChangePassword from '../password/ChangePassword';
+import ViewForms from '../forms/ViewForms';
+import ViewFormNew from '../forms/ViewFormNew';
 const AllRoutes = () => {
   return (
     <>
@@ -56,6 +58,8 @@ const AllRoutes = () => {
         <Route path='/password/update' element={<ChangePassword/>}/>
         <Route path='/view/all/customers' element={<DayPlanViewCustomer/>}/>
         <Route path='/dyaplanroute' element={<ReusableCarousalDayPlan/>}/>
+        <Route path='/view/forms' element={<ViewForms/>}/>
+        <Route path='/view/form/new' element={<ViewFormNew/>}/>
       </Routes>
      
     </>

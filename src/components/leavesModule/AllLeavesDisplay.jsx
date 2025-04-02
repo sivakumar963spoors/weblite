@@ -1,8 +1,6 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
-import DialogContent from "@mui/joy/DialogContent";
 import CloseIcon from '@mui/icons-material/Close';
-import { Button, Stack, TextField, Typography,Dialog,Avatar} from "@mui/material";
+import { Avatar, Button, Dialog, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -20,7 +18,6 @@ const AllLeaves_display = () => {
   const [searchParams] = useSearchParams();
   const viewType = searchParams.get("viewType");
   const leaveMenuType = searchParams.get("leaveMenuType");
-  const [layout, setLayout] = React.useState(undefined);
   const [isRejectClick, setIsRejectClick] = useState(false);
   const [isApproveClick, setIsApproveClick] = useState(false);
   const [itemsPerRow, setItemsPerRow] = useState(3);
@@ -131,7 +128,7 @@ const AllLeaves_display = () => {
         isActiveLeaveMenu={leaveMenuType}
       />
 
-      {status == "loading" ? (
+      {status === "loading" ? (
         <Typography>loading ......</Typography>
       ) : (
         <Stack
