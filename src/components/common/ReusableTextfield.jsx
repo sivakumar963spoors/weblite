@@ -2,6 +2,7 @@ import { IconButton, InputAdornment, TextField } from '@mui/material';
 import React from 'react';
 
 const ReusableTextfield = ({ 
+  name,
   placeholder, 
   value, 
   onChange, 
@@ -15,6 +16,7 @@ const ReusableTextfield = ({
   return (
     <TextField
     type={ type}
+    name={name}
      autoComplete='off'
       variant="outlined"
       placeholder={placeholder}

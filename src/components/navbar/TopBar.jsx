@@ -52,7 +52,7 @@ const TopBar = () => {
     dispatch(toggleMenuTitle(menus));
     switch (menus) {
       case "Home":
-        nav("/");
+        nav("/home");
         break;
       case "Dashboard":
         nav("/dashboard");

@@ -3,17 +3,17 @@ import {useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {  useParams} from "react-router-dom";
 import { getLeavesData } from "../../redux/slices/LeavesModule";
-const Leaves_details = () => {
+const LeavesDetails = () => {
   const entityId=useParams();
 const dispatch =useDispatch();
-  const { LeavesModuleMenu, status, data } = useSelector(
+  const {  data } = useSelector(
     (state) => state.LeavesModule
   );  useEffect(() => {
       dispatch(getLeavesData(entityId));
     }, [dispatch,entityId]);
-    const detailedLeaves = data?.leaves?.filter(leave => leave.empId == entityId);
+    const detailedLeaves = data?.leaves?.filter(leave => leave.empId === entityId);
     console.log("Filtered Leaves for Employee:", detailedLeaves)
-//     const leavesMap = JSON.parse(data?.leavesMap || "{}");
+// const leavesMap = JSON.parse(data?.leavesMap || "{}");
 // const detailedLeaves = Object.values(leavesMap).filter(leave => leave.empId === entityId);
 // console.log("Detailed Leaves:", detailedLeaves);
 
@@ -136,4 +136,4 @@ const dispatch =useDispatch();
   );
 };
 
-export default Leaves_details;
+export default LeavesDetails;
