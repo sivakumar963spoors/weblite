@@ -15,7 +15,7 @@ const CustomerCard = ({searchText}) => {
   const { filteredCustomerData } = useSelector((state) => state.CustomerModule);
   const navigateToCustomerDetails = (id) => {
  
-    dispatch(toggleMenuTitle("Customer Details"));
+  
     navigate(`/customer/details/${id}`);
   };  
  

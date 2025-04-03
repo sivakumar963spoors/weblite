@@ -70,7 +70,7 @@ const HomePage = () => {
   };
   const navigateToDashBoard = () => {
     var title = "Dashboard";
-    dispatch(toggleMenuTitle(title));
+  
     nav("/dashboard");
   };
   const handleChange = (e) => {

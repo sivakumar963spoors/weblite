@@ -15,16 +15,14 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const open = Boolean(anchorEl);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const dispatch = useDispatch();
   const { currentMenuTitle, menuItems } = useSelector((state) => state.menu);
   const handleMouseEnter = (index) => {
     setHoveredIndex(index);
@@ -49,7 +47,7 @@ const TopBar = () => {
   };
   const handlenavigateToMenuItem = (menus) => {
     setOpenDrawer(false);
-    dispatch(toggleMenuTitle(menus));
+
     switch (menus) {
       case "Home":
         nav("/home");
@@ -222,24 +220,32 @@ const TopBar = () => {
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
-           
           >
             <MenuItem
               onClick={handleMenuClose}
-              sx={{ fontSize: { sm: "14px", xs: "12px"} ,     minHeight: "0px !important"}}
+              sx={{
+                fontSize: { sm: "14px", xs: "12px" },
+                minHeight: "0px !important",
+              }}
             >
               Switch To web
             </MenuItem>
-           
+
             <MenuItem
               onClick={handleMenuClose}
-              sx={{ fontSize: { sm: "14px", xs: "12px" }, minHeight: "0px !important" }}
+              sx={{
+                fontSize: { sm: "14px", xs: "12px" },
+                minHeight: "0px !important",
+              }}
             >
               Reset password
             </MenuItem>
             <MenuItem
               onClick={handleMenuClose}
-              sx={{ fontSize: { sm: "14px", xs: "12px" } , minHeight: "0px !important"}}
+              sx={{
+                fontSize: { sm: "14px", xs: "12px" },
+                minHeight: "0px !important",
+              }}
             >
               Logout
             </MenuItem>

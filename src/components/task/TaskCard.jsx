@@ -37,39 +37,32 @@ const TaskCard = ({ searchInput }) => {
     alert(moduleId);
     switch (moduleId) {
       case 12:
-        title = "Knowledge ";
-        dispatch(toggleMenuTitle(title));
         navigate("/knowledgebase/manage");
         break;
       case 9:
-        title = "All Customers";
-        dispatch(toggleMenuTitle(title));
         navigate("/Allcustomers");
         break;
 
       case 1000:
-        title = "Leaves";
-        dispatch(toggleMenuTitle(title));
         navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
-        case 17:
-          title = "Forms";
-          dispatch(toggleMenuTitle(title));
-          navigate("/view/forms?empId=136947&viewType=2&formSpecId=245583");
-          break;
-          case 36:
-            title = "Forms";
-            dispatch(toggleMenuTitle(title));
-            navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
-            break;
-            case 37:
-              title = "work actions";
-              dispatch(toggleMenuTitle(title));
-              navigate("/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1");
-              break;
+      case 17:
+        navigate("/view/forms?empId=136947&viewType=2&formSpecId=245583");
+        break;
+      case 36:
+        navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
+        break;
+      case 37:
+        navigate(
+          "/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1"
+        );
+        break;
+      case 34:
+        navigate(
+          "/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1"
+        );
+        break;
       case 1001:
-        title = "day planner";
-        dispatch(toggleMenuTitle(title));
         navigate("/dayplanner/customers");
         break;
       default:
@@ -141,11 +134,9 @@ const TaskCard = ({ searchInput }) => {
       navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`);
     }
   };
-  
+
   const handleDyaPlan = (label) => {
     if (!label) return;
-
-    dispatch(toggleMenuTitleDayPlan(label.title));
 
     localStorage.setItem("activeMenuTitle", label.title);
     switch (label.id) {
@@ -838,198 +829,174 @@ const TaskCard = ({ searchInput }) => {
                           </Stack>
                         </Stack>
                       ))}
-                      {
-                        data.moduleId === 17&& 
-                        <Stack>
+                  {data.moduleId === 17 && (
+                    <Stack>
+                      <Stack
+                        sx={{
+                          width: "100%",
+                          flexDirection: { sm: "row", xs: "column" },
+                          alignItems: "center",
+                          justifyContent: "space-evenly",
+                          gap: 1,
+                          mt: 1,
+                        }}
+                      >
                         <Stack
+                          key={index}
                           sx={{
-                            width: "100%",
-                            flexDirection: { sm: "row", xs: "column" },
-                            alignItems: "center",
-                            justifyContent: "space-evenly",
-                            gap: 1,
-                            mt: 1,
+                            border: "1px solid #EEEEEE",
+                            flexGrow: { sm: 1, xs: 12 },
+                            width: { xs: "250px", sm: "auto" },
+
+                            textAlign: "center",
+                            borderRadius: "5px",
+                            py: 2,
                           }}
                         >
-                        
-                        
-                              <Stack
-                                key={index}
-                                sx={{
-                                  border: "1px solid #EEEEEE",
-                                  flexGrow: { sm: 1, xs: 12 },
-                                  width: { xs: "250px", sm: "auto" },
-  
-                                  textAlign: "center",
-                                  borderRadius: "5px",
-                                  py: 2,
-                                
-                                }}
-                               
-                              >
-                                <Typography
-                                  sx={{
-                               
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                0
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                 filled today
-                                </Typography>
-                              </Stack>
-                              <Stack
-                                key={index}
-                                sx={{
-                                  border: "1px solid #EEEEEE",
-                                  flexGrow: { sm: 1, xs: 12 },
-                                  width: { xs: "250px", sm: "auto" },
-  
-                                  textAlign: "center",
-                                  borderRadius: "5px",
-                                  py: 2,
-                                 
-                                }}
-                               
-                              >
-                                <Typography
-                                  sx={{
-                               
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                0
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                 filled Yestarday
-                                </Typography>
-                              </Stack>
-                        
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: { sm: "14px", xs: "12px" },
+                            }}
+                          >
+                            filled today
+                          </Typography>
                         </Stack>
-                        </Stack>
-                        
-                      }
-                      {
-                         data.moduleId === 36&&       <Stack>
-                         <Stack
-                           sx={{
-                             width: "100%",
-                             flexDirection: { sm: "row", xs: "column" },
-                             alignItems: "center",
-                             justifyContent: "space-evenly",
-                             gap: 1,
-                             mt: 1,
-                           }}
-                         >
-                         
-                         
-                               <Stack
-                                 key={index}
-                                 sx={{
-                                   border: "1px solid #EEEEEE",
-                                   flexGrow: { sm: 1, xs: 12 },
-                                   width: { xs: "250px", sm: "auto" },
-   
-                                   textAlign: "center",
-                                   borderRadius: "5px",
-                                   py: 2,
-                                   cursor: "pointer",
-                                 }}
-                                
-                               >
-                                 <Typography
-                                   sx={{
-                                
-                                     fontWeight: "bold",
-                                   }}
-                                 >
-                                 0
-                                 </Typography>
-                                 <Typography
-                                   sx={{
-                                     fontSize: { sm: "14px", xs: "12px" },
-                                   }}
-                                 >
-                                
+                        <Stack
+                          key={index}
+                          sx={{
+                            border: "1px solid #EEEEEE",
+                            flexGrow: { sm: 1, xs: 12 },
+                            width: { xs: "250px", sm: "auto" },
 
-                                 Pending your
-                                 manager approvals
-                                 </Typography>
-                               </Stack>
-                               <Stack
-                                 key={index}
-                                 sx={{
-                                   border: "1px solid #EEEEEE",
-                                   flexGrow: { sm: 1, xs: 12 },
-                                   width: { xs: "250px", sm: "auto" },
-   
-                                   textAlign: "center",
-                                   borderRadius: "5px",
-                                   py: 2,
-                                   cursor: "pointer",
-                                 }}
-                                
-                               >
-                                 <Typography
-                                   sx={{
-                                
-                                     fontWeight: "bold",
-                                   }}
-                                 >
-                                 0
-                                 </Typography>
-                                 <Typography
-                                   sx={{
-                                     fontSize: { sm: "14px", xs: "12px" },
-                                   }}
-                                 >
-                                Awaiting your approval
-                                 </Typography>
-                               </Stack>
-                               <Stack
-                                 key={index}
-                                 sx={{
-                                   border: "1px solid #EEEEEE",
-                                   flexGrow: { sm: 1, xs: 12 },
-                                   width: { xs: "250px", sm: "auto" },
-   
-                                   textAlign: "center",
-                                   borderRadius: "5px",
-                                   py: 2,
-                                   cursor: "pointer",
-                                 }}
-                                
-                               >
-                                 <Typography
-                                   sx={{
-                                
-                                     fontWeight: "bold",
-                                   }}
-                                 >
-                                 0
-                                 </Typography>
-                                 <Typography
-                                   sx={{
-                                     fontSize: { sm: "14px", xs: "12px" },
-                                   }}
-                                 >
-                               Awaiting
-                               team approval
-                                 </Typography>
-                               </Stack>
-                         
-                         </Stack>
-                         </Stack>
-                      }
+                            textAlign: "center",
+                            borderRadius: "5px",
+                            py: 2,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: { sm: "14px", xs: "12px" },
+                            }}
+                          >
+                            filled Yestarday
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  )}
+                  {data.moduleId === 36 && (
+                    <Stack>
+                      <Stack
+                        sx={{
+                          width: "100%",
+                          flexDirection: { sm: "row", xs: "column" },
+                          alignItems: "center",
+                          justifyContent: "space-evenly",
+                          gap: 1,
+                          mt: 1,
+                        }}
+                      >
+                        <Stack
+                          key={index}
+                          sx={{
+                            border: "1px solid #EEEEEE",
+                            flexGrow: { sm: 1, xs: 12 },
+                            width: { xs: "250px", sm: "auto" },
+
+                            textAlign: "center",
+                            borderRadius: "5px",
+                            py: 2,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: { sm: "14px", xs: "12px" },
+                            }}
+                          >
+                            Pending your manager approvals
+                          </Typography>
+                        </Stack>
+                        <Stack
+                          key={index}
+                          sx={{
+                            border: "1px solid #EEEEEE",
+                            flexGrow: { sm: 1, xs: 12 },
+                            width: { xs: "250px", sm: "auto" },
+
+                            textAlign: "center",
+                            borderRadius: "5px",
+                            py: 2,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: { sm: "14px", xs: "12px" },
+                            }}
+                          >
+                            Awaiting your approval
+                          </Typography>
+                        </Stack>
+                        <Stack
+                          key={index}
+                          sx={{
+                            border: "1px solid #EEEEEE",
+                            flexGrow: { sm: 1, xs: 12 },
+                            width: { xs: "250px", sm: "auto" },
+
+                            textAlign: "center",
+                            borderRadius: "5px",
+                            py: 2,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                            }}
+                          >
+                            0
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: { sm: "14px", xs: "12px" },
+                            }}
+                          >
+                            Awaiting team approval
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  )}
                 </Stack>
               </Stack>
             </Stack>
