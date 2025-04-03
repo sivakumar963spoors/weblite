@@ -1,18 +1,50 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
-import React from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import ReusableTextfield from "../common/ReusableTextfield";
+import DescriptionIcon from "@mui/icons-material/Description";
 import SearchIcon from "@mui/icons-material/Search";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import ReusableTextfield from "../common/ReusableTextfield";
 const ViewForms = () => {
+  const navigate = useNavigate();
+  const [active, setActive] = useState(() => {
+    return parseInt(localStorage.getItem("activeViewForms")) || 0;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("activeViewForms", active);
+    return () => {
+      localStorage.removeItem("activeViewForms");
+    };
+  }, [active]);
+
+  const handleViewType = (view) => {
+    setActive(view);
+    navigate(`/view/forms?empId=136947&formSpecId=245583&viewType=${view}`);
+  };
   return (
-    <Box sx={{ mt: 10 }}>
+    <Box sx={{ mt: 8 }}>
+      <Stack sx={{ background: "", py: 1.5 }}>
+        <Typography
+          sx={{
+            color: "#FFF",
+           
+            fontSize: { sm: 20, xs: 20 },
+            fontWeight: { sm: 500, xs: 400 },
+            position:'absolute', top:17, zIndex:9999,  left:50
+          }}
+        >
+          Simple form
+        </Typography>
+      </Stack>
       <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
         <Stack sx={{ width: "95%", gap: 1 }}>
           <Typography
             sx={{
               fontSize: { sm: "12px", xs: "10px" },
-              fontWeight: 500,
+              fontWeight: 400,
               ml: 0.7,
             }}
           >
@@ -67,14 +99,12 @@ const ViewForms = () => {
                       }}
                     />
                   </Typography>
-                  <Typography>0</Typography>
+                  <Typography onClick={() => handleViewType(101)}>0</Typography>
                   <Typography
-                    sx={
-                      {
-                        // textDecoration: active == viewType ? "underline" : "none",
-                        //color:active == viewType ? "orange !important ":'#000'
-                      }
-                    }
+                    sx={{
+                      textDecoration: active === 101 ? "underline" : "none",
+                      color: active === 101 ? "orange !important " : "#000",
+                    }}
                   >
                     filled today
                   </Typography>
@@ -91,14 +121,12 @@ const ViewForms = () => {
                       }}
                     />
                   </Typography>
-                  <Typography>0</Typography>
+                  <Typography onClick={() => handleViewType(102)}>0</Typography>
                   <Typography
-                    sx={
-                      {
-                        // textDecoration: active == viewType ? "underline" : "none",
-                        //color:active == viewType ? "orange !important ":'#000'
-                      }
-                    }
+                    sx={{
+                      textDecoration: active === 102 ? "underline" : "none",
+                      color: active === 102 ? "orange !important " : "#000",
+                    }}
                   >
                     filled Yestarday
                   </Typography>
@@ -112,9 +140,73 @@ const ViewForms = () => {
               icon={<SearchIcon />}
             />
           </Stack>
-          <Stack>
-            <Typography sx={{ textAlign: "center" }}>No data found</Typography>
-          </Stack>
+          {active !== 101 && active !== 102 && (
+            <Stack>
+              <Typography
+                sx={{ textAlign: "center", fontSize: { xs: 12, sm: 14 } }}
+              >
+                No data found
+              </Typography>
+            </Stack>
+          )}
+          {active === 101 && (
+            <Stack>
+              <Typography
+                sx={{ fontSize: { xs: 12, sm: 14 }, fontWeight: 500 }}
+              >
+                filled today
+              </Typography>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontSize: { xs: 12, sm: 14 },
+                  py: 1.5,
+                  background: "#fff",
+                  mt: 1,
+                  border: "1px solid #EBEBEB",
+                }}
+              >
+                No data found
+              </Typography>
+            </Stack>
+          )}
+          {active === 102 && (
+            <Stack>
+              <Typography
+                sx={{ fontSize: { xs: 12, sm: 14 }, fontWeight: 500 }}
+              >
+                filled yestarday
+              </Typography>
+              <Stack sx={{ background: "#FFF", mt: 1 }}>
+                <Stack
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                    px: 1,
+                    py: 2,
+                  }}
+                >
+                  <Stack
+                    sx={{ flexDirection: "row", gap: 1, alignItems: "center" }}
+                  >
+                    <Typography>
+                      <DescriptionIcon sx={{ color: "gray",  }} />
+                    </Typography>
+                    <Stack sx={{cursor:'pointer'}}>
+                      <Typography sx={{ fontSize: "12px", color:'#000' }}>13882</Typography>
+                      <Typography sx={{ fontSize: "10px", color:'#2e2e2e' }}>
+                        APril 2,2025 | Root user
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                  <>
+                    <EditIcon sx={{ color: "gray",fontSize:'20px' , cursor:'pointer'}} />
+                  </>
+                </Stack>
+              </Stack>
+            </Stack>
+          )}
         </Stack>
       </Stack>
       <Stack sx={{ position: "fixed", bottom: 10, right: 10 }}>

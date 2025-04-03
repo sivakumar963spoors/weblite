@@ -9,7 +9,7 @@ const MenuTitleUpdater = () => {
 
   useEffect(() => {
     const pathToTitleMap = {
-      "/": "Home",
+      "/home": "Home",
       "/dashboard": "Dashboard",
       "/knowledgebase/manage": "Knowledge Base",
       "/knowledgebase/manage/new": "New Knowledge Base",
@@ -30,8 +30,8 @@ const MenuTitleUpdater = () => {
       "/view/all/employees":'employees',
       "/view/all/customers":'customers',
       '/password/update':'change password',
-      '/view/forms':'forms',
-      '/view/forms/new':'forms'
+      '/view/forms':'',
+      '/view/forms/new':''
     };
 
     
@@ -45,7 +45,7 @@ const MenuTitleUpdater = () => {
       return new RegExp(regexPattern).test(pathname);
     });
 
-    let newTitle = pathToTitleMap[matchedPath] || "Home";
+    let newTitle = pathToTitleMap[matchedPath] || "";
 
 
     const urlParams = new URLSearchParams(location.search);

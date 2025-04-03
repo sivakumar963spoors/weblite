@@ -5,7 +5,9 @@ import DayPlannerReducer from '../slices/DayPalneModule';
 import HomePageModuleReducer from '../slices/HomePageSlice';
 import LeavesModuleReducer from '../slices/LeavesModule';
 import menuReducer from '../slices/MenuSlice';
-import ApprovalReducer from '../slices/ApprovalSlice'
+import ApprovalReducer from '../slices/ApprovalSlice';
+import workspecReducer from '../slices/WorkSpecSlice'
+
 const Store = configureStore({
   reducer: {
     ActionRequired: ActionRequiredReducer, 
@@ -14,7 +16,8 @@ const Store = configureStore({
     menu: menuReducer,
     DayPlannerModule: DayPlannerReducer,
     HomePageModule: HomePageModuleReducer,
-    ApprovalModule:ApprovalReducer
+    ApprovalModule:ApprovalReducer,
+    WorkSepcModule:workspecReducer
   },
 });
 

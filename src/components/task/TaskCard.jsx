@@ -57,6 +57,16 @@ const TaskCard = ({ searchInput }) => {
           dispatch(toggleMenuTitle(title));
           navigate("/view/forms?empId=136947&viewType=2&formSpecId=245583");
           break;
+          case 36:
+            title = "Forms";
+            dispatch(toggleMenuTitle(title));
+            navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
+            break;
+            case 37:
+              title = "work actions";
+              dispatch(toggleMenuTitle(title));
+              navigate("/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1");
+              break;
       case 1001:
         title = "day planner";
         dispatch(toggleMenuTitle(title));
