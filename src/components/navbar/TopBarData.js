@@ -13,6 +13,8 @@ import knowledgebase from '../../assets/menu_svg_filled/Knowledge_Base.svg'
 import blueknowledge from '../../assets/menu_svg_filled/Blue/Knowledge_Base.svg'
 import myapproval from '../../assets/menu_svg_filled/My_approvals.svg'
 import bluemyapproval from '../../assets/menu_svg_filled/Blue/My_approvals.svg'
+import reports from '../../assets/menu_svg_filled/Reports.svg'
+import bluereports from '../../assets/menu_svg_filled/Blue/Reports.svg'
 export const menuItem = [
   {
     menuTitle: "Home",
@@ -34,6 +36,11 @@ export const menuItem = [
     menuTitle: "My Approvals",
     menuIcon: myapproval,
     blueMenuIcon: bluemyapproval,
+  },
+  {
+    menuTitle: "Reports",
+    menuIcon: reports,
+    blueMenuIcon: bluereports,
   },
   {
     menuTitle: "Knowledge Base",

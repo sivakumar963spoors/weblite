@@ -24,6 +24,9 @@ const ViewForms = () => {
     setActive(view);
     navigate(`/view/forms?empId=136947&formSpecId=245583&viewType=${view}`);
   };
+  const handleNavToSubmitForm =()=>{
+    navigate('/add/form/1200')
+  }
   return (
     <Box sx={{ mt: 8 }}>
       <Stack sx={{ background: "", py: 1.5 }}>
@@ -211,6 +214,7 @@ const ViewForms = () => {
       </Stack>
       <Stack sx={{ position: "fixed", bottom: 10, right: 10 }}>
         <Button
+        onClick={handleNavToSubmitForm}
           startIcon={<AddCircleOutlineIcon sx={{}} />}
           sx={{
             borderRadius: "30px",

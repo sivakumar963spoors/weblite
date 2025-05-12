@@ -9,83 +9,120 @@ export const theme = createTheme({
       default: "#f4f6f8",
     },
   },
-    typography: {
-      allVariants: {
-        fontFamily: '"Poppins", sans-serif !important',
-        textTransform: "capitalize",
-        fontSize:{
-          sm:'14px', xs:'12px'
-        }
-      },
+  typography: {
+    allVariants: {
+      fontFamily: '"Poppins", sans-serif !important',
+      textTransform: "capitalize",
+      lineHeight: "1.42857143",
+      fontSize: '13px',
     },
-    breakpoints: {
-      values: {
-        xs: 0,
-        sm: 768,
-        md: 900,
-        lg: 1200,
-        xl: 1536,
-      },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 768,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
     },
-    components: {
-      MuiDatePicker: {
-        defaultProps: {
-          slots: {
-            openPickerIcon: CalendarMonthIcon, // Change the default calendar icon
+  },
+  components: {
+    MuiDatePicker: {
+      defaultProps: {
+        slots: {
+          openPickerIcon: CalendarMonthIcon,
+        },
+        slotProps: {
+          openPickerButton: {
+            sx: {
+              color: "#F06E70",
+            },
           },
-          slotProps: {
-            openPickerButton: {
-              sx: {
-                color: "#F06E70", // Only applies to the date picker icon
+          popper: {
+            sx: {
+              "& .MuiPaper-root": {
+                width: {
+                  xs: "300px",
+                  sm: "auto",
+                },
+                maxWidth: "95vw", // Make sure it doesn't overflow screen
+                overflow: "hidden",
               },
             },
           },
-          desktopModeMediaQuery: "(min-width: 0px)", // Ensures consistent behavior
+        },
+
+        desktopModeMediaQuery: "(min-width: 0px)",
+      },
+    },
+    MuiDateTimePicker: {
+      defaultProps: {
+        slots: {
+          openPickerIcon: CalendarMonthIcon,
+        },
+        slotProps: {
+          openPickerButton: {
+            sx: { color: "#F06E70 !important" },
+          },
+        },
+        desktopModeMediaQuery: "(min-width: 0px)",
+      },
+    },
+    MuiTimePicker: {
+      defaultProps: {
+        slotProps: {
+          openPickerButton: {
+            sx: { color: "#F06E70 !important" },
+          },
+        },
+        desktopModeMediaQuery: "(min-width: 0px)",
+      },
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          margin: 0,
+          padding: 0,
+          overflowX: "hidden",
         },
       },
-      MuiDateTimePicker: {
-        defaultProps: {
-          slots: {
-            openPickerIcon: CalendarMonthIcon, 
-          },
-          slotProps: {
-            openPickerButton: {
-              sx: { color: "#F06E70 !important" },
-            },
-          },
-          desktopModeMediaQuery: "(min-width: 0px)", 
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: "tomato", // Set helper text color globally to red
+          fontSize: { sm: "12px", xs: "10px" },
         },
       },
-      MuiTimePicker: {
-        defaultProps: {
-         
-          slotProps: {
-            openPickerButton: {
-              sx: { color: "#F06E70 !important" },
-            },
-          },
-          desktopModeMediaQuery: "(min-width: 0px)", 
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          background: "#FAFAFA",
         },
       },
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            margin: 0,
-            padding: 0,
-            overflowX: "hidden",
-          },
-        },},
-        MuiFormHelperText: {
-          styleOverrides: {
-            root: {
-              color: "tomato", // Set helper text color globally to red
-              fontSize:{sm:'12px',xs:'10px' }
-            },
-          },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          color: "#22222",
+          fontWeight: 550,
+          fontSize: "13px",
+          textAlign: "center",
+          height: "35px",
+          margin: "0 !important",
+          padding: "0 !important",
         },
-     
-    }
-    
-  });
-  
-  
+        body: {
+          fontSize: "13px",
+          textAlign: "center",
+          height: "43px",
+          margin: "0 !important",
+          padding: "0 !important",
+          color:'#000'
+        },
+      },
+    },
+  },
+ 
+});

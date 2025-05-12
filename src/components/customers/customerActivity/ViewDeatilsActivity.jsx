@@ -23,7 +23,7 @@ const ViewDeatilsActivity = () => {
     },[])
     const nav =useNavigate();
     const handleOnClickgetForm =()=>{
-nav('/getForm');
+nav('/add/form/100');
     }
   return (
     <div>

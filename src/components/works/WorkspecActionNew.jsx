@@ -98,17 +98,95 @@ const WorkspecActionNew = () => {
         </Stack>
         <Stack sx={{ my: 2 }}>
           {workView === 1 && (
-            <Typography
-              sx={{
-                textAlign: "center",
-                background: "#fff",
-                py: 1.5,
-                border: "1px solid #EBEBEB",
-                fontSize: { sm: "12px", xs: "10px" },
-              }}
-            >
-              No data found
-            </Typography>
+            <>
+              <Stack
+                sx={{
+                  flexDirection: "row",
+                  width: "100%",
+                  background: "#fff",
+                  "&: hover": {
+                    background: "#ddd",
+                  },
+                  px: 1.5,
+                  py: 5,
+                  border: "1px solid #EBEBEB",
+
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Stack
+                  sx={{
+                    " & > * ": {
+                      flexDirection: "row",
+                    },
+
+                    "& > * >:nth-child(2)": {
+                      color: "#000",
+                      fontWeight: 500,
+                      fontSize: {
+                        sm: "12px",
+                        xs: "10px",
+                      },
+                    },
+                    "& > * >:nth-child(1)": {
+                      color: "#4B4B4B",
+                      fontSize: {
+                        sm: "12px",
+                        xs: "10px",
+                      },
+                    },
+                    "& > :nth-child(1)": {
+                      color: "#000",
+                      fontWeight: "bold",
+                      fontSize: {
+                        sm: "12px",
+                        xs: "10px",
+                      },
+                    },
+                  }}
+                >
+                  <Typography>Id:7162</Typography>
+                  <Stack>
+                    <Typography>work name&nbsp;:</Typography>
+                    <Typography> &nbsp;kishore new test</Typography>
+                  </Stack>{" "}
+                  <Stack>
+                    <Typography>assignTo&nbsp;:</Typography>
+                    <Typography> &nbsp;amtul imrana</Typography>
+                  </Stack>{" "}
+                  <Stack>
+                    <Typography>starts :</Typography>
+                    <Typography></Typography>
+                  </Stack>{" "}
+                  <Stack>
+                    <Typography>ends :</Typography>
+                    <Typography></Typography>
+                  </Stack>{" "}
+                  <Stack>
+                    <Typography>lastctivity :</Typography>
+                    <Typography></Typography>
+                  </Stack>
+                </Stack>
+                <Stack>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      color: "tomato!important",
+                      borderColor: "tomato!important",
+                      background: "#FFF",
+                      fontSize: {
+                        sm: "12px",
+                        xs: "8px",
+                      },
+                    }}
+                    startIcon={<DirectionsRunIcon color="tomato" />}
+                  >
+                    in-progress
+                  </Button>
+                </Stack>
+              </Stack>
+            </>
           )}{" "}
           {workView === 3 && (
             <>
@@ -339,3 +417,55 @@ const WorkspecActionNew = () => {
 };
 
 export default WorkspecActionNew;
+const WorkCard = ({ workId, workName, assignTo, status, color }) => (
+  <Stack
+    sx={{
+      flexDirection: "row",
+      width: "100%",
+      background: "#fff",
+      "&:hover": { background: "#ddd" },
+      px: 1.5,
+      py: 5,
+      border: "1px solid #EBEBEB",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <Stack sx={{ "& > * ": { flexDirection: "row" } }}>
+      <Typography>Id: {workId}</Typography>
+      <Stack>
+        <Typography>work name&nbsp;:</Typography>
+        <Typography>&nbsp;{workName}</Typography>
+      </Stack>
+      <Stack>
+        <Typography>assignTo&nbsp;:</Typography>
+        <Typography>&nbsp;{assignTo}</Typography>
+      </Stack>
+      <Stack>
+        <Typography>starts :</Typography>
+        <Typography></Typography>
+      </Stack>
+      <Stack>
+        <Typography>ends :</Typography>
+        <Typography></Typography>
+      </Stack>
+      <Stack>
+        <Typography>last activity :</Typography>
+        <Typography></Typography>
+      </Stack>
+    </Stack>
+    <Stack>
+      <Button
+        variant="outlined"
+        sx={{
+          color: `${color}!important`,
+          borderColor: `${color}!important`,
+          background: "#FFF",
+          fontSize: { sm: "12px", xs: "8px" },
+        }}
+      >
+        {status}
+      </Button>
+    </Stack>
+  </Stack>
+);

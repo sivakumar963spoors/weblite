@@ -1,30 +1,46 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BlueCustomersIcon from "../../assets/menu_svg_filled/Blue/Customers.svg";
+import dayPlan from "../../assets/menu_svg_filled/Blue/Day_Plans.svg";
 import FormsIcon from "../../assets/menu_svg_filled/Blue/Forms.svg";
 import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.svg";
+import leavesIcon from "../../assets/menu_svg_filled/Blue/Leaves.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
-import { toggleMenuTitleDayPlan } from "../../redux/slices/DayPalneModule";
 import {
   filterByModule,
+  loadHomeScreenCards_get,
+  loggedInUser_get,
   resetFilteredData,
 } from "../../redux/slices/HomePageSlice";
-import { toggleMenuTitle } from "../../redux/slices/MenuSlice";
 import CustomButton from "../reusablecomponents/CustomButton";
-
+const approvalCards = [
+  { count: 0, label: "Pending your manager approvals" },
+  { count: 0, label: "Awaiting your approval" },
+  { count: 0, label: "Awaiting team approval" },
+];
 const TaskCard = ({ searchInput }) => {
   const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
   const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
-  const { workSpecsDataMenu } = useSelector((state) => state.HomePageModule);
-  const filteredHomePageData = useSelector(
-    (state) => state.HomePageModule.filteredHomePageData
+  const { LoadHomeScreenCards, workSpecsDataMenu, loggedInUser } = useSelector(
+    (state) => state.HomePageModule
   );
+  const filteredLoadHomeScreenCards = [...LoadHomeScreenCards].sort(
+    (a, b) => a.displayOrder - b.displayOrder
+  );
+ 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadHomeScreenCards_get());
+  }, []);
+  useEffect(() => {
+    dispatch(loggedInUser_get());
+  }, []);
   useEffect(() => {
     if (searchInput && searchInput.trim() !== "") {
       dispatch(filterByModule(searchInput));
@@ -43,7 +59,7 @@ const TaskCard = ({ searchInput }) => {
         navigate("/Allcustomers");
         break;
 
-      case 1000:
+      case 15:
         navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
       case 17:
@@ -62,7 +78,7 @@ const TaskCard = ({ searchInput }) => {
           "/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1"
         );
         break;
-      case 1001:
+      case 17:
         navigate("/dayplanner/customers");
         break;
       default:
@@ -94,7 +110,7 @@ const TaskCard = ({ searchInput }) => {
   const handleNavToAdd = (id) => {
     alert(id);
     switch (id) {
-      case 1000:
+      case 15:
         navigate("/leave/my/create");
         break;
       case 1:
@@ -170,836 +186,950 @@ const TaskCard = ({ searchInput }) => {
     }
   };
   return (
-    <Box sx={{ bgcolor: "#DDDBDB", m: 1 }}>
-      <Stack gap={2} sx={{ mt: "15px", pt: 1 }}>
-        {filteredHomePageData && filteredHomePageData.length > 0 ? (
-          filteredHomePageData.map((data, index) => (
-            <Stack
-              key={index}
-              sx={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <Stack
-                sx={{
-                  width: { sm: "80%", xs: "97%" },
-                  bgcolor: "#FFF",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(0, 0, 0, 0.12)",
-                }}
-              >
-                <Stack sx={{ px: 1, py: 1 }}>
+    <Box sx={{}}>
+      <Stack gap={1} sx={{ pt: 1 }}>
+       
+        {filteredLoadHomeScreenCards ? (
+          filteredLoadHomeScreenCards?.map((data, index) => (
+            <>
+              {[37, 36, 34, 17, 15, 12, 9].includes(data.moduleId) && (
+                <Stack
+                  key={index}
+                  sx={{ alignItems: "center", justifyContent: "center" }}
+                >
                   <Stack
                     sx={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      width: { sm: "80%", xs: "97%" },
+                      bgcolor: "#FFF",
+                      borderRadius: "8px",
+                      border: "1px solid rgba(0, 0, 0, 0.12)",
                     }}
                   >
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <React.Fragment>
-                        {data.moduleId === 37 ? (
-                          <Box
-                            component={"img"}
-                            src={FormsIcon}
-                            alt="Forms Icon"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                        ) : data.moduleId === 34 ? (
-                          <Box
-                            component={"img"}
-                            src={WorkActionFormIcon}
-                            alt="Work Action Form"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                        ) : data.moduleId === 9 ? (
-                          <Box
-                            component={"img"}
-                            src={BlueCustomersIcon}
-                            alt="Customers Icon"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                        ) : data.moduleId === 12 ? (
-                          <Box
-                            component={"img"}
-                            src={KnowledgeBaseIcon}
-                            alt="Knowledge Base Icon"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                        ) : (
-                          <HelpOutlineIcon />
-                        )}
-                        <Typography
-                          sx={{
-                            fontWeight: { sm: 500, xs: 500 },
-                            fontSize: { sm: "14px", xs: "10px" },
-                          }}
-                        >
-                          {data.moduleName}
-                        </Typography>
-                      </React.Fragment>
-                    </Stack>
-
-                    <Stack
-                      sx={{
-                        flexDirection: { sm: "row", xs: "column" },
-                        gap: { sm: 1, xs: 0.5 },
-                        fontSize: "13px",
-                      }}
-                    >
-                      <CustomButton
-                        title="show all"
-                        size="small"
+                    <Stack sx={{ px: 1, py: 1 }}>
+                      <Stack
                         sx={{
-                          fontSize: "13px",
-                          padding: "4px 8px",
-                          minWidth: "auto",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
                         }}
-                        onClick={() => navigateToShowAlldModule(data.moduleId)}
-                      />
-                      {[37, 36, 34, 17, 1000].includes(data.moduleId) && (
-                        <CustomButton
-                          title={"Add"}
-                          startIcon={<AddIcon />}
-                          size={"small"}
-                          sx={{
-                            fontSize: "13px",
-                            padding: "4px 8px",
-                            minWidth: "auto",
-                          }}
-                          onClick={() => handleNavToAdd(data.moduleId)}
-                        />
-                      )}
-                    </Stack>
-                  </Stack>
-                  <Divider sx={{ width: "100%", height: "10px" }} />
-                  {data.moduleId === 34 &&
-                    workSpecsDataMenu
-                      .filter(
-                        (eachWorkData) =>
-                          eachWorkData.customEntitySpecId ===
-                          data.customEntitySpecId
-                      )
-                      .map((eachWorkData) => (
-                        <Stack sx={{ mt: 1 }} key={eachWorkData.id}>
-                          <Stack
-                            sx={{
-                              flexDirection: "row",
-                              gap: 2,
-                              flexWrap: "wrap",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <Stack
-                              sx={{
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                                justifyContent: "space-between",
-                                gap: 1,
-                                width: "100%",
-                                padding: 1,
-                                borderRadius: "4px",
-                              }}
-                            >
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  You need to do:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.todo.personal === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.todo.personal}
-                                </Typography>
-                              </Stack>
-
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  Team needs to do:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.todo.team === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.todo.team}
-                                </Typography>
-                              </Stack>
-
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  Invitations need your action:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.invitations
-                                        .personal === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.invitations.personal}
-                                </Typography>
-                              </Stack>
-
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  Team has invitations to process:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.invitations.team === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.invitations.team}
-                                </Typography>
-                              </Stack>
-
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  No progress tasks:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.noProgress === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.noProgress}
-                                </Typography>
-                              </Stack>
-                            </Stack>
-                          </Stack>
-                        </Stack>
-                      ))}
-                  {data.moduleId === 12 && (
-                    <Stack
-                      sx={{
-                        width: "100%",
-                        flexDirection: { sm: "row", xs: "column" },
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                        gap: 1,
-                        mt: 1,
-                      }}
-                    >
-                      {["Total count", "Total viewed", "Total unviewed"].map(
-                        (label, index) => (
-                          <Stack
-                            key={index}
-                            sx={{
-                              border: "1px solid #EEEEEE",
-                              flexGrow: { sm: 1, xs: 12 },
-                              width: { xs: "250px", sm: "auto" },
-
-                              textAlign: "center",
-                              borderRadius: "5px",
-                              py: 4,
-                              cursor: "pointer",
-                            }}
-                            onClick={() =>
-                              handleNavigationForDatKnoweledgeBaseView(index)
-                            }
-                          >
-                            <Typography
-                              sx={{
-                                fontSize: { sm: "14px", xs: "12px" },
-                              }}
-                            >
-                              {label}
-                            </Typography>
-                          </Stack>
-                        )
-                      )}
-                    </Stack>
-                  )}
-
-                  {data.moduleId === 1000 &&
-                    [
-                      {
-                        id: "pending your manager approval",
-                        count: 0,
-                        view: 1,
-                      },
-                      { id: "awaiting your approval", count: 1, view: 2 },
-                      { id: "awaiting team approval", count: 2, view: 3 },
-                    ].map((eachWorkData, i) => (
-                      <Stack sx={{ mt: 1 }} key={i}>
+                      >
                         <Stack
                           sx={{
                             flexDirection: "row",
-                            gap: 2,
-                            flexWrap: "wrap",
-                            justifyContent: "space-between",
+                            gap: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
                         >
-                          <Stack
+                          {[12, 15, 17, 9, 36, 37].includes(data.moduleId) && (
+                            <React.Fragment>
+                              {data.moduleId === 37 ? (
+                                <Box
+                                  component={"img"}
+                                  src={FormsIcon}
+                                  alt="Forms Icon"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : data.moduleId === 9 ? (
+                                <Box
+                                  component={"img"}
+                                  src={BlueCustomersIcon}
+                                  alt="Customers Icon"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : data.moduleId === 12 ? (
+                                <Box
+                                  component={"img"}
+                                  src={KnowledgeBaseIcon}
+                                  alt="Knowledge Base Icon"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : data.moduleId === 36 ? (
+                                <Box
+                                  component={"img"}
+                                  src={WorkActionFormIcon}
+                                  alt="worksssssss"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : data.moduleId === 15 ? (
+                                <Box
+                                  component={"img"}
+                                  src={leavesIcon}
+                                  alt="leaves Base Icon"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : data.moduleId === 17 ? (
+                                <Box
+                                  component={"img"}
+                                  src={dayPlan}
+                                  alt="dayplan Base Icon"
+                                  style={{ width: "24px", height: "24px" }}
+                                />
+                              ) : (
+                                <HelpOutlineIcon />
+                              )}
+
+                              <Typography
+                                sx={{
+                                  fontWeight: { sm: 500, xs: 500 },
+                                  fontSize: { sm: "14px", xs: "10px" },
+                                }}
+                              >
+                                {data.moduleName}
+                              </Typography>
+                            </React.Fragment>
+                          )}
+                        </Stack>
+
+                        <Stack
+                          sx={{
+                            flexDirection: { sm: "row", xs: "column" },
+                            gap: { sm: 1, xs: 0.5 },
+                            fontSize: "13px",
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            size="small"
                             sx={{
-                              flexDirection: "column",
-                              alignItems: "flex-start",
-                              justifyContent: "space-between",
-                              gap: 1,
-                              width: "100%",
-                              px: 1,
-                              py: 0.4,
-                              borderRadius: "4px",
+                              borderRadius: "5px",
+                              fontSize: { sm: "13px", xs: "8px" },
+                              boxShadow: "none",
                             }}
+                            onClick={() =>
+                              navigateToShowAlldModule(data.moduleId)
+                            }
                           >
-                            <Stack
-                              sx={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                width: "100%",
-                                cursor: "pointer",
-                              }}
-                              onClick={() =>
-                                navToLeaveModule(eachWorkData.view)
-                              }
-                            >
-                              <Typography
-                                sx={{
-                                  flexGrow: 1,
-                                  fontSize: { sm: "14px", xs: "12px" },
-                                }}
-                              >
-                                {eachWorkData.id}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  color:
-                                    eachWorkData.count === 0 ? "green" : "red",
-                                }}
-                              >
-                                {eachWorkData.count}
-                              </Typography>
-                            </Stack>
-                          </Stack>
+                            Show all
+                          </Button>
+                          {[37, 36, 15].includes(data.moduleId) && (
+                            <CustomButton
+                              title={"Add"}
+                              startIcon={<AddIcon />}
+                              size={"small"}
+                              onClick={() => handleNavToAdd(data.moduleId)}
+                            />
+                          )}
                         </Stack>
                       </Stack>
-                    ))}
-                  {data.moduleId === 1001 && (
-                    <Stack>
-                      <Stack
-                        sx={{
-                          width: "100%",
-                          flexDirection: { sm: "row", xs: "column" },
-                          alignItems: "center",
-                          justifyContent: "space-evenly",
-                          gap: 1,
-                          mt: 1,
-                        }}
-                      >
-                        {DayPlanModuleMenu.slice(0, 3).map((label, index) => (
-                          <>
-                            <Stack
-                              key={index}
-                              sx={{
-                                border: "1px solid #EEEEEE",
-                                flexGrow: { sm: 1, xs: 12 },
-                                width: { xs: "250px", sm: "auto" },
+                      <Divider sx={{ width: "100%", height: "10px" }} />
+                      {[9, 12, 15, 17, 37, 36].includes(data.moduleId) && (
+                        <>
+                          {data.moduleId === 9 && (
+                            <Stack>
+                              <Stack
+                                direction="row"
+                                sx={{
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  mt: 1,
+                                }}
+                              >
+                                {CustomerModuleMenu.slice(0, 3).map(
+                                  (label, index) => (
+                                    <React.Fragment key={index}>
+                                      <Stack
+                                        sx={{
+                                          flexGrow: { sm: 1, xs: 12 },
+                                          width: "100px",
+                                          textAlign: "center",
 
-                                textAlign: "center",
-                                borderRadius: "5px",
-                                py: 4,
-                                cursor: "pointer",
-                              }}
-                              onClick={() => handleDyaPlan(label)}
-                            >
-                              <Typography
-                                sx={{
-                                  color: label.count > 0 ? "green" : "red",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {label.count}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  fontSize: { sm: "14px", xs: "12px" },
-                                }}
-                              >
-                                {label.title}
-                              </Typography>
+                                          py: 1.3,
+                                          cursor: "pointer",
+                                          transition: "all 0.3s ease",
+                                          "&:hover": {
+                                            boxShadow:
+                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                            transform: "scale(1.01)",
+                                          },
+                                        }}
+                                        onClick={() =>
+                                          handlenavigationToCustomerModules(
+                                            label.id
+                                          )
+                                        }
+                                      >
+                                        <Typography
+                                          sx={{
+                                            color:
+                                              label.count > 0 ? "green" : "red",
+                                            fontWeight: "bold",
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.count}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.title}
+                                        </Typography>
+                                      </Stack>
+                                      {index !== 2 && (
+                                        <Divider
+                                          orientation="vertical"
+                                          variant="middle"
+                                          flexItem
+                                          sx={{
+                                            alignSelf: "center",
+                                            height: { sm: "55px", xs: "40px" },
+                                            borderColor: "#e0e0e0",
+                                          }}
+                                        />
+                                      )}
+                                    </React.Fragment>
+                                  )
+                                )}
+                              </Stack>
+
+                              <Stack sx={{ mt: 1 }}>
+                                {CustomerModuleMenu.slice(3, 9).map(
+                                  (label, index) => (
+                                    <>
+                                      <Stack
+                                        key={index}
+                                        sx={{
+                                          cursor: "pointer",
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                          px: { sm: 1, xs: 0.4 },
+                                          py: 0.5,
+                                        }}
+                                        onClick={() =>
+                                          handlenavigationToCustomerModules(
+                                            label.id
+                                          )
+                                        }
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "13px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.title}
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                label.count > 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "12px",
+                                              },
+                                            }}
+                                          >
+                                            {label.count}
+                                          </Typography>
+                                          <>
+                                            <NavigateNextIcon
+                                              sx={{
+                                                color:
+                                                  label.count > 0
+                                                    ? "green"
+                                                    : "red",
+                                                fontSize: {
+                                                  sm: "14px",
+                                                  xs: "12px",
+                                                },
+                                              }}
+                                            />
+                                          </>
+                                        </Stack>
+                                      </Stack>
+                                    </>
+                                  )
+                                )}
+                              </Stack>
                             </Stack>
-                          </>
-                        ))}
-                      </Stack>
-                      <Stack>
-                        {DayPlanModuleMenu.slice(3, 9).map((label, index) => (
-                          <>
+                          )}
+                          {data.moduleId === 12 && (
                             <Stack
-                              key={index}
                               sx={{
-                                width: { xs: "250px", sm: "auto" },
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                py: 0.9,
+                                width: "100%",
                                 flexDirection: "row",
-                                justifyContent: "space-between",
-                                px: 1,
+                                alignItems: "center",
+                                justifyContent: "space-evenly",
+                                gap: 0.6,
+                                mt: 1,
                               }}
-                              onClick={() => handleDyaPlan(label)}
                             >
-                              <Typography
-                                sx={{
-                                  fontSize: { sm: "14px", xs: "12px" },
-                                }}
-                              >
-                                {label.title}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  color: label.count > 0 ? "green" : "red",
-                                }}
-                              >
-                                {label.count}
-                              </Typography>
+                              {[
+                                "Total count",
+                                "Total viewed",
+                                "Total unviewed",
+                              ].map((label, index) => (
+                                <>
+                                  <Stack
+                                    key={index}
+                                    sx={{
+                                      flexGrow: { sm: 1, xs: 12 },
+                                      textAlign: "center",
+                                      borderRadius: "5px",
+                                      py: 2,
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                        transform: "scale(1.01)",
+                                      },
+                                    }}
+                                    onClick={() =>
+                                      handleNavigationForDatKnoweledgeBaseView(
+                                        index
+                                      )
+                                    }
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontSize: { sm: "14px", xs: "10px" },
+                                      }}
+                                    >
+                                      {label}
+                                    </Typography>
+                                  </Stack>
+                                  {index !== 2 && (
+                                    <Divider
+                                      orientation="vertical"
+                                      variant="middle"
+                                      flexItem
+                                      sx={{
+                                        alignSelf: "center",
+                                        height: { sm: "55px", xs: "40px" },
+                                        borderColor: "#e0e0e0",
+                                      }}
+                                    />
+                                  )}
+                                </>
+                              ))}
                             </Stack>
-                          </>
-                        ))}
-                      </Stack>
-                    </Stack>
-                  )}
+                          )}
+                          {data.moduleId === 15 &&
+                            [
+                              {
+                                title: "pending your manager approval",
+                                count: 0,
+                                view: 1,
+                              },
+                              {
+                                title: "awaiting your approval",
+                                count: 1,
+                                view: 2,
+                              },
+                              {
+                                title: "awaiting team approval",
+                                count: 2,
+                                view: 3,
+                              },
+                            ].map((leaveData, i) => {
+                              const chipColors = [
+                                "#FEF8D6",
+                                "#EFFCFF",
+                                "#F6F5FD",
+                              ]; // Add more if needed
+                              const chipTextColors = [
+                                "#DEB883",
+                                "#3084A9",
+                                "#5663C4",
+                              ];
+                              return (
+                                <Stack sx={{ mt: 1 }} key={i}>
+                                  <Stack
+                                    sx={{
+                                      flexDirection: "row",
+                                      gap: 2,
+                                      flexWrap: "wrap",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <Stack
+                                      sx={{
+                                        flexDirection: "column",
+                                        alignItems: "flex-start",
+                                        justifyContent: "space-between",
+                                        gap: 1,
+                                        width: "100%",
+                                        px: 1,
 
-                  {data.moduleId === 9 && (
-                    <Stack>
-                      <Stack
-                        sx={{
-                          width: "100%",
-                          flexDirection: { sm: "row", xs: "column" },
-                          alignItems: "center",
-                          justifyContent: "space-evenly",
-                          gap: 1,
-                          mt: 1,
-                        }}
-                      >
-                        {CustomerModuleMenu.slice(0, 3).map((label, index) => (
-                          <>
-                            <Stack
-                              key={index}
-                              sx={{
-                                border: "1px solid #EEEEEE",
-                                flexGrow: { sm: 1, xs: 12 },
-                                width: { xs: "250px", sm: "auto" },
+                                        borderRadius: "4px",
+                                      }}
+                                    >
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                          navToLeaveModule(leaveData.view)
+                                        }
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                            textTransform: "capitalize",
+                                            gap: 1,
+                                          }}
+                                        >
+                                          <Typography component={"span"}>
+                                            <Chip
+                                              label={
+                                                leaveData.title.split(" ")[0]
+                                              }
+                                              size="small"
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "12px",
+                                                  xs: "9px",
+                                                },
+                                                backgroundColor:
+                                                  chipColors[
+                                                    i % chipColors.length
+                                                  ],
+                                                color:
+                                                  chipTextColors[
+                                                    i % chipTextColors.length
+                                                  ],
+                                                textTransform: "capitalize",
+                                                mr: 0.5,
+                                              }}
+                                            />
+                                          </Typography>
+                                          {leaveData.title
+                                            .split(" ")
+                                            .slice(1)
+                                            .join(" ")}
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                leaveData.count === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {leaveData.count}
+                                          </Typography>
+                                          <NavigateNextIcon
+                                            sx={{
+                                              color:
+                                                leaveData.count === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          />
+                                        </Stack>
+                                      </Stack>
+                                    </Stack>
+                                  </Stack>
+                                </Stack>
+                              );
+                            })}
+                          {data.moduleId === 17 && (
+                            <Stack>
+                              <Stack
+                                sx={{
+                                  width: "100%",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "space-evenly",
+                                  gap: 1,
+                                  mt: 1,
+                                }}
+                              >
+                                {DayPlanModuleMenu.slice(0, 3).map(
+                                  (label, index) => (
+                                    <>
+                                      <Stack
+                                        key={index}
+                                        sx={{
+                                          //  border: "1px solid #EEEEEE",
+                                          flexGrow: { sm: 1, xs: 12 },
+                                          width: { xs: "250px", sm: "auto" },
+                                          textAlign: "center",
+                                          borderRadius: "5px",
+                                          py: 2,
+                                          cursor: "pointer",
+                                          transition: "all 0.3s ease",
+                                          "&:hover": {
+                                            boxShadow:
+                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                            transform: "scale(1.01)",
+                                          },
+                                        }}
+                                        onClick={() => handleDyaPlan(label)}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            color:
+                                              label.count > 0 ? "green" : "red",
+                                            fontWeight: "bold",
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.count}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.title}
+                                        </Typography>
+                                      </Stack>
+                                      {index !== 2 && (
+                                        <Divider
+                                          orientation="vertical"
+                                          variant="middle"
+                                          flexItem
+                                          sx={{
+                                            alignSelf: "center",
+                                            height: { sm: "55px", xs: "40px" },
+                                            borderColor: "#e0e0e0",
+                                          }}
+                                        />
+                                      )}
+                                    </>
+                                  )
+                                )}
+                              </Stack>
+                              <Stack sx={{ mt: 1 }}>
+                                {DayPlanModuleMenu.slice(3, 9).map(
+                                  (label, index) => (
+                                    <>
+                                      <Stack
+                                        key={index}
+                                        sx={{
+                                          borderRadius: "5px",
+                                          cursor: "pointer",
+                                          py: 0.9,
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                        }}
+                                        onClick={() => handleDyaPlan(label)}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          {label.title}
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                label.count > 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {label.count}
+                                          </Typography>
+                                          <NavigateNextIcon
+                                            sx={{
+                                              color:
+                                                label.count > 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          />
+                                        </Stack>
+                                      </Stack>
+                                    </>
+                                  )
+                                )}
+                              </Stack>
+                            </Stack>
+                          )}
+                          {/* {data.moduleId === 37 ? (
+                          
+                          data.formType === 2 &&
+                          data.formSpecPermission === true ? (
+                            data.formAddPermission ? (
+                              <Typography sx={{ color: "green" }}>
+                                {data.moduleName}
+                              </Typography>
+                            ) : (
+                              <Typography sx={{ color: "yellow" }}>
+                                {data.moduleName}
+                              </Typography>
+                            )
+                          ) : data.employeeAccessSettings ? (
+                            <Typography sx={{ color: "pink" }}>
+                              {data.moduleName}
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ color: "blue" }}>
+                              {data.moduleName}
+                            </Typography>
+                          )
+                        ) : null} */}
+                          {/* {data.moduleId === 37 ? (
+                          
+                            data.formType === 1 &&
+                            data.formSpecPermission === true ? (
+                              data.formAddPermission ? (
+                                <Typography sx={{ color: "green" }}>
+                                  {data.moduleName}
+                                </Typography>
+                              ) : (
+                                <Typography sx={{ color: "yellow" }}>
+                                  {data.moduleName}
+                                </Typography>
+                              )
+                            ) : data.employeeAccessSettings ? (
+                              <Typography sx={{ color: "pink" }}>
+                                {data.moduleName}
+                              </Typography>
+                            ) : (
+                              <Typography sx={{ color: "blue" }}>
+                                {data.moduleName}
+                              </Typography>
+                            )
+                          ) : null} */}
+                          {/* If moduleId is not 37, it renders nothing */}
+                          {/* {data.moduleId === 37 &&
+                          data.formType === 1 &&
+                          data.formSpecPermission === true ? (
+                            data.formAddPermission ? (
+                              <Typography>{data.moduleName}</Typography>
+                            ) : (
+                              <Typography>{data.moduleName}</Typography>
+                            )
+                          ) : data.employeeAccessSettings ? (
+                            <Typography sx={{ color: "pink" }}>
+                              {data.moduleName}
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ color: "blue" }}>
+                              {" "}
+                              {data.moduleName}
+                            </Typography>
+                          )} */}
+                          {data.moduleId === 37 &&
+                            workSpecsDataMenu
+                              .filter(
+                                (eachWorkData) =>
+                                  eachWorkData.customEntitySpecId ===
+                                  data.customEntitySpecId
+                              )
+                              .map((eachWorkData) => (
+                                <Stack sx={{ mt: 1 }} key={eachWorkData.id}>
+                                  <Stack
+                                    sx={{
+                                      flexDirection: "row",
+                                      gap: 2,
+                                      flexWrap: "wrap",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <Stack
+                                      sx={{
+                                        flexDirection: "column",
+                                        alignItems: "flex-start",
+                                        justifyContent: "space-between",
+                                        width: "100%",
+                                        px: { sm: 2, xs: 1 },
+                                        py: 0.5,
+                                        gap: 0.5,
+                                        borderRadius: "4px",
+                                      }}
+                                    >
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            flexGrow: 1,
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          You need to do:
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks.todo
+                                                  .personal === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {eachWorkData.tasks.todo.personal}
+                                          </Typography>
+                                          <NavigateNextIcon
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks.todo
+                                                  .personal === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          />
+                                        </Stack>
+                                      </Stack>
 
-                                textAlign: "center",
-                                borderRadius: "5px",
-                                py: 3,
-                                cursor: "pointer",
-                              }}
-                              onClick={() =>
-                                handlenavigationToCustomerModules(label.id)
-                              }
-                            >
-                              <Typography
-                                sx={{
-                                  color: label.count > 0 ? "green" : "red",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {label.count}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  fontSize: { sm: "14px", xs: "12px" },
-                                }}
-                              >
-                                {label.title}
-                              </Typography>
-                            </Stack>
-                          </>
-                        ))}
-                      </Stack>
-                      <Stack>
-                        {CustomerModuleMenu.slice(3, 9).map((label, index) => (
-                          <>
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            flexGrow: 1,
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          Team needs to do:
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks.todo.team ===
+                                                0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {eachWorkData.tasks.todo.team}
+                                          </Typography>
+                                          <NavigateNextIcon
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks.todo.team ===
+                                                0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          />
+                                        </Stack>
+                                      </Stack>
+
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: {
+                                              sm: "14px",
+                                              xs: "10px",
+                                            },
+                                          }}
+                                        >
+                                          No progress tasks:
+                                        </Typography>
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks
+                                                  .noProgress === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {eachWorkData.tasks.noProgress}
+                                          </Typography>
+                                          <NavigateNextIcon
+                                            sx={{
+                                              color:
+                                                eachWorkData.tasks
+                                                  .noProgress === 0
+                                                  ? "green"
+                                                  : "red",
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          />
+                                        </Stack>
+                                      </Stack>
+                                    </Stack>
+                                  </Stack>
+                                </Stack>
+                              ))}
+                          {data.moduleId === 36 && (
                             <Stack
-                              key={index}
+                              direction="row"
                               sx={{
-                                cursor: "pointer",
-                                py: 0.8,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                px: 1,
-                              }}
-                              onClick={() =>
-                                handlenavigationToCustomerModules(label.id)
-                              }
-                            >
-                              <Typography
-                                sx={{
-                                  fontSize: { sm: "14px", xs: "12px" },
-                                }}
-                              >
-                                {label.title}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  color: label.count > 0 ? "green" : "red",
-                                }}
-                              >
-                                {label.count}
-                              </Typography>
-                            </Stack>
-                          </>
-                        ))}
-                      </Stack>
-                    </Stack>
-                  )}
-                  {data.moduleId === 37 &&
-                    workSpecsDataMenu
-                      .filter(
-                        (eachWorkData) =>
-                          eachWorkData.customEntitySpecId ===
-                          data.customEntitySpecId
-                      )
-                      .map((eachWorkData) => (
-                        <Stack sx={{ mt: 1 }} key={eachWorkData.id}>
-                          <Stack
-                            sx={{
-                              flexDirection: "row",
-                              gap: 2,
-                              flexWrap: "wrap",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <Stack
-                              sx={{
-                                flexDirection: "column",
-                                alignItems: "flex-start",
-                                justifyContent: "space-between",
+                                width: "100%",
+                                alignItems: "center",
+                                justifyContent: "space-evenly",
                                 gap: 1,
-                                width: "100%",
-                                padding: 1,
-                                borderRadius: "4px",
+                                mt: 1,
                               }}
                             >
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  You need to do:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.todo.personal === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.todo.personal}
-                                </Typography>
-                              </Stack>
+                              {approvalCards.map((card, index) => (
+                                <React.Fragment key={index}>
+                                  <Stack
+                                    sx={{
+                                      // border: "1px solid #EEEEEE",
+                                      flexGrow: { sm: 1, xs: 12 },
+                                      width: { xs: "250px", sm: "auto" },
+                                      textAlign: "center",
+                                      borderRadius: "5px",
+                                      py: 2,
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                        transform: "scale(1.01)",
+                                      },
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontSize: { sm: "14px", xs: "10px" },
+                                      }}
+                                    >
+                                      {card.count}
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontSize: { sm: "14px", xs: "10px" },
+                                      }}
+                                    >
+                                      {card.label}
+                                    </Typography>
+                                  </Stack>
 
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    flexGrow: 1,
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  Team needs to do:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.todo.team === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.todo.team}
-                                </Typography>
-                              </Stack>
-
-                              <Stack
-                                sx={{
-                                  flexDirection: "row",
-                                  justifyContent: "space-between",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    fontSize: { sm: "14px", xs: "12px" },
-                                  }}
-                                >
-                                  No progress tasks:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    color:
-                                      eachWorkData.tasks.noProgress === 0
-                                        ? "green"
-                                        : "red",
-                                  }}
-                                >
-                                  {eachWorkData.tasks.noProgress}
-                                </Typography>
-                              </Stack>
+                                  {index !== approvalCards.length - 1 && (
+                                    <Divider
+                                      orientation="vertical"
+                                      flexItem
+                                      sx={{
+                                        alignSelf: "center",
+                                        height: "50px",
+                                        borderColor: "#e0e0e0",
+                                      }}
+                                    />
+                                  )}
+                                </React.Fragment>
+                              ))}
                             </Stack>
-                          </Stack>
-                        </Stack>
-                      ))}
-                  {data.moduleId === 17 && (
-                    <Stack>
-                      <Stack
-                        sx={{
-                          width: "100%",
-                          flexDirection: { sm: "row", xs: "column" },
-                          alignItems: "center",
-                          justifyContent: "space-evenly",
-                          gap: 1,
-                          mt: 1,
-                        }}
-                      >
-                        <Stack
-                          key={index}
-                          sx={{
-                            border: "1px solid #EEEEEE",
-                            flexGrow: { sm: 1, xs: 12 },
-                            width: { xs: "250px", sm: "auto" },
-
-                            textAlign: "center",
-                            borderRadius: "5px",
-                            py: 2,
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                            }}
-                          >
-                            0
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: { sm: "14px", xs: "12px" },
-                            }}
-                          >
-                            filled today
-                          </Typography>
-                        </Stack>
-                        <Stack
-                          key={index}
-                          sx={{
-                            border: "1px solid #EEEEEE",
-                            flexGrow: { sm: 1, xs: 12 },
-                            width: { xs: "250px", sm: "auto" },
-
-                            textAlign: "center",
-                            borderRadius: "5px",
-                            py: 2,
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                            }}
-                          >
-                            0
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: { sm: "14px", xs: "12px" },
-                            }}
-                          >
-                            filled Yestarday
-                          </Typography>
-                        </Stack>
-                      </Stack>
+                          )}{" "}
+                        </>
+                      )}
                     </Stack>
-                  )}
-                  {data.moduleId === 36 && (
-                    <Stack>
-                      <Stack
-                        sx={{
-                          width: "100%",
-                          flexDirection: { sm: "row", xs: "column" },
-                          alignItems: "center",
-                          justifyContent: "space-evenly",
-                          gap: 1,
-                          mt: 1,
-                        }}
-                      >
-                        <Stack
-                          key={index}
-                          sx={{
-                            border: "1px solid #EEEEEE",
-                            flexGrow: { sm: 1, xs: 12 },
-                            width: { xs: "250px", sm: "auto" },
-
-                            textAlign: "center",
-                            borderRadius: "5px",
-                            py: 2,
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                            }}
-                          >
-                            0
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: { sm: "14px", xs: "12px" },
-                            }}
-                          >
-                            Pending your manager approvals
-                          </Typography>
-                        </Stack>
-                        <Stack
-                          key={index}
-                          sx={{
-                            border: "1px solid #EEEEEE",
-                            flexGrow: { sm: 1, xs: 12 },
-                            width: { xs: "250px", sm: "auto" },
-
-                            textAlign: "center",
-                            borderRadius: "5px",
-                            py: 2,
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                            }}
-                          >
-                            0
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: { sm: "14px", xs: "12px" },
-                            }}
-                          >
-                            Awaiting your approval
-                          </Typography>
-                        </Stack>
-                        <Stack
-                          key={index}
-                          sx={{
-                            border: "1px solid #EEEEEE",
-                            flexGrow: { sm: 1, xs: 12 },
-                            width: { xs: "250px", sm: "auto" },
-
-                            textAlign: "center",
-                            borderRadius: "5px",
-                            py: 2,
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                            }}
-                          >
-                            0
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: { sm: "14px", xs: "12px" },
-                            }}
-                          >
-                            Awaiting team approval
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Stack>
-                  )}
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Stack>
+              )}
+            </>
           ))
         ) : (
           <Typography sx={{ textAlign: "center" }}>No data found</Typography>

@@ -1,17 +1,15 @@
-import { BrowserRouter } from "react-router-dom";
-import "./App.css";
+ import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
+import SignIn from "./components/credentials/login/SignIn";
 import AllRoutes from "./components/navbar/AllRoutes";
 import MenuTitleUpdater from "./components/navbar/MenuTitleUpdater";
 import ScrollToTop from "./components/navbar/ScrollToTop";
 import TopBar from "./components/navbar/TopBar";
-import SignIn from "./components/credentials/login/SignIn";
-import { useState, useEffect } from "react";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if the user is already logged in
     const loggedIn = localStorage.getItem("isAuthenticated");
     if (loggedIn === "true") {
       setIsAuthenticated(true);
@@ -22,6 +20,10 @@ function App() {
     localStorage.setItem("isAuthenticated", "true");
     setIsAuthenticated(true);
   };
+  const handleLogout = () => {
+    localStorage.setItem("isAuthenticated","false");
+    setIsAuthenticated(false);
+  };
 
   return (
     <BrowserRouter>
@@ -29,11 +31,13 @@ function App() {
       <MenuTitleUpdater />
 
       {!isAuthenticated ? (
-        <SignIn onLogin={handleLogin} />
+        <Routes>
+          <Route path="/" element={<SignIn  handleLogin={handleLogin} onLogout={handleLogout}/> } />
+        </Routes>
       ) : (
         <>
-          <TopBar />
-          <AllRoutes />
+          <TopBar  onLogout={handleLogout}/>
+          <AllRoutes  />
         </>
       )}
     </BrowserRouter>
