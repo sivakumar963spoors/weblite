@@ -95,7 +95,7 @@ const AllApprovals = () => {
   const handleNavToFormApprovalView = (formId) => {
     if (!formId) return;
     var menu = "form approvals";
-    dispatch(toggleMenuTitle(menu));
+  
     if(!isDragging){
 
       nav(`/status/view/${formId}`);

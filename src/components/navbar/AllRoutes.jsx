@@ -28,6 +28,21 @@ import ChangePassword from "../password/ChangePassword";
 import WorkDetailView from "../works/WorkDetailView";
 import WorkspecActionNew from "../works/WorkspecActionNew";
 import WorkSpecByTeam from "../works/WorkSpecByTeam";
+import PageNotFound from "../PageNotFound";
+import AllReports from "../reports/AllReports";
+import EmployeeReport from "../reports/EmployeeReport";
+import EmpReportDetails from "../reports/EmpReportDetails";
+import DistanceTravelReport from "../reports/distancetravelReport/DistanceTravelReport";
+import DistanceReportDetails from "../reports/distancetravelReport/DistanceReportDetails";
+import EmpWiseActivityreport from "../reports/employeeactiviwise/EmpWiseActivityreport";
+import EmpWiseActivityDetails from "../reports/employeeactiviwise/EmpWiseActivityDetails";
+import DayPlanReport from "../reports/dayplanreport/DayPlanReport";
+import DayPlanDetails from "../reports/dayplanreport/DayPlanDetails";
+import SignInSignOutReport from "../reports/signinsignoutreport/SignInSignOutReport";
+import SignInReportDetails from "../reports/signinsignoutreport/SignInReportDetails";
+import AdvanceActivityReport from "../reports/advActivity/AdvanceActivityReport";
+import PlanVsActualDetails from "../reports/planVsActual/PlanVsActualDetails";
+import PlanVsActualReport from "../reports/planVsActual/PlanVsActualReport";
 const AllRoutes = () => {
   return (
     <>
@@ -51,7 +66,7 @@ const AllRoutes = () => {
           path="/customer/viewactivity/forms"
           element={<ViewDeatilsActivity />}
         />
-        <Route path="/getForm" element={<AllFormDataTypes />} />
+        <Route path="/add/form/:id" element={<AllFormDataTypes />} />
         <Route path="/view/leaves/new" element={<AllLeavesDisplay />} />
         <Route path="/view/leaves" element={<AddedLeavesDisplay />} />
         <Route path="/leave/my/create" element={<LeaveApply />} />
@@ -68,6 +83,7 @@ const AllRoutes = () => {
         <Route path="/view/forms/new" element={<ViewFormNew />} />
         <Route path="/workSpec/actions/new" element={<WorkspecActionNew />} />
         <Route path="/work/details/view" element={<WorkDetailView />} />
+        <Route path="/mobile/reports/showAllReports" element={<AllReports />} />
         <Route
           path="/workSpec/actionable/details/byTeam"
           element={<WorkSpecByTeam />}
@@ -76,6 +92,59 @@ const AllRoutes = () => {
           path="/work/details/view/:workspecid"
           element={<WorkDetailView />}
         />
+        <Route
+          path="/mobile/reports/:empId/:reportId"
+          element={<EmployeeReport />}
+        />
+        <Route
+          path="/mobile/reports/empActivityReport"
+          element={<EmpReportDetails />}
+        />
+        <Route
+          path="/mobile/report/user/trackDistanceReport"
+          element={<DistanceTravelReport />}
+        />
+        <Route
+          path="/mobile/report/distanceTraveledToday/:empId"
+          element={<DistanceReportDetails />}
+        />
+        <Route
+          path="/mobile/report/employee/activity/wise/summary/:empId/:reportId"
+          element={<EmpWiseActivityreport />}
+        />
+        <Route
+          path="/service/employee/activity/wise/summary"
+          element={<EmpWiseActivityDetails />}
+        />
+        <Route
+          path="/service/report/land/dayPlan/:empId/:reportId"
+          element={<DayPlanReport />}
+        />
+        <Route
+          path="/service/send/dayPlanReport/xls"
+          element={<DayPlanDetails />}
+        />
+        <Route
+          path="/report/employee/signin/signout/:empId/:reportId"
+          element={<SignInSignOutReport />}
+        />
+        <Route
+          path="/service/report/employee/signin/signout/details/:empId"
+          element={<SignInReportDetails />}
+        />
+        <Route
+          path="/service/custom/activityReport/:empId/:reportId"
+          element={<AdvanceActivityReport />}
+        />
+        <Route
+          path="/extraService/get/dayplan/planned/actual/visits/report/:empId/:reportId"
+          element={<PlanVsActualReport />}
+        />
+        <Route
+          path="extraService/generate/planned/actual/visits"
+          element={<PlanVsActualDetails />}
+        />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

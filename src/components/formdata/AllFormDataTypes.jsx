@@ -36,7 +36,7 @@ import CustomAutocomplete from "../common/ReusableAutoComplete";
 import ReusableTextfield from "../common/ReusableTextfield";
 import SlideUpModal from "../common/ModalComponent";
 import ReusableModal from "../common/ModalComponent";
-const customer_type = ["ba", "venkatesh"];
+export const customer_type = ["ba", "venkatesh"];
 
 const modules = {
   toolbar: {
@@ -855,7 +855,7 @@ const AllFormDataTypes = () => {
                         </Stack>
                       </ReusableModal>{" "}
                       <Stack>
-                        <Typography>multi pick customer</Typography>handleChangeRowsPerPage
+                        <Typography>multi pick customer</Typography>
 
                         <TextField
                           multiline
@@ -984,10 +984,11 @@ const AllFormDataTypes = () => {
           },
         }}
       >
-        <Button sx={{}} variant="outlined">
+        <Button sx={{fontSize:{xs:'10px', sm:'14px'}}} variant="outlined">
           save
         </Button>
-        <Button sx={{ mr: 2 }}>save and new</Button>
+        <Button sx={{ mr: 2 ,fontSize:{xs:'10px', sm:'14px'}
+      }}>save and new</Button>
       </Stack>
     </>
   );

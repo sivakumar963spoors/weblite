@@ -21,9 +21,7 @@ const ReusableCarousalDayPlan = ({ items }) => {
   
   const handleMenuItemClick = (menu) => {
     if (!menu) return;
-    dispatch(toggleMenuTitleDayPlan(menu.title));
-    setActiveTitle(menu.title);
-    localStorage.setItem("activeMenuTitle", menu.title); 
+   
     switch (menu.id) {
       case 1:
         navigate(`/view/all/customers?viewType=4&customerViewType=1&customerView=2`);

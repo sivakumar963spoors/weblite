@@ -1,6 +1,13 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CloseIcon from '@mui/icons-material/Close';
-import { Avatar, Button, Dialog, Stack, TextField, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -57,8 +64,6 @@ const AllLeaves_display = () => {
     };
   }, []);
   const handleNavigateToAddLeave = () => {
-    var menus = "Add Leave";
-    dispatch(toggleMenuTitle(menus));
     navigate("/leave/my/create");
   };
   const handleIsReject = () => {
@@ -69,35 +74,35 @@ const AllLeaves_display = () => {
   };
   const handlenavigatToLeaveDetails = (entityid) => {
     var menus = "Leave Details";
-    dispatch(toggleMenuTitle(menus));
+
     navigate(`/leave/view/${entityid}`);
   };
 
-//   const openModalPopUp = ( str,leavedetails) => {
-//     alert('hii')
-//     if (!leavedetails || !Array.isArray(leavedetails.leaves)) {
-//       console.error("leavedetails or leaves array is undefined:", leavedetails);
-//       return;
-//     }
-//      setLayout(str);
-// console.log(leavedetails.pendingLeaves)
-//     leavedetails?.leaves.map((each, i) =>
-//       setToggleFormData({
-//         id: each?.empId,
-//         form: each?.formDateTime,
-//         to: each?.toDateTime,
-//         days: each?.noOfDays,
-//         employeeComment: each?.employeeNote,
-//         name: each?.empName,
-//       })
-      
-//     );
-//     alert(toogleFormData.id)
-//   };
+  //   const openModalPopUp = ( str,leavedetails) => {
+  //     alert('hii')
+  //     if (!leavedetails || !Array.isArray(leavedetails.leaves)) {
+  //       console.error("leavedetails or leaves array is undefined:", leavedetails);
+  //       return;
+  //     }
+  //      setLayout(str);
+  // console.log(leavedetails.pendingLeaves)
+  //     leavedetails?.leaves.map((each, i) =>
+  //       setToggleFormData({
+  //         id: each?.empId,
+  //         form: each?.formDateTime,
+  //         to: each?.toDateTime,
+  //         days: each?.noOfDays,
+  //         employeeComment: each?.employeeNote,
+  //         name: each?.empName,
+  //       })
+
+  //     );
+  //     alert(toogleFormData.id)
+  //   };
   const popupclose = () => {
     setIsApproveClick(false);
     setIsRejectClick(false);
-    setOpen(false)
+    setOpen(false);
   };
   const [open, setOpen] = useState(false);
 
@@ -118,7 +123,7 @@ const AllLeaves_display = () => {
       isVisible: leavedetails?.visibleApproveRejectButton,
     });
   };
-  
+
   const handleClose = () => setOpen(false);
   return (
     <Stack sx={{ mt: 10 }}>
@@ -131,10 +136,7 @@ const AllLeaves_display = () => {
       {status === "loading" ? (
         <Typography>loading ......</Typography>
       ) : (
-        <Stack
-          sx={{ mt: 2, cursor: "pointer", width: "98%" }}
-         
-        >
+        <Stack sx={{ mt: 2, cursor: "pointer", width: "98%" }}>
           {data.leaveViewType == 2 &&
             data.viewType == 2 &&
             viewType == 2 &&
@@ -155,7 +157,7 @@ const AllLeaves_display = () => {
               pending from your manager
             </Typography>
           )}
- {viewType == 3 && (
+          {viewType == 3 && (
             <Typography sx={{ px: 2, fontWeight: "bold" }}>
               Awaiting from your manager
             </Typography>
@@ -165,7 +167,7 @@ const AllLeaves_display = () => {
             viewType == 2 &&
             leaveMenuType == 2 &&
             data?.leaves?.map((each, i) => (
-              <Stack key={i}  onClick={()=>handleOpen(each)}>
+              <Stack key={i} onClick={() => handleOpen(each)}>
                 <Stack sx={{ alignItems: "center", mt: 1 }}>
                   <Stack
                     sx={{
@@ -193,8 +195,8 @@ const AllLeaves_display = () => {
                           borderRadius: "100%",
                           alignItems: "center",
                           justifyContent: "center",
-                          width:{sm:'50px', xs:'46px'},
-                          height: {sm:'50px', xs:'46px'},
+                          width: { sm: "50px", xs: "46px" },
+                          height: { sm: "50px", xs: "46px" },
                           color: "#FFF",
                           "& > *": {
                             fontSize: "10px",
@@ -222,7 +224,7 @@ const AllLeaves_display = () => {
                             "& > *": {
                               color: "#2e2e2e",
 
-                              fontSize: {sm:'10px', xs:'8px'},
+                              fontSize: { sm: "10px", xs: "8px" },
                             },
                           }}
                         >
@@ -310,7 +312,10 @@ const AllLeaves_display = () => {
             viewType == 4 &&
             data?.leaves?.map((each, i) => (
               <Stack key={i}>
-                <Stack sx={{ alignItems: "center", mt: 1 }} onClick={()=>handlenavigatToLeaveDetails(each.empId)}>
+                <Stack
+                  sx={{ alignItems: "center", mt: 1 }}
+                  onClick={() => handlenavigatToLeaveDetails(each.empId)}
+                >
                   <Stack
                     sx={{
                       flexDirection: "row",
@@ -337,8 +342,8 @@ const AllLeaves_display = () => {
                           borderRadius: "100%",
                           alignItems: "center",
                           justifyContent: "center",
-                          width:{sm:'50px', xs:'46px'},
-                          height: {sm:'50px', xs:'46px'},
+                          width: { sm: "50px", xs: "46px" },
+                          height: { sm: "50px", xs: "46px" },
                           color: "#FFF",
                           "& > *": {
                             fontSize: "10px",
@@ -366,7 +371,7 @@ const AllLeaves_display = () => {
                             "& > *": {
                               color: "#2e2e2e",
 
-                              fontSize: {sm:'10px', xs:'9px'},
+                              fontSize: { sm: "10px", xs: "9px" },
                             },
                           }}
                         >
@@ -464,19 +469,15 @@ const AllLeaves_display = () => {
               alignItems: "end",
               justifyContent: "flex-end",
               cursor: "pointer",
-              gap:1
+              gap: 1,
             }}
             onClick={popupclose}
           >
-            <Typography sx={{  textTransform: "capitalize" }}>
-              close
-            </Typography>
-        <CloseIcon/>
+            <Typography sx={{ textTransform: "capitalize" }}>close</Typography>
+            <CloseIcon />
           </Stack>
 
-          <Stack sx={{p:2}}>
-
-            
+          <Stack sx={{ p: 2 }}>
             <Stack sx={{ alignItems: "center", justifyContent: "center" }}>
               <Avatar sx={{ width: "100px", height: "100px" }} />
               <Typography>{toogleFormData.name}</Typography>
