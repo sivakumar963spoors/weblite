@@ -56,11 +56,11 @@ const AllRoutes = () => {
         />
         <Route path="/manage/article/:id" element={<ViewArticle />} />
         <Route
-          path="/customers/viewtype/:id"
+          path="/view/all/customers/typed"
           element={<CustomersViewTyped />}
         />
-        <Route path="/Allcustomers" element={<Customers />} />
-        <Route path="/customer/details/:id" element={<CustomerDetails />} />
+        <Route path="/view/all/customers" element={<Customers />} />
+        <Route path="/customer/details/view" element={<CustomerDetails />} />
         <Route path="/customer/viewactivity" element={<ViewActivity />} />
         <Route
           path="/customer/viewactivity/forms"

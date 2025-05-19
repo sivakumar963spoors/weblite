@@ -8,16 +8,26 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetch_getDayPlanCustomerUrl } from "../../redux/slices/DayPalneModule";
 const DayPlanner = () => {
   const [value, setValue] = React.useState(dayjs());
-  const navigation =useNavigate();
-  const handleNavToDaypalnCreation =(selectedDate)=>{
-    const formattedDate = new Date(selectedDate).toISOString().split('T')[0]; 
-   
- navigation(`/dayPlan/creation?selectedDate=${formattedDate}`)
-  }
+  const navigation = useNavigate();
+  const { DayPlanCustomer, isDayPlanCustomer } = useSelector(
+    (state) => state.DayPlannerModule
+  );
+  const dispatch = useDispatch();
+  const handleNavToDaypalnCreation = (selectedDate) => {
+    const formattedDate = new Date(selectedDate).toISOString().split("T")[0];
+
+    navigation(`/dayPlan/creation?selectedDate=${formattedDate}`);
+  };
+
+  useEffect(() => {
+    dispatch(fetch_getDayPlanCustomerUrl());
+  }, [dispatch]);
   return (
     <Box sx={{ mt: 10 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -96,51 +106,84 @@ const DayPlanner = () => {
         <Stack
           sx={{ width: "80%", border: "1px solid #000", textAlign: "center" }}
         >
-          <Typography sx={{fontSize:'12px',fontWeight:'bold'}}>Day Plan details</Typography>
+          <Typography sx={{ fontSize: "12px", fontWeight: "bold" }}>
+            Day Plan details
+          </Typography>
           <Typography>
-            <CalendarTodayIcon sx={{fontSize:'10px'}}/>
-            <Typography component={"span"} sx={{fontSize:'12px'}}>
+            <CalendarTodayIcon sx={{ fontSize: "10px" }} />
+            <Typography component={"span"} sx={{ fontSize: "12px" }}>
               {" "}
               {value.format("dddd, DD MMMM YYYY")}
             </Typography>
           </Typography>
-          <Stack
-            sx={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              mt: 1,
-            gap:2
-            }}
-          >
-            <Stack sx={{ flexDirection: "row" }}>
-             
-                <PersonIcon sx={{fontSize:'19px'}}/>
-           
-              <Stack>
-                <Typography sx={{fontSize:'10px'}}>0</Typography> <Typography sx={{fontSize:'10px'}}>customer</Typography>
-              </Stack>
-            </Stack>
-            <Stack sx={{ flexDirection: "row" }}>
-            
-                <EventAvailableIcon sx={{ color: "green",fontSize:'19px' }} />
-             
-              <Stack>
-                <Typography sx={{fontSize:'10px'}}>0</Typography> <Typography sx={{fontSize:'10px'}}>checkin</Typography>
-              </Stack>
-            </Stack>
-            <Stack sx={{ flexDirection: "row", }}>
-             
-                <EventBusyIcon sx={{ color: "red" ,fontSize:'19px'}} />
-             
-              <Stack>
-                <Typography sx={{fontSize:'10px'}}>0</Typography> <Typography sx={{fontSize:'10px'}}>checkout</Typography>
-              </Stack>
-            </Stack>
-          </Stack>
+
+          {isDayPlanCustomer ? (
+            <Typography>Loading...</Typography>
+          ) : (
+            <>
+              {DayPlanCustomer && DayPlanCustomer?.dayPlannerDetails ? (
+                <Stack
+                  sx={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    mt: 1,
+                    gap: 2,
+                  }}
+                >
+                  <Stack sx={{ flexDirection: "row" }}>
+                    <PersonIcon sx={{ fontSize: "19px" }} />
+
+                    <Stack>
+                      <Typography sx={{ fontSize: "10px" }}>
+                        {
+                          DayPlanCustomer?.dayPlannerDetails
+                            ?.dayplanCustomerCount
+                        }
+                      </Typography>{" "}
+                      <Typography sx={{ fontSize: "10px" }}>
+                        customer
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                  <Stack sx={{ flexDirection: "row" }}>
+                    <EventAvailableIcon
+                      sx={{ color: "green", fontSize: "19px" }}
+                    />
+
+                    <Stack>
+                      <Typography sx={{ fontSize: "10px" }}>
+                        {DayPlanCustomer.checkInCount}
+                      </Typography>{" "}
+                      <Typography sx={{ fontSize: "10px" }}>checkin</Typography>
+                    </Stack>
+                  </Stack>
+                  <Stack sx={{ flexDirection: "row" }}>
+                    <EventBusyIcon sx={{ color: "red", fontSize: "19px" }} />
+
+                    <Stack>
+                      <Typography sx={{ fontSize: "10px" }}>
+                        {DayPlanCustomer.checkOutCount}
+                      </Typography>{" "}
+                      <Typography sx={{ fontSize: "10px" }}>
+                        checkout
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              ) : (
+                <Typography>No data found</Typography>
+              )}
+            </>
+          )}
         </Stack>
         <Stack sx={{ width: "80%", textAlign: "center" }}>
-          <Button variant="contained" fullWidth sx={{ my: 3 }} onClick={()=>handleNavToDaypalnCreation(value)}>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ my: 3 }}
+            onClick={() => handleNavToDaypalnCreation(value)}
+          >
             create
           </Button>
         </Stack>

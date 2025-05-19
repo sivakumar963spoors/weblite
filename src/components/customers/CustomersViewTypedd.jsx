@@ -5,9 +5,10 @@ import ResuableCarousal from "../common/ResuableCarousalForCustomer";
 import CustomerCard from "./CustomerCard";
 
 const CustomersViewTyped = () => {
-  const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const { CustomerModuleMenu, customerViewTypeTitle } = useSelector(
+    (state) => state.CustomerModule
+  );
   const [itemsPerRow, setItemsPerRow] = useState(3);
-  const [isCustomer] = useState(true);
   const calculateItemsPerRow = () => {
     const width = window.innerWidth;
     if (width >= 1440) {
@@ -38,18 +39,6 @@ const CustomersViewTyped = () => {
   }, []);
   const [activeTile, setActiveTile] = useState("");
 
-  useEffect(() => {
-    const storedTitle = localStorage.getItem("activeTile");
-    if (storedTitle) {
-      setActiveTile(storedTitle);
-    }
-  }, []);
-
-  const handleActiveTileChange = (title) => {
-    localStorage.setItem("activeTile", title);
-    setActiveTile(title);
-  };
-
   return (
     <Box sx={{ mt: 10 }}>
       <Stack
@@ -59,11 +48,7 @@ const CustomersViewTyped = () => {
           zIndex: 9999,
         }}
       >
-        <ResuableCarousal
-          items={carousalItems}
-          onActiveTileChange={handleActiveTileChange}
-          isCustomer={isCustomer}
-        />
+        <ResuableCarousal items={carousalItems} />
 
         <Stack sx={{ width: "100%", mt: 2 }}>
           <Typography
@@ -74,7 +59,7 @@ const CustomersViewTyped = () => {
               pl: { sm: 5, xs: 2 },
             }}
           >
-            {activeTile || ""}
+            {customerViewTypeTitle || ""}
           </Typography>
           <CustomerCard />
         </Stack>
