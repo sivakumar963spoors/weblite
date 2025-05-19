@@ -61,7 +61,7 @@ const TopBar = ({ onLogout }) => {
         nav("/dashboard");
         break;
       case "Customers":
-        nav("/Allcustomers");
+        nav("/view/all/customers?viewType=9");
         break;
       case "Day Plans":
         nav("dayplanner/customers");

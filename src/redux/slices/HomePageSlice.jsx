@@ -3,15 +3,11 @@ import { loadHomeScreenCards_ajax, loggedInUser_ajax } from "../../api/Auth";
 import { workSpecsData } from "../../components/task/TaskData";
 
 const initialState = {
-  // HomePageData: [...cardData].sort((a, b) => a.displayOrder - b.displayOrder),
-  // filteredHomePageData: [...cardData].sort(
-  //   (a, b) => a.displayOrder - b.displayOrder
-  // ),
+
   workSpecsDataMenu: workSpecsData,
   LoadHomeScreenCards: [],
   status: "",
   isLoadHomeScreenCards: false,
-  
   loggedInUser: {},
 };
 export const loggedInUser_get = createAsyncThunk(
@@ -99,6 +95,7 @@ const HomePageModule = createSlice({
       })
       .addCase(loadHomeScreenCards_get.pending, (state) => {
         state.status = "loading";
+        
       })
       .addCase(loadHomeScreenCards_get.fulfilled, (state, action) => {
         state.status = "succeeded";

@@ -12,11 +12,25 @@ import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.
 import leavesIcon from "../../assets/menu_svg_filled/Blue/Leaves.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
 import {
+  get_allCustomer,
+  loadMetPast30DaysPercentage_get,
+  loadNotMetPast30Days_get,
+  loadNotMetPast30DaysByTeam_get,
+  loadTodaysCustomerVisitsByTeam_get,
+  loadtotalsCustomersCountUnderEmployees_get,
+  loadYesterdayCustomerVisitsByTeam_get,
+  setDisplayCount,
+  setTitleForCustomerView,
+  todaysCustomerVisits_get,
+  totalCustomersSize_get,
+} from "../../redux/slices/CustomerModule";
+import {
   filterByModule,
   loadHomeScreenCards_get,
   loggedInUser_get,
   resetFilteredData,
 } from "../../redux/slices/HomePageSlice";
+import { loadKNowledgeBasedCount_get } from "../../redux/slices/KnowledgeBaseModule";
 import CustomButton from "../reusablecomponents/CustomButton";
 const approvalCards = [
   { count: 0, label: "Pending your manager approvals" },
@@ -24,23 +38,45 @@ const approvalCards = [
   { count: 0, label: "Awaiting team approval" },
 ];
 const TaskCard = ({ searchInput }) => {
-  const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const {
+    CustomerModuleMenu,
+    totalCustomersSize,
+    todaysCustomerVisits,
+    loadNotMetPast30Days,
+    loadMetPast30DaysPercentage,
+    loadtotalsCustomersCountUnderEmployees,
+    loadYesterdayCustomerVisitsByTeam,
+    loadTodaysCustomerVisitsByTeam,
+    loadNotMetPast30DaysByTeam,
+  } = useSelector((state) => state.CustomerModule);
   const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
   const { LoadHomeScreenCards, workSpecsDataMenu, loggedInUser } = useSelector(
     (state) => state.HomePageModule
   );
+  const { KnowledgeBaseCount } = useSelector(
+    (state) => state.KnowledgeBaseReducerModule
+  );
   const filteredLoadHomeScreenCards = [...LoadHomeScreenCards].sort(
     (a, b) => a.displayOrder - b.displayOrder
   );
- 
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(loadHomeScreenCards_get());
-  }, []);
-  useEffect(() => {
     dispatch(loggedInUser_get());
-  }, []);
+    dispatch(totalCustomersSize_get());
+    dispatch(todaysCustomerVisits_get());
+    dispatch(loadNotMetPast30Days_get());
+    dispatch(loadMetPast30DaysPercentage_get());
+    dispatch(loadYesterdayCustomerVisitsByTeam_get());
+    dispatch(loadTodaysCustomerVisitsByTeam_get());
+    dispatch(loadtotalsCustomersCountUnderEmployees_get());
+    dispatch(loadNotMetPast30DaysByTeam_get());
+    dispatch(loadKNowledgeBasedCount_get());
+  }, [dispatch]);
+
   useEffect(() => {
     if (searchInput && searchInput.trim() !== "") {
       dispatch(filterByModule(searchInput));
@@ -56,15 +92,13 @@ const TaskCard = ({ searchInput }) => {
         navigate("/knowledgebase/manage");
         break;
       case 9:
-        navigate("/Allcustomers");
+        
+        navigate("/view/all/customers?viewType=9");
         break;
-
       case 15:
         navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
-      case 17:
-        navigate("/view/forms?empId=136947&viewType=2&formSpecId=245583");
-        break;
+
       case 36:
         navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
         break;
@@ -87,23 +121,48 @@ const TaskCard = ({ searchInput }) => {
 
   const handleNavigationForDatKnoweledgeBaseView = (id) => {
     switch (id) {
-      case 0:
-        navigate(`/knowledgebase/manage/new/?viewType=${id}`);
-        break;
       case 1:
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
       case 2:
         navigate(`/knowledgebase/manage/new/?viewType=${id}`);
         break;
+      case 3:
+        navigate(`/knowledgebase/manage/new/?viewType=${id}`);
+        break;
       default:
     }
   };
-  const handlenavigationToCustomerModules = (id) => {
-    if (id >= 0 && id <= 8) {
-      navigate(`/customers/viewtype/${id}`);
-    } else {
-      console.log("no data");
+  const handlenavigationToCustomerModules = (id, title, displayCount) => {
+    dispatch(setTitleForCustomerView(title));
+
+   // dispatch(setDisplayCount(displayCount));
+    switch (id) {
+      case 1:
+        navigate("/view/all/customers/typed?viewType=1&customerView=1");
+
+        break;
+      case 2:
+        navigate("/view/all/customers/typed?viewType=8&customerView=1");
+        break;
+      case 3:
+        navigate("/view/all/customers/typed?viewType=14&customerView=1");
+        break;
+      case 4:
+        navigate("/view/all/customers/typed?viewType=3&customerView=1");
+        break;
+      case 5:
+        navigate("/view/all/customers/typed?viewType=7&customerView=1");
+        break;
+      case 6:
+        navigate("/view/all/customers/typed?viewType=10&customerView=1");
+        break;
+      case 7:
+        navigate("/view/all/customers/typed?viewType=11&customerView=1");
+        break;
+      case 8:
+        navigate("/view/all/customers/typed?viewType=12&customerView=1");
+        break;
     }
   };
 
@@ -188,7 +247,6 @@ const TaskCard = ({ searchInput }) => {
   return (
     <Box sx={{}}>
       <Stack gap={1} sx={{ pt: 1 }}>
-       
         {filteredLoadHomeScreenCards ? (
           filteredLoadHomeScreenCards?.map((data, index) => (
             <>
@@ -326,74 +384,109 @@ const TaskCard = ({ searchInput }) => {
                                 }}
                               >
                                 {CustomerModuleMenu.slice(0, 3).map(
-                                  (label, index) => (
-                                    <React.Fragment key={index}>
-                                      <Stack
-                                        sx={{
-                                          flexGrow: { sm: 1, xs: 12 },
-                                          width: "100px",
-                                          textAlign: "center",
+                                  (label, index) => {
+                                    const displayCount =
+                                      label.title === "Visited today"
+                                        ? todaysCustomerVisits
+                                        : label.title === "Assigned to you"
+                                        ? totalCustomersSize
+                                        : label.title === "Coverage"
+                                        ? loadNotMetPast30Days
+                                        : label.count;
 
-                                          py: 1.3,
-                                          cursor: "pointer",
-                                          transition: "all 0.3s ease",
-                                          "&:hover": {
-                                            boxShadow:
-                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                            transform: "scale(1.01)",
-                                          },
-                                        }}
-                                        onClick={() =>
-                                          handlenavigationToCustomerModules(
-                                            label.id
-                                          )
-                                        }
-                                      >
-                                        <Typography
+                                    return (
+                                      <React.Fragment key={index}>
+                                        <Stack
                                           sx={{
-                                            color:
-                                              label.count > 0 ? "green" : "red",
-                                            fontWeight: "bold",
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
+                                            flexGrow: { sm: 1, xs: 12 },
+                                            width: "100px",
+                                            textAlign: "center",
+
+                                            py: 1.3,
+                                            cursor: "pointer",
+                                            transition: "all 0.3s ease",
+                                            "&:hover": {
+                                              boxShadow:
+                                                "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                              transform: "scale(1.01)",
                                             },
                                           }}
+                                          onClick={() =>
+                                            handlenavigationToCustomerModules(
+                                              label.id,
+                                              label.title,
+                                              displayCount
+                                            )
+                                          }
                                         >
-                                          {label.count}
-                                        </Typography>
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          {label.title}
-                                        </Typography>
-                                      </Stack>
-                                      {index !== 2 && (
-                                        <Divider
-                                          orientation="vertical"
-                                          variant="middle"
-                                          flexItem
-                                          sx={{
-                                            alignSelf: "center",
-                                            height: { sm: "55px", xs: "40px" },
-                                            borderColor: "#e0e0e0",
-                                          }}
-                                        />
-                                      )}
-                                    </React.Fragment>
-                                  )
+                                          <Typography
+                                            sx={{
+                                              color:
+                                                displayCount > 0
+                                                  ? "green"
+                                                  : "red",
+
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {label.count}
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              fontSize: {
+                                                sm: "14px",
+                                                xs: "10px",
+                                              },
+                                            }}
+                                          >
+                                            {label.title}
+                                          </Typography>
+                                        </Stack>
+                                        {index !== 2 && (
+                                          <Divider
+                                            orientation="vertical"
+                                            variant="middle"
+                                            flexItem
+                                            sx={{
+                                              alignSelf: "center",
+                                              height: {
+                                                sm: "55px",
+                                                xs: "40px",
+                                              },
+                                              borderColor: "#e0e0e0",
+                                            }}
+                                          />
+                                        )}
+                                      </React.Fragment>
+                                    );
+                                  }
                                 )}
                               </Stack>
 
                               <Stack sx={{ mt: 1 }}>
                                 {CustomerModuleMenu.slice(3, 9).map(
-                                  (label, index) => (
-                                    <>
+                                  (label, index) => {
+                                    const displayCount =
+                                      label.title ===
+                                      "You haven't visited in the past 30 days"
+                                        ? loadMetPast30DaysPercentage
+                                        : label.title === "Assigned to team"
+                                        ? loadtotalsCustomersCountUnderEmployees
+                                        : label.title ===
+                                          "Visited by the team yesterday"
+                                        ? loadYesterdayCustomerVisitsByTeam
+                                        : label.title ===
+                                          "Visited by the team today"
+                                        ? loadTodaysCustomerVisitsByTeam
+                                        : label.title ===
+                                          "Team hasn't visited in the past 30 days"
+                                        ? loadNotMetPast30DaysByTeam
+                                        : label.count;
+
+                                    return (
                                       <Stack
                                         key={index}
                                         sx={{
@@ -405,7 +498,9 @@ const TaskCard = ({ searchInput }) => {
                                         }}
                                         onClick={() =>
                                           handlenavigationToCustomerModules(
-                                            label.id
+                                            label.id,
+                                            label.title,
+                                           // displayCount
                                           )
                                         }
                                       >
@@ -428,7 +523,7 @@ const TaskCard = ({ searchInput }) => {
                                           <Typography
                                             sx={{
                                               color:
-                                                label.count > 0
+                                                displayCount > 0
                                                   ? "green"
                                                   : "red",
                                               fontSize: {
@@ -439,11 +534,11 @@ const TaskCard = ({ searchInput }) => {
                                           >
                                             {label.count}
                                           </Typography>
-                                          <>
+                                          <Stack>
                                             <NavigateNextIcon
                                               sx={{
                                                 color:
-                                                  label.count > 0
+                                                  displayCount > 0
                                                     ? "green"
                                                     : "red",
                                                 fontSize: {
@@ -452,11 +547,11 @@ const TaskCard = ({ searchInput }) => {
                                                 },
                                               }}
                                             />
-                                          </>
+                                          </Stack>{" "}
                                         </Stack>
                                       </Stack>
-                                    </>
-                                  )
+                                    );
+                                  }
                                 )}
                               </Stack>
                             </Stack>
@@ -495,10 +590,25 @@ const TaskCard = ({ searchInput }) => {
                                     }}
                                     onClick={() =>
                                       handleNavigationForDatKnoweledgeBaseView(
-                                        index
+                                        index + 1
                                       )
                                     }
                                   >
+                                    <Typography>
+                                      {KnowledgeBaseCount &&
+                                        label === "Total count" &&
+                                        KnowledgeBaseCount?.totalCount}
+                                    </Typography>
+                                    <Typography>
+                                      {KnowledgeBaseCount &&
+                                        label === "Total viewed" &&
+                                        KnowledgeBaseCount?.viewedSum}
+                                    </Typography>
+                                    <Typography>
+                                      {KnowledgeBaseCount &&
+                                        label === "Total unviewed" &&
+                                        KnowledgeBaseCount?.unviewedSum}
+                                    </Typography>
                                     <Typography
                                       sx={{
                                         fontSize: { sm: "14px", xs: "10px" },

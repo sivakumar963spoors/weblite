@@ -94,17 +94,15 @@ const ActionRequiredSlice = createSlice({
   name: "ActionRequired",
   initialState: {
     isLoadingApproval: false,
-  isLoadingLeaves: false,
-  isLoadingWork: false,
+    isLoadingLeaves: false,
+    isLoadingWork: false,
     status: "",
     actionRequiredDetails: [],
     leavesList: [],
     approvalList: [],
     workList: [],
   },
-  reducers: {
-  
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(actionRequiredAjax.pending, (state) => {
@@ -118,6 +116,7 @@ const ActionRequiredSlice = createSlice({
       })
       .addCase(actionRequiredAjax.rejected, (state, action) => {
         state.status = "failed";
+        state.isLoading = false;
         state.error = action.error.message;
       })
       .addCase(actionRequiredAjax_GetApproval.pending, (state) => {
@@ -131,6 +130,7 @@ const ActionRequiredSlice = createSlice({
       })
       .addCase(actionRequiredAjax_GetApproval.rejected, (state, action) => {
         state.status = "failed";
+        state.isLoadingApproval = false;
         state.error = action.error.message;
       })
       .addCase(actionRequiredAjax_Getleaves.pending, (state) => {
@@ -144,6 +144,7 @@ const ActionRequiredSlice = createSlice({
       })
       .addCase(actionRequiredAjax_Getleaves.rejected, (state, action) => {
         state.status = "failed";
+        state.isLoadingLeaves = false;
         state.error = action.error.message;
       })
       .addCase(actionRequiredAjax_Getworks.pending, (state) => {

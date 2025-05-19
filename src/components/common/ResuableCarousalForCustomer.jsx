@@ -1,29 +1,63 @@
 import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setTitleForCustomerView } from "../../redux/slices/CustomerModule";
 
-const ResuableCarousal = ({ items, onActiveTileChange, isForm, isCustomer }) => {
-  const [activecarousal, setActiveCarousal] = useState(() => {
-
-    const storedView = localStorage.getItem("view");
-    return storedView ? Number(storedView) : 0;
-  });
-
+const ResuableCarousal = ({ items }) => {
+  const [activecarousal, setActiveCarousal] = useState(0);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    CustomerModuleMenu,
+    customerViewTypeTitle,
+    displayCountForCustomerModule,
+  } = useSelector((state) => state.CustomerModule);
 
   useEffect(() => {
-    localStorage.setItem("view", activecarousal);
-  }, [activecarousal]); 
+    // Flatten the nested items array
+    const flatItems = items.flat();
 
-  const handleViewTypeChange = (viewType, title) => {
-    setActiveCarousal(viewType);
-    onActiveTileChange?.(title);
+    const matchedItem = flatItems.find(
+      (item) => item.title === customerViewTypeTitle
+    );
 
-    if (isCustomer) {
-      navigate(`/customers/viewtype/${viewType}`);
-    } else if (isForm) {
-      navigate(`/view/forms/new?empId=136947&viewType=${viewType}&formSpecId=245583`);
+    if (matchedItem) {
+      setActiveCarousal(matchedItem.id); // Use `id` if that's what your logic tracks
+    }
+  }, [customerViewTypeTitle, items]);
+
+  const handleViewTypeChange = (id, title) => {
+    dispatch(setTitleForCustomerView(title));
+
+    setActiveCarousal(id);
+    switch (id) {
+      case 1:
+        navigate("/view/all/customers/typed?viewType=1&customerView=1");
+
+        break;
+      case 2:
+        navigate("/view/all/customers/typed?viewType=8&customerView=1");
+        break;
+      case 3:
+        navigate("/view/all/customers/typed?viewType=14&customerView=1");
+        break;
+      case 4:
+        navigate("/view/all/customers/typed?viewType=3&customerView=1");
+        break;
+      case 5:
+        navigate("/view/all/customers/typed?viewType=7&customerView=1");
+        break;
+      case 6:
+        navigate("/view/all/customers/typed?viewType=10&customerView=1");
+        break;
+      case 7:
+        navigate("/view/all/customers/typed?viewType=11&customerView=1");
+        break;
+      case 8:
+        navigate("/view/all/customers/typed?viewType=12&customerView=1");
+        break;
     }
   };
 
@@ -66,10 +100,10 @@ const ResuableCarousal = ({ items, onActiveTileChange, isForm, isCustomer }) => 
             <Stack
               key={i}
               onClick={() => handleViewTypeChange(menuitem.id, menuitem.title)}
-              sx={{ cursor: "pointer" }} // Ensure stack is clickable
+              sx={{ cursor: "pointer" }} 
             >
               <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>
-                {menuitem.count}
+                {menuitem.count }
               </Typography>
               <Typography
                 sx={{
@@ -79,7 +113,8 @@ const ResuableCarousal = ({ items, onActiveTileChange, isForm, isCustomer }) => 
                   width: { sm: "130px", xs: "90px" },
                   textAlign: "center",
                   color: menuitem.id === activecarousal ? "#ffa00d" : "#011D45",
-                  textDecoration: menuitem.id === activecarousal ? "underline" : "none",
+                  textDecoration:
+                    menuitem.id === activecarousal ? "underline" : "none",
                 }}
               >
                 {menuitem.title}

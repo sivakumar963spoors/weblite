@@ -21,10 +21,10 @@ import {
   actionRequiredAjax_Getleaves,
   actionRequiredAjax_Getworks,
 } from "../../redux/slices/ActionRequiredSlice";
+import { loggedInUser_get } from "../../redux/slices/HomePageSlice";
 import { todayLeaveDetails } from "../../redux/slices/LeavesModule";
 import ReusableTextfield from "../common/ReusableTextfield";
 import TaskCard from "../task/TaskCard";
-import { loggedInUser_get } from "../../redux/slices/HomePageSlice";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -47,28 +47,37 @@ const HomePage = () => {
   const [zIndex, setZIndex] = useState(1000);
   const [searchText, setSearchText] = useState("");
   const loggedIn = localStorage.getItem("isAuthenticated");
+  const [leavesLoadStarted, setLeavesLoadStarted] = useState(false);
+  const [workLoadStarted, setWorkLoadStarted] = useState(false);
+  const [approvalLoadStarted, setApprovalLoadStarted] = useState(false);
   const nav = useNavigate();
- useEffect(() => {
+  useEffect(() => {
     dispatch(loggedInUser_get());
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     dispatch(actionRequiredAjax());
     console.log("Dispatched actionRequiredAjax:", actionRequiredDetails);
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     dispatch(todayLeaveDetails());
   }, [openLeaveCount]);
   useEffect(() => {
-    actionRequiredDetails.forEach((each) => {
-      if (each.actionRequiredType === 2) {
-        dispatch(actionRequiredAjax_Getworks());
-      } else if (each.actionRequiredType === 3) {
-        dispatch(actionRequiredAjax_Getleaves());
-      } else if (each.actionRequiredType === 4) {
-        dispatch(actionRequiredAjax_GetApproval());
-      }
-    });
-  }, [openActionRequird, actionRequiredDetails]);
+    if (actionRequiredDetails.length > 0) {
+      actionRequiredDetails.forEach((each) => {
+        if (each.actionRequiredType === 2) {
+          setWorkLoadStarted(true);
+          dispatch(actionRequiredAjax_Getworks());
+        } else if (each.actionRequiredType === 3) {
+          setLeavesLoadStarted(true);
+          dispatch(actionRequiredAjax_Getleaves());
+        } else if (each.actionRequiredType === 4) {
+          setApprovalLoadStarted(true);
+          dispatch(actionRequiredAjax_GetApproval());
+        }
+      });
+    }
+  }, [ openActionRequird,actionRequiredDetails]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -314,7 +323,7 @@ const HomePage = () => {
                 <Stack sx={{ width: "100%", gap: 1 }}>
                   {/* Approval List */}
 
-                  {isLoadingApproval ? (
+                  {!approvalLoadStarted ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -343,7 +352,36 @@ const HomePage = () => {
                         Approval loadings
                       </Typography>
                     </Stack>
-                  ) : approvalList && approvalList.length > 0 ? (
+                  ) : isLoadingApproval ? (
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        gap: 1,
+                        alignItems: "center",
+                        bgcolor: "#FAEBD7",
+                        py: 0.7,
+                        px: 0.5,
+                        ml: 0.5,
+                        mr: 0.5,
+                        mt: 0.5,
+                      }}
+                    >
+                      <CircularProgress
+                        sx={{
+                          color: "black",
+                          height: "10px",
+                          width: "10px",
+                        }}
+                        size={15}
+                      />
+                      <Typography
+                        component={"span"}
+                        sx={{ fontWeight: "bold", fontSize: "12px" }}
+                      >
+                        Approval loadings
+                      </Typography>
+                    </Stack>
+                  ) : approvalList?.length > 0 ? (
                     approvalList
                       .filter((item) => item.count > 0)
                       .map((item, index) => (
@@ -391,7 +429,36 @@ const HomePage = () => {
                   )}
 
                   {/* Leaves List */}
-                  {isLoadingLeaves ? (
+                  {!leavesLoadStarted ? (
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        gap: 1,
+                        alignItems: "center",
+                        bgcolor: "#FAEBD7",
+                        py: 0.7,
+                        px: 0.5,
+                        ml: 0.5,
+                        mr: 0.5,
+                        mt: 0.5,
+                      }}
+                    >
+                      <CircularProgress
+                        sx={{
+                          color: "black",
+                          height: "10px",
+                          width: "10px",
+                        }}
+                        size={15}
+                      />
+                      <Typography
+                        component={"span"}
+                        sx={{ fontWeight: "bold", fontSize: "12px" }}
+                      >
+                        leave loadings
+                      </Typography>
+                    </Stack>
+                  ) : isLoadingLeaves ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -416,10 +483,10 @@ const HomePage = () => {
                         component={"span"}
                         sx={{ fontWeight: "bold", fontSize: "12px" }}
                       >
-                        Approval loadings
+                        leave loadings
                       </Typography>
                     </Stack>
-                  ) : leavesList && leavesList.length > 0 ? (
+                  ) : leavesList?.length > 0 ? (
                     leavesList
                       .filter((item) => item.count > 0)
                       .map((item, index) => (
@@ -467,7 +534,7 @@ const HomePage = () => {
                   )}
 
                   {/* Work List */}
-                  {isLoadingWork ? (
+                  {!workLoadStarted ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -495,7 +562,35 @@ const HomePage = () => {
                         works loadings
                       </Typography>
                     </Stack>
-                  ) : workList && workList.length > 0 ? (
+                  ) : isLoadingWork ? (
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        gap: 1,
+                        alignItems: "center",
+                        bgcolor: "#FAEBD7",
+                        py: 0.7,
+                        px: 0.5,
+                        ml: 0.5,
+                        mr: 0.5,
+                      }}
+                    >
+                      <CircularProgress
+                        sx={{
+                          color: "black",
+                          height: "10px",
+                          width: "10px",
+                        }}
+                        size={15}
+                      />
+                      <Typography
+                        component={"span"}
+                        sx={{ fontWeight: "bold", fontSize: "12px" }}
+                      >
+                        works loadings
+                      </Typography>
+                    </Stack>
+                  ) : workList?.length > 0 ? (
                     workList
                       .filter((item) => item.count > 0)
                       .map((item, index) => (

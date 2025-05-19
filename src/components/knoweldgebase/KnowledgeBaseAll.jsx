@@ -1,22 +1,22 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-const categories = [
-  { title: "Others", count1: 10, count2: 20, showButton: true , id:5001},
-  { title: "react build", count1: 10, count2: 20, showButton: true , id :5001},
-  { title: "lts", count1: 10, count2: 20, showButton: false, id:5002 },
-  { title: "Bootstrap", count1: 10, count2: 20, showButton: false,id:5003 },
-  { title: "Testing", count1: 10, count2: 20, showButton: false,id:5004},
-  { title: "Article", count1: 10, count2: 20, showButton: false ,id:5005},
-];
+import { GetKnowledgeBase } from "../../redux/slices/KnowledgeBaseModule";
 
 const KnowledgeBaseAll = () => {
-  const nav =useNavigate();
+  const nav = useNavigate();
 
-  const handleArticle =(id, forView)=>{
-nav(`/manage/article/${id}?forview=${forView}`)
-  }
+  const { KnowledgeBaseData, isKnowledgeBaseData } = useSelector(
+    (state) => state.KnowledgeBaseReducerModule
+  );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(GetKnowledgeBase());
+  }, [dispatch]);
+  const handleArticle = ({ id, forView }) => {
+    nav(`/manage/article/${id}?forview=${forView}`);
+  };
   return (
     <Box sx={{ mt: 10 }}>
       <Stack sx={{ width: "100%", alignItems: "center" }}>
@@ -49,50 +49,103 @@ nav(`/manage/article/${id}?forview=${forView}`)
               },
             }}
           >
-            {categories.map((item, index) => (
-              <Stack key={index}>
-                <Typography>{item.title}</Typography>
-                <Stack
-                  sx={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    my: 1,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      bgcolor: "#ddd",
-                      height: "50px",
-                      width: "50px",
-                      borderRadius: "50%",
-                      textAlign: "center",
-                      pt: 2,
-                      cursor:'pointer'
-                    }}
-                    onClick={()=> handleArticle(item.id , true)}
-                   
-                  >
-                    {item.count1}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      bgcolor: "#ddd",
-                      height: "50px",
-                      width: "50px",
-                      borderRadius: "50%",
-                      textAlign: "center",
-                      pt: 2,
-                      cursor:'pointer'
-                    }}
-                    onClick={()=> handleArticle(item.id, false)}
-                  >
-                    {item.count2}
-                  </Typography>
-                </Stack>
-                {item.showButton && <Button variant="outlined">New</Button>}
-              </Stack>
-            ))}
+            {isKnowledgeBaseData ? (
+              <Typography>loading....</Typography>
+            ) : (
+              <>
+                {KnowledgeBaseData?.knowledgeBaseDashboards?.length > 0 &&
+                  KnowledgeBaseData?.knowledgeBaseDashboards?.map(
+                    (item, index) => (
+                      <Stack key={index}>
+                        <Typography>{item.title}</Typography>
+
+                        {item.unviewedCount === 0 ? (
+                          <Stack
+                            sx={{
+                              textAlign: "center",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                bgcolor: "#ddd",
+                                height: "50px",
+                                width: "50px",
+                                borderRadius: "50%",
+                                textAlign: "center",
+                                alignItems: "center",
+                                pt: 2,
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleArticle({
+                                  id: item.articleId,
+                                  forView: false,
+                                })
+                              }
+                            >
+                              {item.totalCount}
+                            </Typography>
+                          </Stack>
+                        ) : (
+                          <>
+                            <Stack
+                              sx={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                my: 1,
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  bgcolor: "#ddd",
+                                  height: "50px",
+                                  width: "50px",
+                                  borderRadius: "50%",
+                                  textAlign: "center",
+                                  pt: 2,
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleArticle({
+                                    id: item.articleId,
+                                    forView: true,
+                                  })
+                                }
+                              >
+                                {item.unviewedCount}
+                              </Typography>
+
+                              <Typography
+                                sx={{
+                                  bgcolor: "#ddd",
+                                  height: "50px",
+                                  width: "50px",
+                                  borderRadius: "50%",
+                                  textAlign: "center",
+                                  pt: 2,
+                                  cursor: "pointer",
+                                }}
+                                onClick={() =>
+                                  handleArticle({
+                                    id: item.articleId,
+                                    forView: false,
+                                  })
+                                }
+                              >
+                                {item.totalCount}
+                              </Typography>
+                            </Stack>
+                            <Button variant="outlined">New</Button>
+                          </>
+                        )}
+                      </Stack>
+                    )
+                  )}
+              </>
+            )}
           </Stack>
         </Stack>
       </Stack>
