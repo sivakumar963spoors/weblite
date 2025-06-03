@@ -14,11 +14,11 @@ const MenuTitleUpdater = () => {
       "/knowledgebase/manage": "Knowledge Base",
       "/knowledgebase/manage/new": "New Knowledge Base",
       "/manage/article/:id": "View Article",
-      "/customers/viewtype/:id": "Customers",
+      "view/all/customers/typed": "Customers",
       "/Allcustomers": "All Customers",
       "/customer/details/view": "Customer Details",
-      "/customer/viewactivity": "View Activity",
-      "/customer/viewactivity/forms": "Activity Details",
+      "/customer/view/activity": "customer history",
+      "/customer/view/activity/forms": "Activity Details",
       "/add/form/:id": "Forms",
       "/view/leaves/new": "Leave Requests",
       "/leave/my/create": "Apply Leave",
@@ -82,8 +82,10 @@ const MenuTitleUpdater = () => {
       newTitle = `report details`;
     } else if (pathname === "/mobile/reports/:empId/:reportId") {
       newTitle = `reports`;
-    }else if (pathToTitleMap === "/customer/details/view"){
-      newTitle =`Customer Details`
+    } else if (pathToTitleMap === "/customer/details/view") {
+      newTitle = `Customer Details`;
+    } else if (pathname === "/view/all/customers/typed") {
+      newTitle = `Customer`;
     }
 
     dispatch(toggleMenuTitle(newTitle));

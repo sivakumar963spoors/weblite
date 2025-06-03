@@ -1,14 +1,35 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { loadHomeScreenCards_ajax, loggedInUser_ajax } from "../../api/Auth";
+import {
+  loadActionableWorksByMeURl,
+  loadFormApprovalsCountByManager,
+  loadFormApprovalsCountByMe,
+  loadHomeScreenCards_ajax,
+  loadInActiveWorks,
+  loadWorkSpecCardsCounturl,
+  loadWorkSpecPendingInvitationByMeUrl,
+  loadWorkSpecPendingInvitationByTeamUrl,
+  loggedInUser_ajax,
+} from "../../api/Auth";
 import { workSpecsData } from "../../components/task/TaskData";
 
 const initialState = {
-
   workSpecsDataMenu: workSpecsData,
   LoadHomeScreenCards: [],
   status: "",
   isLoadHomeScreenCards: false,
   loggedInUser: {},
+  filteredHomePageData: [],
+  yesterdayCount: [],
+  todayCount: [],
+  loading: false,
+  error: null,
+  loadActionableWorksByMe: [],
+  workSpecCards: [],
+  pendingByMe: [],
+  pendingByTeam: [],
+  inactiveWorks: [],
+  loadFormApprovalsCountByMe_byMe: [],
+  loadFormApprovalsCountByManager_byManager: [],
 };
 export const loggedInUser_get = createAsyncThunk(
   "homepage/loggedInUser_get",
@@ -53,7 +74,172 @@ export const loadHomeScreenCards_get = createAsyncThunk(
     }
   }
 );
+export const fetchYesterdayCount = createAsyncThunk(
+  "formCounts/fetchYesterdayCount",
+  async (empId, { rejectWithValue }) => {
+    try {
+      // Fetch data for yesterday
+      const response = await fetch(
+        `http://localhost:8080/effort/reactrest/api/ajax/form/activities?employeeId=${empId}&day=yesterday`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
 
+      const data = await response.json(); // Parse JSON data
+
+      // Check if the response contains the 'day' array
+      if (!data.day) {
+        throw new Error("Invalid response data");
+      }
+
+      // Sum up the 'size' field for yesterday
+      return data.day;
+    } catch (error) {
+      return rejectWithValue("Error fetching yesterday's form counts");
+    }
+  }
+);
+
+// Async thunk to fetch form counts for today
+export const fetchTodayCount = createAsyncThunk(
+  "formCounts/fetchTodayCount",
+  async (empId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/effort/reactrest/api/ajax/form/activities?employeeId=${empId}&day=today`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+
+      if (!data.day) {
+        throw new Error("Invalid response data");
+      }
+
+      return data.day;
+    } catch (error) {
+      return rejectWithValue("Error fetching today's form counts");
+    }
+  }
+);
+//you need to do
+export const Get_loadActionableWorksByMe = createAsyncThunk(
+  "homepage/Get_loadActionableWorksByMe",
+  async (empId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(loadActionableWorksByMeURl, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch action required data");
+      }
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return rejectWithValue("Error fetching today's form counts");
+    }
+  }
+);
+
+// team need to do
+export const fetchWorkSpecCards = createAsyncThunk(
+  "workSpecs/fetchCards",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(loadWorkSpecCardsCounturl, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return rejectWithValue("Failed to fetch workSpec cards");
+    }
+  }
+);
+// invitation need to you
+export const fetchPendingInvitationsByMe = createAsyncThunk(
+  "workSpecs/fetchPendingByMe",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(loadWorkSpecPendingInvitationByMeUrl, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return rejectWithValue("Failed to fetch pending invitations by me");
+    }
+  }
+);
+// invitations need by team
+export const fetchPendingInvitationsByTeam = createAsyncThunk(
+  "workSpecs/fetchPendingByTeam",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(loadWorkSpecPendingInvitationByTeamUrl, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return rejectWithValue("Failed to fetch pending invitations by team");
+    }
+  }
+);
+// no progress
+export const fetchInactiveWorks = createAsyncThunk(
+  "workSpecs/fetchInactive",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(loadInActiveWorks, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      return rejectWithValue("Failed to fetch inactive works");
+    }
+  }
+);
+export const fetchFormApprovalsCountByMe = createAsyncThunk(
+  "formApprovals/fetchByMe",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(loadFormApprovalsCountByMe, {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Failed to fetch approvals by me");
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+//
+export const fetchFormApprovalsCountByManager = createAsyncThunk(
+  "formApprovals/fetchByManager",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(loadFormApprovalsCountByManager, {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Failed to fetch approvals by manager");
+      return await response.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 const HomePageModule = createSlice({
   name: "HomePageModule",
   initialState,
@@ -64,11 +250,11 @@ const HomePageModule = createSlice({
         : "";
 
       if (!searchText) {
-        state.filteredHomePageData = state.HomePageData;
+        state.filteredHomePageData = state.LoadHomeScreenCards;
         return;
       }
 
-      state.filteredHomePageData = state.HomePageData.filter((item) =>
+      state.filteredHomePageData = state.LoadHomeScreenCards.filter((item) =>
         item.moduleName && typeof item.moduleName === "string"
           ? item.moduleName.toLowerCase().includes(searchText)
           : false
@@ -78,7 +264,7 @@ const HomePageModule = createSlice({
       }
     },
     resetFilteredData: (state) => {
-      state.filteredHomePageData = state.HomePageData;
+      state.filteredHomePageData = state.LoadHomeScreenCards;
     },
   },
   extraReducers: (builder) => {
@@ -95,7 +281,6 @@ const HomePageModule = createSlice({
       })
       .addCase(loadHomeScreenCards_get.pending, (state) => {
         state.status = "loading";
-        
       })
       .addCase(loadHomeScreenCards_get.fulfilled, (state, action) => {
         state.status = "succeeded";
@@ -103,6 +288,111 @@ const HomePageModule = createSlice({
       })
       .addCase(loadHomeScreenCards_get.rejected, (state, action) => {
         state.status = "failed";
+      })
+      .addCase(fetchYesterdayCount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchYesterdayCount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.yesterdayCount = action.payload;
+      })
+
+      .addCase(fetchYesterdayCount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchTodayCount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchTodayCount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.todayCount = action.payload;
+      })
+
+      .addCase(fetchTodayCount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // works you need to do 37
+      .addCase(Get_loadActionableWorksByMe.pending, (state) => {})
+
+      .addCase(Get_loadActionableWorksByMe.fulfilled, (state, action) => {
+        state.loadActionableWorksByMe = action.payload;
+      })
+
+      .addCase(Get_loadActionableWorksByMe.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(fetchWorkSpecCards.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchWorkSpecCards.fulfilled, (state, action) => {
+        state.loading = false;
+        state.workSpecCards = action.payload;
+      })
+      .addCase(fetchWorkSpecCards.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Pending By Me
+      .addCase(fetchPendingInvitationsByMe.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPendingInvitationsByMe.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pendingByMe = action.payload;
+      })
+      .addCase(fetchPendingInvitationsByMe.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Pending By Team
+      .addCase(fetchPendingInvitationsByTeam.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPendingInvitationsByTeam.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pendingByTeam = action.payload;
+      })
+      .addCase(fetchPendingInvitationsByTeam.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Inactive Works
+      .addCase(fetchInactiveWorks.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchInactiveWorks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.inactiveWorks = action.payload;
+      })
+      .addCase(fetchInactiveWorks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }) // By Me
+      .addCase(fetchFormApprovalsCountByMe.pending, (state) => {})
+      .addCase(fetchFormApprovalsCountByMe.fulfilled, (state, action) => {
+        state.loadFormApprovalsCountByMe_byMe = action.payload;
+      })
+      .addCase(fetchFormApprovalsCountByMe.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // By Manager
+      .addCase(fetchFormApprovalsCountByManager.pending, (state) => {})
+      .addCase(fetchFormApprovalsCountByManager.fulfilled, (state, action) => {
+        state.loadFormApprovalsCountByManager_byManager = action.payload;
+      })
+      .addCase(fetchFormApprovalsCountByManager.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });

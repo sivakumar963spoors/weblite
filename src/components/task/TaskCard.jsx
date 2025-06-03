@@ -12,20 +12,27 @@ import KnowledgeBaseIcon from "../../assets/menu_svg_filled/Blue/Knowledge_Base.
 import leavesIcon from "../../assets/menu_svg_filled/Blue/Leaves.svg";
 import WorkActionFormIcon from "../../assets/menu_svg_filled/Blue/Work_Action_form.svg";
 import {
-  get_allCustomer,
   loadMetPast30DaysPercentage_get,
   loadNotMetPast30Days_get,
   loadNotMetPast30DaysByTeam_get,
   loadTodaysCustomerVisitsByTeam_get,
   loadtotalsCustomersCountUnderEmployees_get,
   loadYesterdayCustomerVisitsByTeam_get,
-  setDisplayCount,
   setTitleForCustomerView,
   todaysCustomerVisits_get,
   totalCustomersSize_get,
 } from "../../redux/slices/CustomerModule";
 import {
+  fetchFormApprovalsCountByManager,
+  fetchFormApprovalsCountByMe,
+  fetchInactiveWorks,
+  fetchPendingInvitationsByMe,
+  fetchPendingInvitationsByTeam,
+  fetchTodayCount,
+  fetchWorkSpecCards,
+  fetchYesterdayCount,
   filterByModule,
+  Get_loadActionableWorksByMe,
   loadHomeScreenCards_get,
   loggedInUser_get,
   resetFilteredData,
@@ -50,13 +57,24 @@ const TaskCard = ({ searchInput }) => {
     loadNotMetPast30DaysByTeam,
   } = useSelector((state) => state.CustomerModule);
   const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
-  const { LoadHomeScreenCards, workSpecsDataMenu, loggedInUser } = useSelector(
-    (state) => state.HomePageModule
-  );
+  const {
+    LoadHomeScreenCards,
+    filteredHomePageData,
+    loggedInUser,
+    yesterdayCount,
+    todayCount,
+    loadActionableWorksByMe,
+    workSpecCards,
+    pendingByMe,
+    pendingByTeam,
+    inactiveWorks,
+    loadFormApprovalsCountByMe_byMe,
+    loadFormApprovalsCountByManager_byManager,
+  } = useSelector((state) => state.HomePageModule);
   const { KnowledgeBaseCount } = useSelector(
     (state) => state.KnowledgeBaseReducerModule
   );
-  const filteredLoadHomeScreenCards = [...LoadHomeScreenCards].sort(
+  const filteredLoadHomeScreenCards = [...filteredHomePageData].sort(
     (a, b) => a.displayOrder - b.displayOrder
   );
 
@@ -75,6 +93,13 @@ const TaskCard = ({ searchInput }) => {
     dispatch(loadtotalsCustomersCountUnderEmployees_get());
     dispatch(loadNotMetPast30DaysByTeam_get());
     dispatch(loadKNowledgeBasedCount_get());
+    dispatch(Get_loadActionableWorksByMe());
+    dispatch(fetchInactiveWorks());
+    dispatch(fetchPendingInvitationsByTeam());
+    dispatch(fetchPendingInvitationsByMe());
+    dispatch(fetchWorkSpecCards());
+    dispatch(fetchFormApprovalsCountByManager());
+    dispatch(fetchFormApprovalsCountByMe());
   }, [dispatch]);
 
   useEffect(() => {
@@ -84,21 +109,21 @@ const TaskCard = ({ searchInput }) => {
       dispatch(resetFilteredData());
     }
   }, [dispatch, searchInput]);
+  useEffect(() => {
+    dispatch(loggedInUser_get());
+  }, [dispatch]);
   const navigateToShowAlldModule = (moduleId) => {
-    let title = "Show All";
     alert(moduleId);
     switch (moduleId) {
       case 12:
         navigate("/knowledgebase/manage");
         break;
       case 9:
-        
         navigate("/view/all/customers?viewType=9");
         break;
       case 15:
         navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
         break;
-
       case 36:
         navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
         break;
@@ -133,10 +158,9 @@ const TaskCard = ({ searchInput }) => {
       default:
     }
   };
-  const handlenavigationToCustomerModules = (id, title, displayCount) => {
+  const handlenavigationToCustomerModules = (id, title) => {
     dispatch(setTitleForCustomerView(title));
 
-   // dispatch(setDisplayCount(displayCount));
     switch (id) {
       case 1:
         navigate("/view/all/customers/typed?viewType=1&customerView=1");
@@ -244,13 +268,25 @@ const TaskCard = ({ searchInput }) => {
         break;
     }
   };
+
+  useEffect(() => {
+    if (loggedInUser?.empId) {
+      dispatch(fetchYesterdayCount(loggedInUser?.empId));
+      dispatch(fetchTodayCount(loggedInUser?.empId));
+    }
+  }, [loggedInUser?.empId, dispatch]);
+  useEffect(() => {
+    console.log(yesterdayCount);
+  }, []);
+
   return (
     <Box sx={{}}>
       <Stack gap={1} sx={{ pt: 1 }}>
-        {filteredLoadHomeScreenCards ? (
+        {filteredLoadHomeScreenCards &&
+        filteredLoadHomeScreenCards.length > 0 ? (
           filteredLoadHomeScreenCards?.map((data, index) => (
             <>
-              {[37, 36, 34, 17, 15, 12, 9].includes(data.moduleId) && (
+              {[37, 36, 17, 15, 12, 9].includes(data.moduleId) && (
                 <Stack
                   key={index}
                   sx={{ alignItems: "center", justifyContent: "center" }}
@@ -414,8 +450,8 @@ const TaskCard = ({ searchInput }) => {
                                           onClick={() =>
                                             handlenavigationToCustomerModules(
                                               label.id,
-                                              label.title,
-                                              displayCount
+                                              label.title
+                                              // displayCount
                                             )
                                           }
                                         >
@@ -499,8 +535,8 @@ const TaskCard = ({ searchInput }) => {
                                         onClick={() =>
                                           handlenavigationToCustomerModules(
                                             label.id,
-                                            label.title,
-                                           // displayCount
+                                            label.title
+                                            // displayCount
                                           )
                                         }
                                       >
@@ -911,287 +947,35 @@ const TaskCard = ({ searchInput }) => {
                               </Stack>
                             </Stack>
                           )}
-                          {/* {data.moduleId === 37 ? (
-                          
-                          data.formType === 2 &&
-                          data.formSpecPermission === true ? (
-                            data.formAddPermission ? (
-                              <Typography sx={{ color: "green" }}>
-                                {data.moduleName}
-                              </Typography>
-                            ) : (
-                              <Typography sx={{ color: "yellow" }}>
-                                {data.moduleName}
-                              </Typography>
-                            )
-                          ) : data.employeeAccessSettings ? (
-                            <Typography sx={{ color: "pink" }}>
-                              {data.moduleName}
-                            </Typography>
-                          ) : (
-                            <Typography sx={{ color: "blue" }}>
-                              {data.moduleName}
-                            </Typography>
-                          )
-                        ) : null} */}
-                          {/* {data.moduleId === 37 ? (
-                          
-                            data.formType === 1 &&
-                            data.formSpecPermission === true ? (
-                              data.formAddPermission ? (
-                                <Typography sx={{ color: "green" }}>
-                                  {data.moduleName}
-                                </Typography>
-                              ) : (
-                                <Typography sx={{ color: "yellow" }}>
-                                  {data.moduleName}
-                                </Typography>
-                              )
-                            ) : data.employeeAccessSettings ? (
-                              <Typography sx={{ color: "pink" }}>
-                                {data.moduleName}
-                              </Typography>
-                            ) : (
-                              <Typography sx={{ color: "blue" }}>
-                                {data.moduleName}
-                              </Typography>
-                            )
-                          ) : null} */}
-                          {/* If moduleId is not 37, it renders nothing */}
-                          {/* {data.moduleId === 37 &&
-                          data.formType === 1 &&
-                          data.formSpecPermission === true ? (
-                            data.formAddPermission ? (
-                              <Typography>{data.moduleName}</Typography>
-                            ) : (
-                              <Typography>{data.moduleName}</Typography>
-                            )
-                          ) : data.employeeAccessSettings ? (
-                            <Typography sx={{ color: "pink" }}>
-                              {data.moduleName}
-                            </Typography>
-                          ) : (
-                            <Typography sx={{ color: "blue" }}>
-                              {" "}
-                              {data.moduleName}
-                            </Typography>
-                          )} */}
-                          {data.moduleId === 37 &&
-                            workSpecsDataMenu
-                              .filter(
-                                (eachWorkData) =>
-                                  eachWorkData.customEntitySpecId ===
-                                  data.customEntitySpecId
-                              )
-                              .map((eachWorkData) => (
-                                <Stack sx={{ mt: 1 }} key={eachWorkData.id}>
+                          {data.moduleId === 37 ? (
+                            data.formType === 1 ? (
+                              data.formSpecPermission === "true" ||
+                              data.formSpecPermission === true ? (
+                                data.formSpecViewPermission === "true" ||
+                                data.formSpecViewPermission === true ? (
+                                  data.formAddPermission === "true" ||
+                                  data.formAddPermission === true ? (
+                                    <div>
+                                      <h1>heloooo</h1>
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <h1>hello 2</h1>
+                                    </div>
+                                  )
+                                ) : null
+                              ) : loggedInUser?.employeeAccessSettings
+                                  ?.addForm === "true" ||
+                                loggedInUser?.employeeAccessSettings
+                                  ?.addForm === true ? (
+                                <>
                                   <Stack
                                     sx={{
-                                      flexDirection: "row",
-                                      gap: 2,
-                                      flexWrap: "wrap",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <Stack
-                                      sx={{
-                                        flexDirection: "column",
-                                        alignItems: "flex-start",
-                                        justifyContent: "space-between",
-                                        width: "100%",
-                                        px: { sm: 2, xs: 1 },
-                                        py: 0.5,
-                                        gap: 0.5,
-                                        borderRadius: "4px",
-                                      }}
-                                    >
-                                      <Stack
-                                        sx={{
-                                          flexDirection: "row",
-                                          justifyContent: "space-between",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        <Typography
-                                          sx={{
-                                            flexGrow: 1,
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          You need to do:
-                                        </Typography>
-                                        <Stack
-                                          sx={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <Typography
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks.todo
-                                                  .personal === 0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          >
-                                            {eachWorkData.tasks.todo.personal}
-                                          </Typography>
-                                          <NavigateNextIcon
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks.todo
-                                                  .personal === 0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          />
-                                        </Stack>
-                                      </Stack>
-
-                                      <Stack
-                                        sx={{
-                                          flexDirection: "row",
-                                          justifyContent: "space-between",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        <Typography
-                                          sx={{
-                                            flexGrow: 1,
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          Team needs to do:
-                                        </Typography>
-                                        <Stack
-                                          sx={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <Typography
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks.todo.team ===
-                                                0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          >
-                                            {eachWorkData.tasks.todo.team}
-                                          </Typography>
-                                          <NavigateNextIcon
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks.todo.team ===
-                                                0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          />
-                                        </Stack>
-                                      </Stack>
-
-                                      <Stack
-                                        sx={{
-                                          flexDirection: "row",
-                                          justifyContent: "space-between",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          No progress tasks:
-                                        </Typography>
-                                        <Stack
-                                          sx={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <Typography
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks
-                                                  .noProgress === 0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          >
-                                            {eachWorkData.tasks.noProgress}
-                                          </Typography>
-                                          <NavigateNextIcon
-                                            sx={{
-                                              color:
-                                                eachWorkData.tasks
-                                                  .noProgress === 0
-                                                  ? "green"
-                                                  : "red",
-                                              fontSize: {
-                                                sm: "14px",
-                                                xs: "10px",
-                                              },
-                                            }}
-                                          />
-                                        </Stack>
-                                      </Stack>
-                                    </Stack>
-                                  </Stack>
-                                </Stack>
-                              ))}
-                          {data.moduleId === 36 && (
-                            <Stack
-                              direction="row"
-                              sx={{
-                                width: "100%",
-                                alignItems: "center",
-                                justifyContent: "space-evenly",
-                                gap: 1,
-                                mt: 1,
-                              }}
-                            >
-                              {approvalCards.map((card, index) => (
-                                <React.Fragment key={index}>
-                                  <Stack
-                                    sx={{
-                                      // border: "1px solid #EEEEEE",
                                       flexGrow: { sm: 1, xs: 12 },
-                                      width: { xs: "250px", sm: "auto" },
+                                      alignContent: "center",
+                                      justifyContent: "space-around",
                                       textAlign: "center",
-                                      borderRadius: "5px",
+                                      flexDirection: "row",
                                       py: 2,
                                       cursor: "pointer",
                                       transition: "all 0.3s ease",
@@ -1200,37 +984,1962 @@ const TaskCard = ({ searchInput }) => {
                                           "0 1px 10px rgba(0, 0, 0, 0.10)",
                                         transform: "scale(1.01)",
                                       },
+
+                                      "& > *": {
+                                        width: "32%",
+                                      },
+                                      "& > * >: nth-of-type(2)": {
+                                        fontSize: { sm: "12px", xs: "10px" },
+                                      },
                                     }}
                                   >
-                                    <Typography
+                                    {loggedInUser?.manager ? (
+                                      <>
+                                        {" "}
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByMe ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting your approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByTeam ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting team approval
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.approvedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Approved Forms
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.rejectedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Rejected Forms
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    )}
+                                  </Stack>
+                                </>
+                              ) : (
+                                <Stack
+                                  sx={{
+                                    flexGrow: { sm: 1, xs: 12 },
+                                    alignContent: "center",
+                                    justifyContent: "space-around",
+                                    textAlign: "center",
+                                    flexDirection: "row",
+                                    py: 2,
+                                    cursor: "pointer",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": {
+                                      boxShadow:
+                                        "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                      transform: "scale(1.01)",
+                                    },
+
+                                    "& > *": {
+                                      width: "32%",
+                                    },
+                                    "& > * >: nth-of-type(2)": {
+                                      fontSize: { sm: "12px", xs: "10px" },
+                                    },
+                                  }}
+                                >
+                                  {loggedInUser?.manager ? (
+                                    <>
+                                      {" "}
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByMe_byMe?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.pendingCount ?? 0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>
+                                          Pending your manager approval
+                                        </Typography>
+                                      </Stack>
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByManager_byManager?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.formApprovalByMe ??
+                                              0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>
+                                          Awaiting your approval
+                                        </Typography>
+                                      </Stack>
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByManager_byManager?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.formApprovalByTeam ??
+                                              0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>
+                                          Awaiting team approval
+                                        </Typography>
+                                      </Stack>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByMe_byMe?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.pendingCount ?? 0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>
+                                          Pending your manager approval
+                                        </Typography>
+                                      </Stack>
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByMe_byMe?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.approvedCount ?? 0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>Approved Forms</Typography>
+                                      </Stack>
+                                      <Stack>
+                                        <Typography>
+                                          {(() => {
+                                            const matchingGroup =
+                                              loadFormApprovalsCountByMe_byMe?.find(
+                                                (group) =>
+                                                  group.formSpecId ===
+                                                  data.formSpecId
+                                              );
+
+                                            const size =
+                                              matchingGroup?.rejectedCount ?? 0;
+
+                                            return (
+                                              <Typography
+                                                component={"span"}
+                                                sx={{
+                                                  color:
+                                                    size > 0 ? "green" : "red",
+                                                }}
+                                              >
+                                                {size}
+                                              </Typography>
+                                            );
+                                          })()}
+                                        </Typography>
+                                        <Typography>Rejected Forms</Typography>
+                                      </Stack>
+                                    </>
+                                  )}
+                                </Stack>
+                              )
+                            ) : data.formType === 2 ? (
+                              data.formSpecPermission === "true" ||
+                              data.formSpecPermission === true ? (
+                                data.formSpecViewPermission === "true" ||
+                                data.formSpecViewPermission === true ? (
+                                  data.formAddPermission === "true" ||
+                                  data.formAddPermission === true ? (
+                                    <Stack
                                       sx={{
-                                        fontSize: { sm: "14px", xs: "10px" },
+                                        flexGrow: { sm: 1, xs: 12 },
+                                        alignContent: "center",
+                                        justifyContent: "space-around",
+                                        textAlign: "center",
+                                        flexDirection: "row",
+                                        py: 2,
+                                        cursor: "pointer",
+                                        transition: "all 0.3s ease",
+                                        "&:hover": {
+                                          boxShadow:
+                                            "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                          transform: "scale(1.01)",
+                                        },
+
+                                        "& > *": {
+                                          width: "32%",
+                                        },
+                                        "& > * >: nth-of-type(2)": {
+                                          fontSize: { sm: "12px", xs: "10px" },
+                                        },
                                       }}
                                     >
-                                      {card.count}
+                                      {loggedInUser?.manager ? (
+                                        <>
+                                          {" "}
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Pending your manager approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.formApprovalByMe ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Awaiting your approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.formApprovalByTeam ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Awaiting team approval
+                                            </Typography>
+                                          </Stack>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Pending your manager approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.approvedCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Approved Forms
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.rejectedCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Rejected Forms
+                                            </Typography>
+                                          </Stack>
+                                        </>
+                                      )}
+                                    </Stack>
+                                  ) : (
+                                    <Stack
+                                      sx={{
+                                        flexGrow: { sm: 1, xs: 12 },
+                                        alignContent: "center",
+                                        justifyContent: "space-around",
+                                        textAlign: "center",
+                                        flexDirection: "row",
+                                        py: 2,
+                                        cursor: "pointer",
+                                        transition: "all 0.3s ease",
+                                        "&:hover": {
+                                          boxShadow:
+                                            "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                          transform: "scale(1.01)",
+                                        },
+
+                                        "& > *": {
+                                          width: "32%",
+                                        },
+                                        "& > * >: nth-of-type(2)": {
+                                          fontSize: { sm: "12px", xs: "10px" },
+                                        },
+                                      }}
+                                    >
+                                      {loggedInUser?.manager ? (
+                                        <>
+                                          {" "}
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Pending your manager approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.formApprovalByMe ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Awaiting your approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.formApprovalByTeam ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Awaiting team approval
+                                            </Typography>
+                                          </Stack>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Pending your manager approval
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.approvedCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Approved Forms
+                                            </Typography>
+                                          </Stack>
+                                          <Stack>
+                                            <Typography>
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+
+                                                const size =
+                                                  matchingGroup?.rejectedCount ??
+                                                  0;
+
+                                                return (
+                                                  <Typography
+                                                    component={"span"}
+                                                    sx={{
+                                                      color:
+                                                        size > 0
+                                                          ? "green"
+                                                          : "red",
+                                                    }}
+                                                  >
+                                                    {size}
+                                                  </Typography>
+                                                );
+                                              })()}
+                                            </Typography>
+                                            <Typography>
+                                              Rejected Forms
+                                            </Typography>
+                                          </Stack>
+                                        </>
+                                      )}
+                                    </Stack>
+                                  )
+                                ) : null
+                              ) : loggedInUser?.employeeAccessSettings
+                                  ?.addForm === "true" ||
+                                loggedInUser?.employeeAccessSettings
+                                  ?.addForm === true ? (
+                                <>
+                                  <Stack
+                                    sx={{
+                                      flexGrow: { sm: 1, xs: 12 },
+                                      alignContent: "center",
+                                      justifyContent: "space-around",
+                                      textAlign: "center",
+                                      flexDirection: "row",
+                                      py: 2,
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                        transform: "scale(1.01)",
+                                      },
+
+                                      "& > *": {
+                                        width: "32%",
+                                      },
+                                      "& > * >: nth-of-type(2)": {
+                                        fontSize: { sm: "12px", xs: "10px" },
+                                      },
+                                    }}
+                                  >
+                                    {loggedInUser?.manager ? (
+                                      <>
+                                        {" "}
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByMe ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting your approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByTeam ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting team approval
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Stack>
+                                          <Typography></Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography></Typography>
+                                          <Typography>
+                                            Approved Forms
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography></Typography>
+                                          <Typography>
+                                            Rejected Forms
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    )}
+                                  </Stack>
+                                </>
+                              ) : (
+                                <div>formType 2</div>
+                              )
+                            ) : data.formSpecPermission === "true" ||
+                              data.formSpecPermission === true ? (
+                              data.formSpecViewPermission === "true" ||
+                              data.formSpecViewPermission === true ? (
+                                data.formAddPermission === "true" ||
+                                data.formAddPermission === true ? (
+                                  <Stack
+                                    sx={{
+                                      flexGrow: { sm: 1, xs: 12 },
+                                      alignContent: "center",
+                                      justifyContent: "space-around",
+                                      textAlign: "center",
+                                      flexDirection: "row",
+                                      py: 2,
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                        transform: "scale(1.01)",
+                                      },
+
+                                      "& > *": {
+                                        width: "32%",
+                                      },
+                                      "& > * >: nth-of-type(2)": {
+                                        fontSize: { sm: "12px", xs: "10px" },
+                                      },
+                                    }}
+                                  >
+                                    {loggedInUser?.manager ? (
+                                      <>
+                                        {" "}
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByMe ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting your approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByTeam ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting team approval
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.approvedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Approved Forms
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.rejectedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Rejected Forms
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    )}
+                                  </Stack>
+                                ) : (
+                                  <Stack
+                                    sx={{
+                                      flexGrow: { sm: 1, xs: 12 },
+                                      alignContent: "center",
+                                      justifyContent: "space-around",
+                                      textAlign: "center",
+                                      flexDirection: "row",
+                                      py: 2,
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        boxShadow:
+                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                        transform: "scale(1.01)",
+                                      },
+
+                                      "& > *": {
+                                        width: "32%",
+                                      },
+                                      "& > * >: nth-of-type(2)": {
+                                        fontSize: { sm: "12px", xs: "10px" },
+                                      },
+                                    }}
+                                  >
+                                    {loggedInUser?.manager ? (
+                                      <>
+                                        {" "}
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByMe ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting your approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByManager_byManager?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.formApprovalByTeam ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Awaiting team approval
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.pendingCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Pending your manager approval
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.approvedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Approved Forms
+                                          </Typography>
+                                        </Stack>
+                                        <Stack>
+                                          <Typography>
+                                            {(() => {
+                                              const matchingGroup =
+                                                loadFormApprovalsCountByMe_byMe?.find(
+                                                  (group) =>
+                                                    group.formSpecId ===
+                                                    data.formSpecId
+                                                );
+
+                                              const size =
+                                                matchingGroup?.rejectedCount ??
+                                                0;
+
+                                              return (
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+                                              );
+                                            })()}
+                                          </Typography>
+                                          <Typography>
+                                            Rejected Forms
+                                          </Typography>
+                                        </Stack>
+                                      </>
+                                    )}
+                                  </Stack>
+                                )
+                              ) : <Typography>okkk</Typography>
+                            ) : loggedInUser?.employeeAccessSettings
+                                ?.addForm === "true" ||
+                              loggedInUser?.employeeAccessSettings?.addForm ===
+                                true ? (
+                              <>
+                                <Stack
+                                  sx={{
+                                    flexGrow: { sm: 1, xs: 12 },
+                                    alignContent: "center",
+                                    justifyContent: "space-around",
+                                    textAlign: "center",
+                                    flexDirection: "row",
+                                    py: 1.5,
+                                    cursor: "pointer",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": {
+                                      boxShadow:
+                                        "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                      transform: "scale(1.01)",
+                                    },
+                                  }}
+                                >
+                                  <Stack>
+                                    <Typography>
+                                      {(() => {
+                                        const matchingGroup =
+                                          yesterdayCount?.find((group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                          );
+
+                                        const size = matchingGroup?.size ?? 0;
+
+                                        return (
+                                          <Typography
+                                            component={"span"}
+                                            sx={{
+                                              color: size > 0 ? "green" : "red",
+                                            }}
+                                          >
+                                            {size}
+                                          </Typography>
+                                        );
+                                      })()}
                                     </Typography>
+
                                     <Typography
                                       sx={{
-                                        fontSize: { sm: "14px", xs: "10px" },
+                                        fontSize: {
+                                          sm: "14px",
+                                          xs: "10px",
+                                        },
                                       }}
                                     >
-                                      {card.label}
+                                      filled yesterday
                                     </Typography>
                                   </Stack>
 
-                                  {index !== approvalCards.length - 1 && (
-                                    <Divider
-                                      orientation="vertical"
-                                      flexItem
+                                  <Stack>
+                                    <Typography>
+                                      {(() => {
+                                        const matchingGroup = todayCount?.find(
+                                          (group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                        );
+
+                                        const size = matchingGroup?.size ?? 0;
+
+                                        return (
+                                          <Typography
+                                            component={"span"}
+                                            sx={{
+                                              color: size > 0 ? "green" : "red",
+                                            }}
+                                          >
+                                            {size}
+                                          </Typography>
+                                        );
+                                      })()}
+                                    </Typography>
+                                    <Typography
                                       sx={{
-                                        alignSelf: "center",
-                                        height: "50px",
-                                        borderColor: "#e0e0e0",
+                                        fontSize: {
+                                          sm: "14px",
+                                          xs: "10px",
+                                        },
                                       }}
-                                    />
-                                  )}
-                                </React.Fragment>
-                              ))}
+                                    >
+                                      filled today
+                                    </Typography>
+                                  </Stack>
+                                </Stack>
+                              </>
+                            ) : (
+                              <Stack
+                                sx={{
+                                  flexGrow: { sm: 1, xs: 12 },
+                                  alignContent: "center",
+                                  justifyContent: "space-around",
+                                  textAlign: "center",
+                                  flexDirection: "row",
+                                  py: 1.5,
+                                  cursor: "pointer",
+                                  transition: "all 0.3s ease",
+                                  "&:hover": {
+                                    boxShadow: "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                    transform: "scale(1.01)",
+                                  },
+                                }}
+                              >
+                                <Stack>
+                                  <Typography>
+                                    {(() => {
+                                      const matchingGroup =
+                                        yesterdayCount?.find((group) =>
+                                          group.forms?.some(
+                                            (form) =>
+                                              form.formSpecId ===
+                                              data.formSpecId
+                                          )
+                                        );
+
+                                      const size = matchingGroup?.size ?? 0;
+
+                                      return (
+                                        <Typography
+                                          component={"span"}
+                                          sx={{
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        >
+                                          {size}
+                                        </Typography>
+                                      );
+                                    })()}
+                                  </Typography>
+
+                                  <Typography
+                                    sx={{
+                                      fontSize: {
+                                        sm: "14px",
+                                        xs: "10px",
+                                      },
+                                    }}
+                                  >
+                                    filled yesterday
+                                  </Typography>
+                                </Stack>
+
+                                <Stack>
+                                  <Typography>
+                                    {(() => {
+                                      const matchingGroup = todayCount?.find(
+                                        (group) =>
+                                          group.forms?.some(
+                                            (form) =>
+                                              form.formSpecId ===
+                                              data.formSpecId
+                                          )
+                                      );
+
+                                      const size = matchingGroup?.size ?? 0;
+
+                                      return (
+                                        <Typography
+                                          component={"span"}
+                                          sx={{
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        >
+                                          {size}
+                                        </Typography>
+                                      );
+                                    })()}
+                                  </Typography>
+                                  <Typography
+                                    sx={{
+                                      fontSize: {
+                                        sm: "14px",
+                                        xs: "10px",
+                                      },
+                                    }}
+                                  >
+                                    filled today
+                                  </Typography>
+                                </Stack>
+                              </Stack>
+                            )
+                          ) : <Typography>jiii</Typography>}
+                          {data.moduleId === 36 && (
+                            <Stack
+                              sx={{
+                                width: "100%",
+                                gap: 1,
+                                mt: 1,
+                                "& > *": {
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                },
+
+                                "& > * >: first-of-type": {
+                                  fontSize: { sm: "12px", xs: "10px" },
+                                },
+                              }}
+                            >
+                              <Stack>
+                                <Typography>you need to do</Typography>
+                                <Typography>
+                                  {(() => {
+                                    const matchingGroup =
+                                      loadActionableWorksByMe?.find(
+                                        (group) =>
+                                          group.formSpecId === data.formSpecId
+                                      );
+
+                                    const size = matchingGroup?.count ?? 0;
+
+                                    return (
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <Typography
+                                          component={"span"}
+                                          sx={{
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        >
+                                          {size}
+                                        </Typography>
+
+                                        <NavigateNextIcon
+                                          sx={{
+                                            fontSize: "13px",
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        />
+                                      </Stack>
+                                    );
+                                  })()}
+                                </Typography>
+                              </Stack>
+                              {loggedInUser?.manager && (
+                                <Stack>
+                                  <Typography>team need to do</Typography>
+
+                                  <Typography>
+                                    {(() => {
+                                      const matchingGroup = workSpecCards?.find(
+                                        (group) =>
+                                          group.formSpecId === data.formSpecId
+                                      );
+
+                                      const size = matchingGroup?.count ?? 0;
+
+                                      return (
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography
+                                            component={"span"}
+                                            sx={{
+                                              color:
+                                                size > 0 ? "orange" : "green",
+                                            }}
+                                          >
+                                            {size}
+                                          </Typography>
+
+                                          <NavigateNextIcon
+                                            sx={{
+                                              fontSize: "13px",
+                                              color:
+                                                size > 0 ? "orange" : "green",
+                                            }}
+                                          />
+                                        </Stack>
+                                      );
+                                    })()}
+                                  </Typography>
+                                </Stack>
+                              )}
+                              {(() => {
+                                const matchingGroup = pendingByMe?.find(
+                                  (group) =>
+                                    group.formSpecId === data.formSpecId
+                                );
+
+                                const size = matchingGroup?.count ?? 0;
+                                const canSend =
+                                  matchingGroup?.canSendWorkInvitation;
+
+                                if (!canSend) return null;
+
+                                return (
+                                  <Stack>
+                                    <Typography>
+                                      Invitations need your action
+                                    </Typography>
+                                    <Stack
+                                      sx={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        component={"span"}
+                                        sx={{
+                                          color: size > 0 ? "green" : "red",
+                                        }}
+                                      >
+                                        {size}
+                                      </Typography>
+
+                                      <NavigateNextIcon
+                                        sx={{
+                                          fontSize: "13px",
+                                          color: size > 0 ? "green" : "red",
+                                        }}
+                                      />
+                                    </Stack>
+                                  </Stack>
+                                );
+                              })()}
+
+                              {(() => {
+                                const matchingGroup = pendingByTeam?.find(
+                                  (group) =>
+                                    group.formSpecId === data.formSpecId
+                                );
+                                const size = matchingGroup?.count ?? 0;
+                                const canSend =
+                                  matchingGroup?.canSendWorkInvitation;
+
+                                if (!loggedInUser?.manager || !canSend)
+                                  return null;
+
+                                return (
+                                  <Stack>
+                                    <Typography>
+                                      Invitations for team action
+                                    </Typography>
+                                    <Stack
+                                      sx={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        component={"span"}
+                                        sx={{
+                                          color: size > 0 ? "green" : "red",
+                                        }}
+                                      >
+                                        {size}
+                                      </Typography>
+
+                                      <NavigateNextIcon
+                                        sx={{
+                                          fontSize: "13px",
+                                          color: size > 0 ? "green" : "red",
+                                        }}
+                                      />
+                                    </Stack>
+                                  </Stack>
+                                );
+                              })()}
+
+                              <Stack>
+                                <Typography>
+                                  No progress past&nbsp;
+                                  {loggedInUser?.inActiveDaysValue} days
+                                </Typography>
+                                <Typography>
+                                  {(() => {
+                                    const matchingGroup = inactiveWorks?.find(
+                                      (group) =>
+                                        group.formSpecId === data.formSpecId
+                                    );
+
+                                    const size = matchingGroup?.count ?? 0;
+
+                                    return (
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <Typography
+                                          component={"span"}
+                                          sx={{
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        >
+                                          {size}
+                                        </Typography>
+
+                                        <NavigateNextIcon
+                                          sx={{
+                                            fontSize: "13px",
+                                            color: size > 0 ? "green" : "red",
+                                          }}
+                                        />
+                                      </Stack>
+                                    );
+                                  })()}
+                                </Typography>
+                              </Stack>
                             </Stack>
                           )}{" "}
                         </>

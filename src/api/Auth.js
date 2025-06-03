@@ -1,4 +1,5 @@
 export const BASE_URL = "http://localhost:8080/effort";
+//export const BASE_URL ="https://vapt.spoors.dev/webliteBackend"
 
 export const actionRequired_ajax = `${BASE_URL}/reactrest/api/ajax/get/dashboard/action/required/configurations`;
 export const actionRequired_Approvals = `${BASE_URL}/reactrest/api/individualSpec/formApprovalCount`;
@@ -28,8 +29,6 @@ export const getCustomersAjaxUrl = (params = {}) => {
   return url.toString();
 };
 
-
-
 export const getKnowledgeBaseAjaxUrl = `${BASE_URL}/reactrest/api/knowledgebase/manage`;
 export const getArticleAjax = (id, forView) =>
   `${BASE_URL}/reactrest/api/manage/articles/${id}?forView=${forView}`;
@@ -37,3 +36,46 @@ export const getArticleNewAjaxUrl = (viewType) =>
   `${BASE_URL}/reactrest/api/knowledgebase/manage/new?viewType=${viewType}`;
 export const loadKNowledgeBasedCount = `${BASE_URL}/reactrest/api/knowledgebase/manage/count`;
 export const getDayPlanCustomerUrl = `${BASE_URL}/reactrest/api/dayPlan/customers`;
+export const customerDetailsAPi = (params = {}) => {
+  const url = new URL(`${BASE_URL}/reactrest/api/customer/details/view`);
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.append(key, value);
+    }
+  });
+
+  return url.toString();
+};
+
+export const cutomerActivityUrl = (params = {}) => {
+  const url = new URL(`${BASE_URL}/reactrest/api/view/customer/activities`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.append(key, value);
+    }
+  });
+
+  return url.toString();
+};
+export const customerActivityForms = (params = {}) => {
+  const url = new URL(`${BASE_URL}/reactrest/api/customer/activity/forms`);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.append(key, value);
+    }
+  });
+
+  return url.toString();
+};
+// works count
+
+export const loadActionableWorksByMeURl = `${BASE_URL}/reactrest/api/ajax/get/actionable/works/me`;
+export const loadWorkSpecCardsCounturl = `${BASE_URL}/reactrest/api/ajax/get/weblite/workSpecs`;
+export const loadWorkSpecPendingInvitationByMeUrl = `${BASE_URL}/reactrest/api/ajax/get/pending/work/invitations/me`;
+export const loadWorkSpecPendingInvitationByTeamUrl = `${BASE_URL}/reactrest/api/ajax/get/pending/work/invitations/team`;
+export const loadInActiveWorks = `${BASE_URL}/reactrest/api/ajax/get/inactive/works`;
+// forms
+
+export const loadFormApprovalsCountByMe = `${BASE_URL}/reactrest/api/get/form/approvals/count/under/emp`;
+export const loadFormApprovalsCountByManager = `${BASE_URL}/reactrest/api/get/form/approvals/count/me`;

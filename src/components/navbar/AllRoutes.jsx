@@ -61,9 +61,9 @@ const AllRoutes = () => {
         />
         <Route path="/view/all/customers" element={<Customers />} />
         <Route path="/customer/details/view" element={<CustomerDetails />} />
-        <Route path="/customer/viewactivity" element={<ViewActivity />} />
+        <Route path="/customer/view/activity" element={<ViewActivity />} />
         <Route
-          path="/customer/viewactivity/forms"
+          path="/customer/view/activity/forms"
           element={<ViewDeatilsActivity />}
         />
         <Route path="/add/form/:id" element={<AllFormDataTypes />} />

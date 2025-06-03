@@ -72,14 +72,19 @@ const ViewArticle = () => {
                         color: "#999",
                         fontWeight: 500,
 
-                        width: "150px",
+                        width: "25%",
+
                         fontSize: { sm: "14px", xs: "10px" },
                       },
                       "& > * > :nth-of-type(2)": {
                         flexShrink: 0,
                         color: "#000",
                         fontWeight: 500,
+                        width: "75%",
+
                         fontSize: { sm: "14px", xs: "10px" },
+                        alignItems: "center",
+                        justifyContent: "center",
                       },
                     }}
                   >
@@ -100,28 +105,52 @@ const ViewArticle = () => {
                     </Stack>{" "}
                     <Stack
                       sx={{
-                        flexDirection: {
-                          xs: "column !important",
-                          sm: "row !important",
-                        },
+                        flexDirection: {},
                       }}
                     >
                       <Typography>Preview &nbsp;</Typography>
                       <Typography>
                         {" "}
-                        <Box
-                          component={"img"}
-                          src={fileUrl}
-                          sx={{ width: "150px", height: "150px" }}
-                          onError={handleOnError}
-                        />
+                        {article.mimeType === null && (
+                          <Typography> :&nbsp;{article.urlLink}</Typography>
+                        )}
+                        {article.mimeType !== null &&
+                          article.mimeType.toLowerCase().includes("audio") && (
+                           <Typography>:&nbsp; audio</Typography>
+                          )}
+                        {article.mimeType !== null &&
+                          article.mimeType.toLowerCase().includes("image") && (
+                            <Box
+                              component={"img"}
+                              src={fileUrl}
+                              sx={{ width: "150px", height: "150px" }}
+                              onError={handleOnError}
+                            />
+                          )}
+                        {article.mimeType !== null &&
+                          article.mimeType.toLowerCase().includes("video") && (
+                            <Typography>:&nbsp;video</Typography>
+                          )}
+                        {article.mimeType !== null &&
+                        article.mimeType.toLowerCase().includes("pdf") ? (
+                          // Now do second check here
+                          article.pdfThumnailMediaId &&
+                          article.pdfThumnailMediaId !== 0 ? (
+                            <Typography>:&nbsp;PDF with thumbnail</Typography>
+                          ) : (
+                            <Typography>:&nbsp;PDF without thumbnail</Typography>
+                          )
+                        ) : (
+                          <Typography></Typography>
+                        )}
                       </Typography>{" "}
                     </Stack>{" "}
                     <Stack>
-                      <Typography>Download</Typography>:&nbsp;
+                      <Typography>Download</Typography>
                       <Typography onClick={() => download(fileUrl)}>
-                        <ArrowDownwardIcon />
-                      </Typography>{" "}
+                        :&nbsp;
+                        {article.mimeType !== null && <ArrowDownwardIcon />}
+                      </Typography>
                     </Stack>
                     <Stack>
                       <Typography>uploaded by</Typography>
