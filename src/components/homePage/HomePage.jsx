@@ -1,17 +1,20 @@
+import { LoginOutlined } from "@mui/icons-material";
 import CallIcon from "@mui/icons-material/Call";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
 import WindowIcon from "@mui/icons-material/Window";
+import HistoryIcon from '@mui/icons-material/History';
 import {
   Box,
+  Button,
   CircularProgress,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
-import { ClockIcon } from "@mui/x-date-pickers";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -41,8 +44,8 @@ const HomePage = () => {
     (state) => state.LeavesModule
   );
   const { loggedInUser } = useSelector((state) => state.HomePageModule);
-  const [openActionRequird, setOpenActionRequird] = useState(true);
-  const [openLeaveCount, setOpenLeaveCount] = useState(false);
+  const [openActionRequird, setOpenActionRequird] = useState(false);
+  const [openLeaveCount, setOpenLeaveCount] = useState(true);
   const [leaveCount] = useState(onLeaveToday?.length);
   const [zIndex, setZIndex] = useState(1000);
   const [searchText, setSearchText] = useState("");
@@ -52,11 +55,8 @@ const HomePage = () => {
   const nav = useNavigate();
   useEffect(() => {
     dispatch(loggedInUser_get());
-    console.log(loggedInUser);
   }, []);
-  useEffect(() => {
-    console.log(loggedInUser);
-  }, []);
+
   useEffect(() => {
     dispatch(actionRequiredAjax());
   }, [dispatch]);
@@ -133,35 +133,20 @@ const HomePage = () => {
                   <>
                     <Stack>
                       {loggedInUser.employeeSignIn === "-1" &&
-                      loggedInUser.employeeSignInAfterSignOut === 0 ? (
-                        loggedInUser.isSignInFrom ? (
+                        loggedInUser.employeeSignInAfterSignOut === 0 &&
+                        (loggedInUser.isSignInFrom ? (
                           <Stack>
                             <Stack
                               sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
                             >
-                              <Stack
+                              <Typography
                                 sx={{
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
+                                  fontWeight: "bold",
+                                  fontSize: { sm: "16px", xs: "14px" },
                                 }}
                               >
-                                <Typography
-                                  sx={{
-                                    fontWeight: "bold",
-                                    fontSize: { sm: "16px", xs: "14px" },
-                                  }}
-                                >
-                                  Hi, {loggedInUser?.loginEmpName}
-                                </Typography>
-                                <Stack sx={{ flexDirection: "row", gap: 1 }}>
-                                  <ClockIcon />
-
-                                  <LogoutIcon
-                                    sx={{ color: "red", cursor: "not-allowed" }}
-                                  />
-                                </Stack>
-                              </Stack>
+                                Hi, {loggedInUser?.loginEmpName}
+                              </Typography>
 
                               <Typography
                                 sx={{
@@ -173,7 +158,70 @@ const HomePage = () => {
                                 Not signed In
                               </Typography>
 
-                              {loggedInUser.noMobileAccess === false && (
+                              
+                              {loggedInUser.noMobileAccess === false ? (
+                                <>
+                                  <Stack
+                                    sx={{
+                                      flexDirection: "row",
+                                      gap: 1,
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <HistoryIcon sx={{color:'#011D45', mt:1}}/>
+
+                                    <Button
+                                      startIcon={<LoginOutlined />}
+                                      variant="outlined"
+                                      sx={{
+                                        color: "green",
+                                        cursor: "not-allowed",
+                                        borderColor: "green",
+
+                                        mt: 1,
+                                      }}
+                                    >
+                                      sign in
+                                    </Button>
+                                  </Stack>
+                                  <Typography
+                                    sx={{
+                                      fontSize: { sm: "11px", xs: "9px" },
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    Note: system has detected mobile application
+                                    access against your profile. Kindly do the
+                                    sign-in through the mobile application.
+                                  </Typography>
+                                </>
+                              ) : (
+                                <>
+                                  <Stack
+                                    sx={{
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                      gap:1
+                                    }}
+                                  >
+                                    <HistoryIcon sx={{color:'#011D45', mt:1}} />
+                                    <Button
+                                      startIcon={<LoginOutlined />}
+                                      variant="outlined"
+                                      sx={{
+                                        color: "green",
+                                        cursor: "pointer",
+                                        borderColor: "green",
+                                        width: "110px",
+                                        mt: 1,
+                                      }}
+                                    >
+                                      signin
+                                    </Button>
+                                  </Stack>
+                                </>
+                              )}
+                              {loggedInUser.lastSignedIn !== null && (
                                 <Typography
                                   sx={{
                                     color: "green",
@@ -181,19 +229,10 @@ const HomePage = () => {
                                     fontWeight: 500,
                                   }}
                                 >
-                                  Last signed in 38 days ago at:01:16:23
-                                </Typography>
-                              )}
-                              {loggedInUser.noMobileAccess === false && (
-                                <Typography
-                                  sx={{
-                                    fontSize: { sm: "11px", xs: "9px" },
-                                    fontWeight: 500,
-                                  }}
-                                >
-                                  Note: system has detected mobile application
-                                  access against your profile. Kindly do the
-                                  sign-in through the mobile application.
+                                  Last signed in &nbsp;
+                                  {loggedInUser.differenceInLastSignIn}&nbsp; at
+                                  &nbsp;
+                                  {loggedInUser.lastSignedIn.substring(11, 19)}
                                 </Typography>
                               )}
                             </Stack>
@@ -201,12 +240,229 @@ const HomePage = () => {
                             <Typography></Typography>
                           </Stack>
                         ) : (
-                          <p>Please sign in to continue.</p>
-                        )
-                      ) : (
-                        <p>null</p>
+                          <Stack>
+                            <Stack
+                              sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
+                            >
+                              <Stack sx={{}}>
+                                <Typography
+                                  sx={{
+                                    fontWeight: "bold",
+                                    fontSize: { sm: "16px", xs: "14px" },
+                                  }}
+                                >
+                                  Hi, {loggedInUser?.loginEmpName}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    color: "red",
+                                    fontSize: { sm: "12px", xs: "10px" },
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Not signed In
+                                </Typography>
+                                {loggedInUser.lastSignedIn !== null && (
+                                  <Typography
+                                    sx={{
+                                      color: "green",
+                                      fontSize: { sm: "12px", xs: "10px" },
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    Last signed in &nbsp;
+                                    {loggedInUser.differenceInLastSignIn}&nbsp;
+                                    at &nbsp;
+                                    {loggedInUser.lastSignedIn.substring(
+                                      11,
+                                      19
+                                    )}
+                                  </Typography>
+                                )}
+                                {loggedInUser.noMobileAccess === false ? (
+                                  <>
+                                    <Stack
+                                      sx={{ flexDirection: "row", gap: 1 }}
+                                    >
+                                      <HistoryIcon sx={{color:'#011D45', mt:1}}/>
+
+                                      <LogoutIcon
+                                        sx={{
+                                          color: "red",
+                                          cursor: "not-allowed",
+                                        }}
+                                      />
+                                    </Stack>
+                                    <Typography
+                                      sx={{
+                                        fontSize: { sm: "11px", xs: "9px" },
+                                        fontWeight: 500,
+                                      }}
+                                    >
+                                      Note: system has detected mobile
+                                      application access against your profile.
+                                      Kindly do the sign-in through the mobile
+                                      application.
+                                    </Typography>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      startIcon={<LoginOutlined />}
+                                      variant="outlined"
+                                      sx={{
+                                        color: "green",
+                                        cursor: "pointer",
+                                        borderColor: "green",
+                                        width: "150px",
+                                        mt: 1,
+                                      }}
+                                    >
+                                      signin
+                                    </Button>
+                                  </>
+                                )}
+                              </Stack>
+                            </Stack>
+                          </Stack>
+                        ))}
+                    </Stack>
+                  </>
+                )}
+
+                {loggedInUser && (
+                  <>
+                    <Stack>
+                      {loggedInUser.employeeSignIn === "1" && (
+                        <>
+                          {loggedInUser.signInFlag === true && (
+                            <Stack>
+                              <Stack
+                                sx={{
+                                  px: 2,
+                                  py: { sm: 1.5, xs: 1 },
+                                  gap: 0.5,
+                                }}
+                              >
+                                <Stack
+                                  sx={{
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      fontWeight: "bold",
+                                      fontSize: { sm: "16px", xs: "14px" },
+                                    }}
+                                  >
+                                    Hi, {loggedInUser?.loginEmpName}
+                                  </Typography>
+                                  <Typography sx={{ color: "green" }}>
+                                    Great. Successfully Signedin.Have a great
+                                    day!
+                                  </Typography>
+                                </Stack>
+                              </Stack>
+                            </Stack>
+                          )}
+
+                          {(loggedInUser.isSignOutFrom === true ||
+                            loggedInUser.isSignOutFrom === false) && (
+                            <Stack>
+                              <Stack
+                                sx={{
+                                  px: 2,
+                                  py: { sm: 1.5, xs: 1 },
+                                  gap: 0.5,
+                                }}
+                              >
+                                <Stack
+                                  sx={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      fontWeight: "bold",
+                                      fontSize: { sm: "16px", xs: "14px" },
+                                    }}
+                                  >
+                                    Hi, {loggedInUser?.loginEmpName}
+                                  </Typography>
+                                </Stack>
+
+                                <Typography sx={{ color: "green" }}>
+                                  signed in&nbsp;
+                                  {loggedInUser.differenceInSignInDate}&nbsp;at
+                                  &nbsp;{loggedInUser.signedTime}
+                                </Typography>
+                                <Stack
+                                  sx={{ flexDirection: "row", gap: 1, mt: 2 }}
+                                >
+                                  <Button
+                                    startIcon={<LogoutIcon />}
+                                    sx={{
+                                      color: "tomato",
+                                      borderColor: "tomato",
+                                    }}
+                                    variant="outlined"
+                                  >
+                                    signout
+                                  </Button>
+                                  <Button
+                                    startIcon={<LoginOutlined />}
+                                    sx={{
+                                      color: "green",
+                                      cursor: "not-allowed",
+                                    }}
+                                  >
+                                    signin
+                                  </Button>
+                                </Stack>
+                                {loggedInUser.noMobileAccess === false && (
+                                  <Typography
+                                    sx={{
+                                      fontSize: { sm: "11px", xs: "9px" },
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    Note: system has detected mobile application
+                                    access against your profile. Kindly do the
+                                    sign-in through the mobile application.
+                                  </Typography>
+                                )}
+                              </Stack>
+                            </Stack>
+                          )}
+                        </>
                       )}
                     </Stack>
+                  </>
+                )}
+
+                {loggedInUser && (
+                  <>
+                    {(() => {
+                      const matchingGroup =
+                        loggedInUser.employeeSignIn === "-1" &&
+                        loggedInUser.employeeSignInAfterSignOut === "1";
+
+                      return (
+                        <>
+                          <Stack>
+                            {matchingGroup ? (
+                              loggedInUser.isSignInFrom ? (
+                                <>Need to add </>
+                              ) : (
+                                <> need to add</>
+                              )
+                            ) : null}
+                          </Stack>
+                        </>
+                      );
+                    })()}
                   </>
                 )}
               </Stack>
@@ -331,36 +587,7 @@ const HomePage = () => {
                 <Stack sx={{ width: "100%", gap: 1 }}>
                   {/* Approval List */}
 
-                  {!approvalLoadStarted ? (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                        mt: 0.5,
-                      }}
-                    >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        Approval loadings
-                      </Typography>
-                    </Stack>
-                  ) : isLoadingApproval ? (
+                  {isLoadingApproval ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -430,43 +657,10 @@ const HomePage = () => {
                           </Typography>
                         </Stack>
                       ))
-                  ) : (
-                    <Typography sx={{ textAlign: "center" }}>
-                      No data
-                    </Typography>
-                  )}
+                  ) : null}
 
                   {/* Leaves List */}
-                  {!leavesLoadStarted ? (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                        mt: 0.5,
-                      }}
-                    >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        leave loadings
-                      </Typography>
-                    </Stack>
-                  ) : isLoadingLeaves ? (
+                  {isLoadingLeaves ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -535,42 +729,10 @@ const HomePage = () => {
                           </Typography>
                         </Stack>
                       ))
-                  ) : (
-                    <Typography sx={{ textAlign: "center" }}>
-                      No data
-                    </Typography>
-                  )}
+                  ) : null}
 
                   {/* Work List */}
-                  {!workLoadStarted ? (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                      }}
-                    >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        works loadings
-                      </Typography>
-                    </Stack>
-                  ) : isLoadingWork ? (
+                  {isLoadingWork ? (
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -639,11 +801,7 @@ const HomePage = () => {
                           </Typography>
                         </Stack>
                       ))
-                  ) : (
-                    <Typography sx={{ textAlign: "center" }}>
-                      No data
-                    </Typography>
-                  )}
+                  ) : null}
                 </Stack>
               </Stack>
             )}
@@ -662,8 +820,8 @@ const HomePage = () => {
                 bgcolor: "#FFF",
                 borderTopLeftRadius: "5px",
                 borderTopRightRadius: "5px",
-                borderBottomLeftRadius: openActionRequird ? "0px" : "5px",
-                borderBottomRightRadius: openActionRequird ? "0px" : "5px",
+                borderBottomLeftRadius: openLeaveCount ? "0px" : "5px",
+                borderBottomRightRadius: openLeaveCount ? "0px" : "5px",
               }}
             >
               <Stack sx={{ px: { sm: 2, xs: 1 } }}>
@@ -682,9 +840,10 @@ const HomePage = () => {
                       fontWeight: 500,
                       letterSpacing: 0.1,
                       fontSize: { sm: "13px", xs: "12px" },
+                      color: "gray",
                     }}
                   >
-                    on leave today{" "}
+                    on leave today
                     <Typography component={"span"} sx={{ color: "gray" }}>
                       ({leaveCount})
                     </Typography>
@@ -776,7 +935,7 @@ const HomePage = () => {
                       )}
                     </>
                   ) : (
-                    <Typography sx={{ textAlign: "center" }}>
+                    <Typography sx={{ textAlign: "center", fontWeight: 500 }}>
                       no data
                     </Typography>
                   )}

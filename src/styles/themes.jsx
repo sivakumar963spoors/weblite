@@ -14,7 +14,7 @@ export const theme = createTheme({
       fontFamily: '"Poppins", sans-serif !important',
       textTransform: "capitalize",
       lineHeight: "1.42857143",
-      fontSize: '13px',
+      fontSize: "13px",
     },
   },
   breakpoints: {
@@ -119,10 +119,35 @@ export const theme = createTheme({
           height: "43px",
           margin: "0 !important",
           padding: "0 !important",
-          color:'#000'
+          color: "#000",
         },
       },
     },
+   MuiButton: {
+  styleOverrides: {
+    root: ({ theme }) => ({
+      textTransform: "uppercase",
+      fontWeight: 500,
+      fontFamily: '"Poppins", sans-serif',
+      
+    }),
+    sizeSmall: {
+      padding: "4px 10px",
+      fontSize: "12px",
+    },
+    startIcon: {
+      marginRight: "5px",
+      color: "inherit",
+      "& > *:nth-of-type(1)": {
+        fontSize: "18px",
+      },
+    },
   },
- 
+  defaultProps: {
+    disableElevation: true,
+    size: "small",
+  },
+},
+
+  },
 });

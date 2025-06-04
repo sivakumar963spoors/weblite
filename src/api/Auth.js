@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:8080/effort";
-//export const BASE_URL ="https://vapt.spoors.dev/webliteBackend"
+//export const BASE_URL = "http://localhost:8080/effort";
+export const BASE_URL = "https://vapt.spoors.dev/webliteBackend";
 
 export const actionRequired_ajax = `${BASE_URL}/reactrest/api/ajax/get/dashboard/action/required/configurations`;
 export const actionRequired_Approvals = `${BASE_URL}/reactrest/api/individualSpec/formApprovalCount`;
@@ -68,6 +68,12 @@ export const customerActivityForms = (params = {}) => {
 
   return url.toString();
 };
+// forms today yestarday
+export const yestardayCountUrl = (empId) => 
+  `${BASE_URL}/reactrest/api/ajax/form/activities?employeeId=${empId}&day=yesterday`;
+export const todayCountUrl = (empId) => 
+  `${BASE_URL}/reactrest/api/ajax/form/activities?employeeId=${empId}&day=today`;
+
 // works count
 
 export const loadActionableWorksByMeURl = `${BASE_URL}/reactrest/api/ajax/get/actionable/works/me`;

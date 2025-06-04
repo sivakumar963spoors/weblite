@@ -9,6 +9,8 @@ import {
   loadWorkSpecPendingInvitationByMeUrl,
   loadWorkSpecPendingInvitationByTeamUrl,
   loggedInUser_ajax,
+  todayCountUrl,
+  yestardayCountUrl,
 } from "../../api/Auth";
 import { workSpecsData } from "../../components/task/TaskData";
 
@@ -78,23 +80,20 @@ export const fetchYesterdayCount = createAsyncThunk(
   "formCounts/fetchYesterdayCount",
   async (empId, { rejectWithValue }) => {
     try {
-      // Fetch data for yesterday
-      const response = await fetch(
-        `http://localhost:8080/effort/reactrest/api/ajax/form/activities?employeeId=${empId}&day=yesterday`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      
+      const response = await fetch(yestardayCountUrl(empId), {
+        method: "GET",
+        credentials: "include",
+      });
 
-      const data = await response.json(); // Parse JSON data
+      const data = await response.json(); 
 
-      // Check if the response contains the 'day' array
+      
       if (!data.day) {
         throw new Error("Invalid response data");
       }
 
-      // Sum up the 'size' field for yesterday
+     
       return data.day;
     } catch (error) {
       return rejectWithValue("Error fetching yesterday's form counts");
@@ -102,13 +101,13 @@ export const fetchYesterdayCount = createAsyncThunk(
   }
 );
 
-// Async thunk to fetch form counts for today
+
 export const fetchTodayCount = createAsyncThunk(
   "formCounts/fetchTodayCount",
   async (empId, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/effort/reactrest/api/ajax/form/activities?employeeId=${empId}&day=today`,
+       todayCountUrl(empId),
         {
           method: "GET",
           credentials: "include",
