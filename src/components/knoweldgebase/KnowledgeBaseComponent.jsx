@@ -6,17 +6,19 @@ import { getArticleForNewTrue } from "../../redux/slices/KnowledgeBaseModule";
 
 const KnowledgeBaseComponent = () => {
   const [searchParams] = useSearchParams();
-  const viewType = searchParams.get("viewType");
+ const viewType = Number(searchParams.get("viewType"));
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const { articleDataForNew, isarticleDataForNew } = useSelector(
     (state) => state.KnowledgeBaseReducerModule
   );
   useEffect(() => {
+   
     if (viewType) {
       dispatch(getArticleForNewTrue(viewType));
     }
-  }, [dispatch]);
+    console.log(articleDataForNew.knowledgeBaseDashboards);
+  }, [dispatch, viewType]);
 
   const typographyStyle = {};
 
@@ -99,8 +101,9 @@ const KnowledgeBaseComponent = () => {
                                     })
                                   }
                                 >
-                                  {each.totalCount}
-                                  {isarticleDataForNew}
+                                  {viewType === 1 && each.totalCount}
+                                  {viewType === 2 && each.viewedCount}
+                                  {viewType === 3 &&each.unviewedCount}
                                 </Typography>
                               </Box>
                             </Stack>
@@ -111,7 +114,6 @@ const KnowledgeBaseComponent = () => {
                   </Stack>
                 ) : (
                   <Typography>No data{isarticleDataForNew}</Typography>
-
                 )}
               </>
             )}

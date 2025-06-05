@@ -1,10 +1,9 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
-import { JSEncrypt } from "jsencrypt";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReusableTextfield from "../../common/ReusableTextfield";
-const SignIn = ({handleLogin}) => {
+const SignIn = ({ handleLogin }) => {
   const navigate = useNavigate();
   const [isRegisterClick, setRegisterClick] = useState(false);
   const [isLoginClick, setIsLoginClick] = useState(true);
@@ -36,55 +35,46 @@ const SignIn = ({handleLogin}) => {
       alert("Please enter email and password.");
       return;
     }
-  
-    const encrypt = new JSEncrypt();
-    encrypt.setPublicKey(publicKey);
-  
-    const encryptedPassword = encrypt.encrypt(loginData.password);
-    if (!encryptedPassword) {
-      alert("Encryption failed.");
-      return;
-    }
-  
-    try {
-    
-      const loginResponse = await fetch("http://localhost:8080/effort/service/get/webliteLogin", {
-        method: "POST",
-        credentials: "include" ,
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userName: loginData.userName,
-          password: loginData.password,
-        }),
-      });
-  
+    // const encrypt = new JSEncrypt();
+    // encrypt.setPublicKey(publicKey);
+
+    // const encryptedPassword = encrypt.encrypt(loginData.password);
+    // if (!encryptedPassword) {
+    //   alert("Encryption failed.");
+    //   return;
+    // }
+
+    try {
+      const loginResponse = await fetch(
+     "https://vapt.spoors.dev/webliteBackend/service/get/webliteLogin",
+      //"http://localhost:8080/effort/service/get/webliteLogin",
+        {
+          method: "POST",
+          credentials: "include",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userName: loginData.userName,
+            password: loginData.password,
+          }),
+        }
+      );
+
       if (!loginResponse.ok) {
         alert("Login failed. Please check credentials.");
         return;
-      }
-  
-      const userDetailsResponse = await fetch("http://localhost:8080/effort/reactrest/api/home", {
-        method: "GET",
-        credentials: "include",
-      });
-  
-      if (userDetailsResponse.ok) {
-        const data = await userDetailsResponse.json();
-        setuserDetails(data);
-        handleLogin()
-        navigate("/home");
       } else {
-        alert("Failed to load user data after login.");
+        handleLogin();
+        navigate("/home");
       }
     } catch (error) {
       console.error("Login error:", error);
       alert("Something went wrong. Try again later.");
     }
   };
-  
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();

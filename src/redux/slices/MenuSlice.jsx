@@ -12,8 +12,8 @@ const menuSlice = createSlice({
   initialState,
   reducers: {
   toggleMenuTitle: (state, action) => {
-      state.currentMenuTitle = action.payload;
-      localStorage.setItem("menuTiles", action.payload);
+     state.currentMenuTitle = action.payload;
+ 
     },
   },
 });

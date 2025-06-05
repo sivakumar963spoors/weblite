@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  customerActivityForms,
+  customerDetailsAPi,
+  cutomerActivityUrl,
   getCustomersAjaxUrl,
   loadMetPast30DaysPercentage_ajax,
   loadNotMetPast30Days_ajax,
@@ -12,12 +15,15 @@ import {
 } from "../../api/Auth";
 import { CustomerModuleMenu } from "../../components/customers/CustomerData";
 const updateCustomerMenuCounts = (menu, state) => {
+
+  const safeLoadNotMetPast30Days = Number(state.loadNotMetPast30Days);
+const cleanedLoadNotMetPast30Days = isNaN(safeLoadNotMetPast30Days) ? 0 : safeLoadNotMetPast30Days;
   return menu.map((item) => {
     const title = item.title;
     const countMap = {
       "Assigned to you": state.totalCustomersSize,
       "Visited today": state.todaysCustomerVisits,
-      Coverage: state.loadNotMetPast30Days,
+      "Coverage": cleanedLoadNotMetPast30Days,
       "You haven't visited in the past 30 days":
         state.loadMetPast30DaysPercentage,
       "Assigned to team": state.loadtotalsCustomersCountUnderEmployees,
@@ -44,12 +50,18 @@ const initialState = {
   loadTodaysCustomerVisitsByTeam: 0,
   loadYesterdayCustomerVisitsByTeam: 0,
   loadtotalsCustomersCountUnderEmployees: 0,
-  filteredCustomerData:[],
+  filteredCustomerData: [],
   loadNotMetPast30DaysByTeam: 0,
   getAllCustomerData: {},
   isgetAllCustomerData: false,
   customerViewTypeTitle: "",
   displayCountForCustomerModule: 0,
+  get_selectedCustomerDetails_data: {},
+  isGetSelectedCustomer: false,
+  customerActivity_data: {},
+  isGetcustomerActivity_data: false,
+  get_customerActivityForms_data: {},
+  isget_customerActivityForms: false,
 };
 export const totalCustomersSize_get = createAsyncThunk(
   "CustomerModule/totalCustomersSize_get",
@@ -190,6 +202,53 @@ export const get_allCustomer = createAsyncThunk(
     } catch (error) {}
   }
 );
+export const get_selectedCustomerDetails = createAsyncThunk(
+  "CustomerModule/get_selectedCustomerDetails",
+  async (queryParams, thunkAPI) => {
+    try {
+      const response = await fetch(customerDetailsAPi(queryParams), {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {}
+  }
+);
+
+export const GetcustomerActivity_data = createAsyncThunk(
+  "CustomerModule/GetcustomerActivity_data",
+  async (queryParams, thunkAPI) => {
+    try {
+      const response = await fetch(cutomerActivityUrl(queryParams), {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {}
+  }
+);
+export const get_customerActivityForms = createAsyncThunk(
+  "CustomerModule/get_customerActivityForms",
+  async (queryParams, thunkAPI) => {
+    try {
+      const response = await fetch(customerActivityForms(queryParams), {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {}
+  }
+);
+
 
 const CustomerModule = createSlice({
   name: "CustomerModule",
@@ -336,10 +395,45 @@ const CustomerModule = createSlice({
       })
       .addCase(get_allCustomer.fulfilled, (state, action) => {
         state.getAllCustomerData = action.payload;
+        state.filteredCustomerData = action?.payload?.customers || [];
+
         state.isgetAllCustomerData = false;
       })
       .addCase(get_allCustomer.rejected, (state, action) => {
         state.isgetAllCustomerData = false;
+      })
+      .addCase(get_selectedCustomerDetails.pending, (state, action) => {
+        state.isGetSelectedCustomer = true;
+      })
+      .addCase(get_selectedCustomerDetails.fulfilled, (state, action) => {
+        state.get_selectedCustomerDetails_data = action.payload;
+
+        state.isGetSelectedCustomer = false;
+      })
+      .addCase(get_selectedCustomerDetails.rejected, (state, action) => {
+        state.isGetSelectedCustomer = false;
+      })
+      .addCase(GetcustomerActivity_data.pending, (state, action) => {
+        state.isGetcustomerActivity_data = true;
+      })
+      .addCase(GetcustomerActivity_data.fulfilled, (state, action) => {
+        state.customerActivity_data = action.payload;
+
+        state.isGetcustomerActivity_data = false;
+      })
+      .addCase(GetcustomerActivity_data.rejected, (state, action) => {
+        state.isGetcustomerActivity_data = false;
+      })
+      .addCase(get_customerActivityForms.pending, (state, action) => {
+        state.isget_customerActivityForms = true;
+      })
+      .addCase(get_customerActivityForms.fulfilled, (state, action) => {
+        state.get_customerActivityForms_data = action.payload;
+
+        state.isget_customerActivityForms = false;
+      })
+      .addCase(get_customerActivityForms.rejected, (state, action) => {
+        state.isget_customerActivityForms = false;
       });
   },
 });
