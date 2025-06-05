@@ -41,8 +41,8 @@ const CustomerCard = ({ searchText }) => {
     if (viewType && customerView) {
       dispatch(
         get_allCustomer({
-          viewType: Number(viewType),
-          customerView: Number(customerView),
+          viewType: viewType,
+          customerView: customerView,
         })
       );
     } else if (viewType) {

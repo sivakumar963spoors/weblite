@@ -123,31 +123,24 @@ export const theme = createTheme({
         },
       },
     },
-   MuiButton: {
-  styleOverrides: {
-    root: ({ theme }) => ({
-      textTransform: "uppercase",
-      fontWeight: 500,
-      fontFamily: '"Poppins", sans-serif',
-      
-    }),
-    sizeSmall: {
-      padding: "4px 10px",
-      fontSize: "12px",
-    },
-    startIcon: {
-      marginRight: "5px",
-      color: "inherit",
-      "& > *:nth-of-type(1)": {
-        fontSize: "18px",
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          fontFamily: '"Poppins", sans-serif',
+        }),
+        
+        startIcon: {
+          marginRight: "5px",
+          color: "inherit",
+          "& > *:nth-of-type(1)": {
+            fontSize: "18px",
+          },
+        },
+      },
+      defaultProps: {
+        disableElevation: true,
+        
       },
     },
-  },
-  defaultProps: {
-    disableElevation: true,
-    size: "small",
-  },
-},
-
   },
 });

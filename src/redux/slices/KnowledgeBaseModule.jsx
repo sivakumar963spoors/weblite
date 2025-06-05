@@ -14,6 +14,11 @@ const initialState = {
   articleDataForNew: {},
   isarticleDataForNew: false,
   KnowledgeBaseCount: {},
+  isKnoKnowledgeBaseCount: {
+    totalCount: false,
+    viewedSum: false,
+    unviewedSum: false,
+  },
 };
 
 export const GetKnowledgeBase = createAsyncThunk(
@@ -116,16 +121,30 @@ const KnowledgeBaseSlice = createSlice({
       .addCase(getArticleForNewTrue.rejected, (state, action) => {
         state.isarticleDataForNew = false;
       })
-      .addCase(loadKNowledgeBasedCount_get.pending, (state) => {
-        //state.articleDataForNew = true;
-      })
-      .addCase(loadKNowledgeBasedCount_get.fulfilled, (state, action) => {
-        // state.articleDataForNew = false;
-        state.KnowledgeBaseCount = action.payload;
-      })
-      .addCase(loadKNowledgeBasedCount_get.rejected, (state, action) => {
-        // state.articleDataForNew = false;
-      });
+     .addCase(loadKNowledgeBasedCount_get.pending, (state) => {
+  state.isKnoKnowledgeBaseCount = {
+    totalCount: true,
+    viewedSum: true,
+    unviewedSum: true,
+  };
+})
+.addCase(loadKNowledgeBasedCount_get.fulfilled, (state, action) => {
+  state.KnowledgeBaseCount = action.payload;
+
+  state.isKnoKnowledgeBaseCount = {
+    totalCount: false,
+    viewedSum: false,
+    unviewedSum: false,
+  };
+})
+.addCase(loadKNowledgeBasedCount_get.rejected, (state, action) => {
+  state.isKnoKnowledgeBaseCount = {
+    totalCount: false,
+    viewedSum: false,
+    unviewedSum: false,
+  };
+});
+
   },
 });
 

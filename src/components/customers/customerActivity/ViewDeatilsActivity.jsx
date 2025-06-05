@@ -7,8 +7,8 @@ import { get_customerActivityForms } from "../../../redux/slices/CustomerModule"
 
 const ViewDeatilsActivity = () => {
   const [searchParams] = useSearchParams();
-  const customerId = searchParams.get("customerId");
-  const dayPlanId = searchParams.get("dayPlanId");
+  const customerId = Number(searchParams.get("customerId"));
+  const dayPlanId = Number(searchParams.get("dayPlanId"));
   const { get_customerActivityForms_data, isget_customerActivityForms } =
     useSelector((state) => state.CustomerModule);
   const dispatch = useDispatch();

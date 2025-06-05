@@ -279,14 +279,15 @@ const HomePageModule = createSlice({
         state.status = "failed";
       })
       .addCase(loadHomeScreenCards_get.pending, (state) => {
-        state.status = "loading";
+        state.isLoadHomeScreenCards = true;
       })
       .addCase(loadHomeScreenCards_get.fulfilled, (state, action) => {
-        state.status = "succeeded";
+      
+        state.isLoadHomeScreenCards= false;
         state.LoadHomeScreenCards = action.payload;
       })
       .addCase(loadHomeScreenCards_get.rejected, (state, action) => {
-        state.status = "failed";
+        state.isLoadHomeScreenCards= false;
       })
       .addCase(fetchYesterdayCount.pending, (state) => {
         state.loading = true;

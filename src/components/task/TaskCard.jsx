@@ -1,7 +1,17 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
+
+import bgloader from "../../assets/loader.gif";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +48,21 @@ import {
   resetFilteredData,
 } from "../../redux/slices/HomePageSlice";
 import { loadKNowledgeBasedCount_get } from "../../redux/slices/KnowledgeBaseModule";
-import CustomButton from "../reusablecomponents/CustomButton";
+import {
+  fetchApprovedLeaves,
+  fetchPendingApprovals,
+  fetchRejectedLeaves,
+  fetchTotalMyLeaves,
+  fetchTotalTeamLeaves,
+} from "../../redux/slices/LeavesModule";
+import {
+  fetchActualCustomerVisitsCount,
+  fetchPlannedCustomersCount,
+  fetchTeamPlannedCustomersCount,
+  fetchTeamUnplannedCustomerVisitsCount,
+  fetchUnplannedCustomerVisitsCount,
+} from "../../redux/slices/DayPalneModule";
+import DottedSpinner from "../common/DottedSpinner";
 const approvalCards = [
   { count: 0, label: "Pending your manager approvals" },
   { count: 0, label: "Awaiting your approval" },
@@ -46,17 +70,20 @@ const approvalCards = [
 ];
 const TaskCard = ({ searchInput }) => {
   const {
-    CustomerModuleMenu,
-    totalCustomersSize,
-    todaysCustomerVisits,
-    loadNotMetPast30Days,
-    loadMetPast30DaysPercentage,
-    loadtotalsCustomersCountUnderEmployees,
-    loadYesterdayCustomerVisitsByTeam,
-    loadTodaysCustomerVisitsByTeam,
-    loadNotMetPast30DaysByTeam,
-  } = useSelector((state) => state.CustomerModule);
-  const { DayPlanModuleMenu } = useSelector((state) => state.DayPlannerModule);
+    pendingApprovals,
+    totalMyLeaves,
+    totalTeamLeaves,
+    approvedLeaves,
+    rejectedLeaves,
+  } = useSelector((state) => state.LeavesModule);
+  const { CustomerModuleMenu } = useSelector((state) => state.CustomerModule);
+  const {
+    teamUnplannedCount,
+    teamPlannedCount,
+    plannedCount,
+    actualCount,
+    unplannedCount,
+  } = useSelector((state) => state.DayPlannerModule);
   const {
     LoadHomeScreenCards,
     filteredHomePageData,
@@ -70,11 +97,12 @@ const TaskCard = ({ searchInput }) => {
     inactiveWorks,
     loadFormApprovalsCountByMe_byMe,
     loadFormApprovalsCountByManager_byManager,
+    isLoadHomeScreenCards,
   } = useSelector((state) => state.HomePageModule);
-  const { KnowledgeBaseCount } = useSelector(
+  const { KnowledgeBaseCount, isKnoKnowledgeBaseCount } = useSelector(
     (state) => state.KnowledgeBaseReducerModule
   );
-  const filteredLoadHomeScreenCards = [...filteredHomePageData].sort(
+  const filteredLoadHomeScreenCards = [...(filteredHomePageData || [])].sort(
     (a, b) => a.displayOrder - b.displayOrder
   );
 
@@ -100,18 +128,57 @@ const TaskCard = ({ searchInput }) => {
     dispatch(fetchWorkSpecCards());
     dispatch(fetchFormApprovalsCountByManager());
     dispatch(fetchFormApprovalsCountByMe());
+    dispatch(fetchPendingApprovals());
+    dispatch(fetchTotalMyLeaves());
+    dispatch(fetchTotalTeamLeaves());
+    dispatch(fetchApprovedLeaves());
+    dispatch(fetchRejectedLeaves());
+
+    dispatch(
+      fetchTeamUnplannedCustomerVisitsCount({
+        allCustomers: false,
+        normal: false,
+        forced: false,
+      })
+    );
+
+    dispatch(
+      fetchTeamPlannedCustomersCount({
+        allCustomers: false,
+      })
+    );
+
+    dispatch(fetchPlannedCustomersCount({ allCustomers: false }));
+    dispatch(
+      fetchActualCustomerVisitsCount({
+        allCustomers: false,
+        normal: false,
+        forced: false,
+      })
+    );
+    dispatch(
+      fetchUnplannedCustomerVisitsCount({
+        allCustomers: false,
+        normal: false,
+        forced: false,
+      })
+    );
   }, [dispatch]);
 
   useEffect(() => {
-    if (searchInput && searchInput.trim() !== "") {
+    if (!LoadHomeScreenCards?.length) return; // Wait until it's loaded
+
+    if (searchInput?.trim()) {
       dispatch(filterByModule(searchInput));
     } else {
       dispatch(resetFilteredData());
     }
-  }, [dispatch, searchInput]);
+  }, [searchInput, LoadHomeScreenCards]);
+
   useEffect(() => {
     dispatch(loggedInUser_get());
   }, [dispatch]);
+
   const navigateToShowAlldModule = (moduleId) => {
     alert(moduleId);
     switch (moduleId) {
@@ -274,13 +341,18 @@ const TaskCard = ({ searchInput }) => {
       dispatch(fetchYesterdayCount(loggedInUser?.empId));
       dispatch(fetchTodayCount(loggedInUser?.empId));
     }
+    console.log(filteredLoadHomeScreenCards);
   }, [loggedInUser?.empId, dispatch]);
 
   return (
     <Box sx={{}}>
       <Stack gap={1} sx={{ pt: 1 }}>
-        {filteredLoadHomeScreenCards &&
-        filteredLoadHomeScreenCards.length > 0 ? (
+        {loggedInUser && isLoadHomeScreenCards ? (
+          <Stack sx={{ alignItems: "center", justifyContent: "center" }}>
+            <Box component={"img"} src={bgloader} />
+          </Stack>
+        ) : filteredLoadHomeScreenCards &&
+          filteredLoadHomeScreenCards.length > 0 ? (
           filteredLoadHomeScreenCards?.map((data, index) => (
             <>
               {data.visible && (
@@ -295,7 +367,7 @@ const TaskCard = ({ searchInput }) => {
                           width: { sm: "80%", xs: "97%" },
                           bgcolor: "#FFF",
                           borderRadius: "8px",
-                          border: "1px solid rgba(0, 0, 0, 0.12)",
+                          border: "1px solid rgba(109, 236, 24, 0.12)",
                         }}
                       >
                         <Stack sx={{ px: 1, py: 1 }}>
@@ -384,23 +456,100 @@ const TaskCard = ({ searchInput }) => {
                               }}
                             >
                               <Button
+                                size="small"
                                 variant="contained"
-                                sx={{}}
+                                sx={{ fontSize: { xs: "9px", sm: "12px" } }}
                                 onClick={() =>
                                   navigateToShowAlldModule(data.moduleId)
                                 }
                               >
                                 Show all
                               </Button>
-                              {[37, 36, 15].includes(data.moduleId) && (
-                                <Button
-                                  variant="outlined"
-                                  startIcon={<AddIcon />}
-                                  onClick={() => handleNavToAdd(data.moduleId)}
-                                >
-                                  add
-                                </Button>
-                              )}
+
+                              {data.moduleId === 36 &&
+                                loggedInUser?.employeeAccessSettings?.addJob ===
+                                  true && (
+                                  <Button
+                                    sx={{ fontSize: { xs: "9px", sm: "12px" } }}
+                                    size="small"
+                                    variant="outlined"
+                                    startIcon={<AddIcon />}
+                                    onClick={() =>
+                                      handleNavToAdd(data.moduleId)
+                                    }
+                                  >
+                                    add
+                                  </Button>
+                                )}
+                              {data.moduleId === 15 &&
+                                loggedInUser?.employeeAccessSettings
+                                  ?.addLeave === true && (
+                                  <Button
+                                    sx={{ fontSize: { xs: "9px", sm: "12px" } }}
+                                    size="small"
+                                    variant="outlined"
+                                    startIcon={<AddIcon />}
+                                    onClick={() =>
+                                      handleNavToAdd(data.moduleId)
+                                    }
+                                  >
+                                    add
+                                  </Button>
+                                )}
+
+
+                           {data.moduleId === 37 &&
+  (
+    data.formType === 1 ? (
+      (data.formSpecPermission === "true" || data.formSpecPermission === true) ? (
+        (data.formSpecViewPermission === "true" || data.formSpecViewPermission === true) ? (
+          (data.formAddPermission === "true" || data.formAddPermission === true) ? (
+            <Button>Add</Button>
+          ) : (
+            <Button>Add</Button>
+          )
+        ) : null
+      ) : (
+        (loggedInUser?.employeeAccessSettings === "true" || loggedInUser?.employeeAccessSettings === true) ? (
+          <Button>Add</Button>
+        ) : null
+      )
+    ) : data.formType === 2 ? (
+      (data.formSpecPermission === "true" || data.formSpecPermission === true) ? (
+        (data.formSpecViewPermission === "true" || data.formSpecViewPermission === true) ? (
+          (data.formAddPermission === "true" || data.formAddPermission === true) ? (
+            <Button>Add</Button>
+          ) : (
+            <Button>Add</Button>
+          )
+        ) : null
+      ) : (
+        (loggedInUser?.employeeAccessSettings === "true" || loggedInUser?.employeeAccessSettings === true) ? (
+          <Button>Add</Button>
+        ) : null
+      )
+    ) : (
+      (data.formSpecPermission === "true" || data.formSpecPermission === true) ? (
+        (data.formSpecViewPermission === "true" || data.formSpecViewPermission === true) ? (
+          (data.formAddPermission === "true" || data.formAddPermission === true) ? (
+            <Button>Add</Button>
+          ) : (
+            <Button>Add</Button>
+          )
+        ) : null
+      ) : (
+        (loggedInUser?.employeeAccessSettings === "true" || loggedInUser?.employeeAccessSettings === true) ? (
+          <Button>Add</Button>
+        ) : null
+      )
+    )
+  )
+}
+
+
+                            
+
+                             
                             </Stack>
                           </Stack>
                           <Divider sx={{ width: "100%", height: "10px" }} />
@@ -418,15 +567,6 @@ const TaskCard = ({ searchInput }) => {
                                   >
                                     {CustomerModuleMenu.slice(0, 3).map(
                                       (label, index) => {
-                                        const displayCount =
-                                          label.title === "Visited today"
-                                            ? todaysCustomerVisits
-                                            : label.title === "Assigned to you"
-                                            ? totalCustomersSize
-                                            : label.title === "Coverage"
-                                            ? loadNotMetPast30Days
-                                            : label.count;
-
                                         return (
                                           <React.Fragment key={index}>
                                             <Stack
@@ -455,7 +595,7 @@ const TaskCard = ({ searchInput }) => {
                                               <Typography
                                                 sx={{
                                                   color:
-                                                    displayCount > 0
+                                                    label.count > 0
                                                       ? "green"
                                                       : "red",
 
@@ -502,23 +642,6 @@ const TaskCard = ({ searchInput }) => {
                                   <Stack sx={{ mt: 1 }}>
                                     {CustomerModuleMenu.slice(3, 9).map(
                                       (label, index) => {
-                                        const displayCount =
-                                          label.title ===
-                                          "You haven't visited in the past 30 days"
-                                            ? loadMetPast30DaysPercentage
-                                            : label.title === "Assigned to team"
-                                            ? loadtotalsCustomersCountUnderEmployees
-                                            : label.title ===
-                                              "Visited by the team yesterday"
-                                            ? loadYesterdayCustomerVisitsByTeam
-                                            : label.title ===
-                                              "Visited by the team today"
-                                            ? loadTodaysCustomerVisitsByTeam
-                                            : label.title ===
-                                              "Team hasn't visited in the past 30 days"
-                                            ? loadNotMetPast30DaysByTeam
-                                            : label.count;
-
                                         return (
                                           <Stack
                                             key={index}
@@ -556,7 +679,7 @@ const TaskCard = ({ searchInput }) => {
                                               <Typography
                                                 sx={{
                                                   color:
-                                                    displayCount > 0
+                                                    label.count > 0
                                                       ? "green"
                                                       : "red",
                                                   fontSize: {
@@ -571,7 +694,7 @@ const TaskCard = ({ searchInput }) => {
                                                 <NavigateNextIcon
                                                   sx={{
                                                     color:
-                                                      displayCount > 0
+                                                      label.count > 0
                                                         ? "green"
                                                         : "red",
                                                     fontSize: {
@@ -627,21 +750,50 @@ const TaskCard = ({ searchInput }) => {
                                           )
                                         }
                                       >
-                                        <Typography>
-                                          {KnowledgeBaseCount &&
-                                            label === "Total count" &&
-                                            KnowledgeBaseCount?.totalCount}
-                                        </Typography>
-                                        <Typography>
-                                          {KnowledgeBaseCount &&
-                                            label === "Total viewed" &&
-                                            KnowledgeBaseCount?.viewedSum}
-                                        </Typography>
-                                        <Typography>
-                                          {KnowledgeBaseCount &&
-                                            label === "Total unviewed" &&
-                                            KnowledgeBaseCount?.unviewedSum}
-                                        </Typography>
+                                        {label === "Total count" && (
+                                          <Typography>
+                                            {isKnoKnowledgeBaseCount.totalCount ? (
+                                              <DottedSpinner
+                                                size={16}
+                                                color="#1976d2"
+                                                thickness={4}
+                                              />
+                                            ) : (
+                                              KnowledgeBaseCount?.totalCount ??
+                                              0
+                                            )}
+                                          </Typography>
+                                        )}
+
+                                        {label === "Total viewed" && (
+                                          <Typography>
+                                            {isKnoKnowledgeBaseCount.viewedSum ? (
+                                              <DottedSpinner
+                                                size={16}
+                                                color="#1976d2"
+                                                thickness={4}
+                                              />
+                                            ) : (
+                                              KnowledgeBaseCount?.viewedSum ?? 0
+                                            )}
+                                          </Typography>
+                                        )}
+
+                                        {label === "Total unviewed" && (
+                                          <Typography>
+                                            {isKnoKnowledgeBaseCount.unviewedSum ? (
+                                              <DottedSpinner
+                                                size={16}
+                                                color="#1976d2"
+                                                thickness={4}
+                                              />
+                                            ) : (
+                                              KnowledgeBaseCount?.unviewedSum ??
+                                              0
+                                            )}
+                                          </Typography>
+                                        )}
+
                                         <Typography
                                           sx={{
                                             fontSize: {
@@ -670,20 +822,21 @@ const TaskCard = ({ searchInput }) => {
                                 </Stack>
                               )}
                               {data.moduleId === 15 &&
+                                loggedInUser?.manager &&
                                 [
                                   {
                                     title: "pending your manager approval",
-                                    count: 0,
+                                    count: pendingApprovals,
                                     view: 1,
                                   },
                                   {
                                     title: "awaiting your approval",
-                                    count: 1,
+                                    count: totalMyLeaves,
                                     view: 2,
                                   },
                                   {
                                     title: "awaiting team approval",
-                                    count: 2,
+                                    count: totalTeamLeaves,
                                     view: 3,
                                   },
                                 ].map((leaveData, i) => {
@@ -811,6 +964,128 @@ const TaskCard = ({ searchInput }) => {
                                     </Stack>
                                   );
                                 })}
+                              {data.moduleId === 15 &&
+                                loggedInUser.manager === false &&
+                                [
+                                  {
+                                    title: "pending your manager approval",
+                                    count: pendingApprovals,
+                                    view: 1,
+                                  },
+                                  {
+                                    title: "Approved leaves",
+                                    count: approvedLeaves,
+                                    view: 2,
+                                  },
+                                  {
+                                    title: "Rejected leaves",
+                                    count: rejectedLeaves,
+                                    view: 3,
+                                  },
+                                ].map((leaveData, i) => {
+                                  return (
+                                    <Stack sx={{ mt: 1 }} key={leaveData.title}>
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          gap: 2,
+                                          flexWrap: "wrap",
+                                          justifyContent: "space-between",
+                                        }}
+                                      >
+                                        <Stack
+                                          sx={{
+                                            flexDirection: "column",
+                                            alignItems: "flex-start",
+                                            justifyContent: "space-between",
+                                            gap: 1,
+                                            width: "100%",
+                                            px: 1,
+
+                                            borderRadius: "4px",
+                                          }}
+                                        >
+                                          <Stack
+                                            sx={{
+                                              flexDirection: "row",
+                                              justifyContent: "space-between",
+                                              width: "100%",
+                                              cursor: "pointer",
+                                            }}
+                                            onClick={() =>
+                                              navToLeaveModule(leaveData.view)
+                                            }
+                                          >
+                                            <Typography
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "14px",
+                                                  xs: "10px",
+                                                },
+                                                textTransform: "capitalize",
+                                                gap: 1,
+                                              }}
+                                            >
+                                              <Typography component={"span"}>
+                                                <Chip
+                                                  label={
+                                                    leaveData.title.split(
+                                                      " "
+                                                    )[0]
+                                                  }
+                                                  size="small"
+                                                  sx={{
+                                                    fontSize: {
+                                                      sm: "12px",
+                                                      xs: "9px",
+                                                    },
+
+                                                    textTransform: "capitalize",
+                                                    mr: 0.5,
+                                                  }}
+                                                />
+                                              </Typography>
+                                              {leaveData.title}
+                                            </Typography>
+                                            <Stack
+                                              sx={{
+                                                flexDirection: "row",
+                                                alignItems: "center",
+                                              }}
+                                            >
+                                              <Typography
+                                                sx={{
+                                                  color:
+                                                    leaveData.count === 0
+                                                      ? "green"
+                                                      : "red",
+                                                  fontSize: {
+                                                    sm: "14px",
+                                                    xs: "10px",
+                                                  },
+                                                }}
+                                              >
+                                                {leaveData.count}
+                                              </Typography>
+                                              <NavigateNextIcon
+                                                sx={{
+                                                  color:
+                                                    leaveData.count === 0
+                                                      ? "green"
+                                                      : "red",
+                                                  fontSize: {
+                                                    sm: "14px",
+                                                    xs: "10px",
+                                                  },
+                                                }}
+                                              />
+                                            </Stack>
+                                          </Stack>
+                                        </Stack>
+                                      </Stack>
+                                    </Stack>
+                                  );
+                                })}
                               {data.moduleId === 17 && (
                                 <Stack>
                                   <Stack
@@ -823,8 +1098,35 @@ const TaskCard = ({ searchInput }) => {
                                       mt: 1,
                                     }}
                                   >
-                                    {DayPlanModuleMenu.slice(0, 3).map(
-                                      (label, index) => (
+                                    {[
+                                      {
+                                        title: "Planned Today",
+                                        count: plannedCount,
+                                        view: 1,
+                                      },
+                                      {
+                                        title: "Visited ",
+                                        count: actualCount,
+                                        view: 2,
+                                      },
+                                      {
+                                        title: "unplanned visits",
+                                        count: unplannedCount,
+                                        view: 3,
+                                      },
+                                      {
+                                        view: 4,
+                                        count: teamPlannedCount,
+                                        title: "team planned employees",
+                                      },
+                                      {
+                                        view: 5,
+                                        count: teamUnplannedCount,
+                                        title: " team unplanned employees",
+                                      },
+                                    ]
+                                      .slice(0, 3)
+                                      .map((label, index) => (
                                         <>
                                           <Stack
                                             key={label}
@@ -854,7 +1156,7 @@ const TaskCard = ({ searchInput }) => {
                                                   label.count > 0
                                                     ? "green"
                                                     : "red",
-                                                fontWeight: "bold",
+
                                                 fontSize: {
                                                   sm: "14px",
                                                   xs: "10px",
@@ -890,12 +1192,38 @@ const TaskCard = ({ searchInput }) => {
                                             />
                                           )}
                                         </>
-                                      )
-                                    )}
+                                      ))}
                                   </Stack>
                                   <Stack sx={{ mt: 1 }}>
-                                    {DayPlanModuleMenu.slice(3, 9).map(
-                                      (label, index) => (
+                                    {[
+                                      {
+                                        title: "Planned Today",
+                                        count: plannedCount,
+                                        view: 1,
+                                      },
+                                      {
+                                        title: "Visited ",
+                                        count: actualCount,
+                                        view: 2,
+                                      },
+                                      {
+                                        title: "unplanned visits",
+                                        count: unplannedCount,
+                                        view: 3,
+                                      },
+                                      {
+                                        view: 4,
+                                        count: teamPlannedCount,
+                                        title: "team planned employees",
+                                      },
+                                      {
+                                        view: 5,
+                                        count: teamUnplannedCount,
+                                        title: " team unplanned employees",
+                                      },
+                                    ]
+                                      .slice(3)
+                                      .map((label, index) => (
                                         <>
                                           <Stack
                                             key={label}
@@ -953,8 +1281,7 @@ const TaskCard = ({ searchInput }) => {
                                             </Stack>
                                           </Stack>
                                         </>
-                                      )
-                                    )}
+                                      ))}
                                   </Stack>
                                 </Stack>
                               )}
@@ -2787,12 +3114,12 @@ const TaskCard = ({ searchInput }) => {
                                       )}
                                     </Stack>
                                   )
-                                ) : data.formSpecPermission === "true" ||
-                                  data.formSpecPermission === true ? (
-                                  data.formSpecViewPermission === "true" ||
-                                  data.formSpecViewPermission === true ? (
-                                    data.formAddPermission === "true" ||
-                                    data.formAddPermission === true ? (
+                                ) :( data.formSpecPermission === "true" ||
+                                  data.formSpecPermission === true) ? (
+                                  (data.formSpecViewPermission === "true" ||
+                                  data.formSpecViewPermission === true) ? (
+                                   ( data.formAddPermission === "true" ||
+                                    data.formAddPermission === true )? (
                                       <Stack
                                         sx={{
                                           flexGrow: { sm: 1, xs: 12 },

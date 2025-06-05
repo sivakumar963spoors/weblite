@@ -1,8 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { get_allCustomer } from "../../redux/slices/CustomerModule";
 import ResuableCarousal from "../common/ResuableCarousalForCustomer";
 import CustomerCard from "./CustomerCard";
 
@@ -13,9 +12,7 @@ const CustomersViewTyped = () => {
   const dispatch = useDispatch();
 
   const [itemsPerRow, setItemsPerRow] = useState(3);
-  useEffect(() => {
-    dispatch(get_allCustomer());
-  }, [dispatch]);
+
   const calculateItemsPerRow = () => {
     const width = window.innerWidth;
     if (width >= 1440) {

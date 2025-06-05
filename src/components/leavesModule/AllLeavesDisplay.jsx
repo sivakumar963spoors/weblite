@@ -23,7 +23,8 @@ const AllLeaves_display = () => {
   );
 
   const [searchParams] = useSearchParams();
-  const viewType = searchParams.get("viewType");
+const viewType = Number(searchParams.get("viewType"));
+
   const leaveMenuType = searchParams.get("leaveMenuType");
   const [isRejectClick, setIsRejectClick] = useState(false);
   const [isApproveClick, setIsApproveClick] = useState(false);

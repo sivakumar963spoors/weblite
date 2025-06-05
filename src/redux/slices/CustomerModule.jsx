@@ -15,12 +15,15 @@ import {
 } from "../../api/Auth";
 import { CustomerModuleMenu } from "../../components/customers/CustomerData";
 const updateCustomerMenuCounts = (menu, state) => {
+
+  const safeLoadNotMetPast30Days = Number(state.loadNotMetPast30Days);
+const cleanedLoadNotMetPast30Days = isNaN(safeLoadNotMetPast30Days) ? 0 : safeLoadNotMetPast30Days;
   return menu.map((item) => {
     const title = item.title;
     const countMap = {
       "Assigned to you": state.totalCustomersSize,
       "Visited today": state.todaysCustomerVisits,
-      Coverage: state.loadNotMetPast30Days,
+      "Coverage": cleanedLoadNotMetPast30Days,
       "You haven't visited in the past 30 days":
         state.loadMetPast30DaysPercentage,
       "Assigned to team": state.loadtotalsCustomersCountUnderEmployees,

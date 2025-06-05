@@ -5,7 +5,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
 import WindowIcon from "@mui/icons-material/Window";
-import HistoryIcon from '@mui/icons-material/History';
+import HistoryIcon from "@mui/icons-material/History";
 import {
   Box,
   Button,
@@ -158,30 +158,32 @@ const HomePage = () => {
                                 Not signed In
                               </Typography>
 
-                              
                               {loggedInUser.noMobileAccess === false ? (
                                 <>
                                   <Stack
                                     sx={{
                                       flexDirection: "row",
-                                      gap: 1,
+                                      gap: 0.3,
                                       alignItems: "center",
                                     }}
                                   >
-                                    <HistoryIcon sx={{color:'#011D45', mt:1}}/>
+                                    <HistoryIcon
+                                      sx={{ color: "#011D45", mt: 1 }}
+                                    />
 
                                     <Button
+                                      size="small"
                                       startIcon={<LoginOutlined />}
                                       variant="outlined"
                                       sx={{
                                         color: "green",
                                         cursor: "not-allowed",
                                         borderColor: "green",
-
+                                        fontSize: {xs:"9px", sm: "12px" },
                                         mt: 1,
                                       }}
                                     >
-                                      sign in
+                                      signin
                                     </Button>
                                   </Stack>
                                   <Typography
@@ -201,11 +203,14 @@ const HomePage = () => {
                                     sx={{
                                       flexDirection: "row",
                                       alignItems: "center",
-                                      gap:1
+                                      gap: 1,
                                     }}
                                   >
-                                    <HistoryIcon sx={{color:'#011D45', mt:1}} />
+                                    <HistoryIcon
+                                      sx={{ color: "#011D45", mt: 1 }}
+                                    />
                                     <Button
+                                      size="small"
                                       startIcon={<LoginOutlined />}
                                       variant="outlined"
                                       sx={{
@@ -213,6 +218,7 @@ const HomePage = () => {
                                         cursor: "pointer",
                                         borderColor: "green",
                                         width: "110px",
+                                        fontSize: {xs:"9px", sm: "12px" },
                                         mt: 1,
                                       }}
                                     >
@@ -284,7 +290,9 @@ const HomePage = () => {
                                     <Stack
                                       sx={{ flexDirection: "row", gap: 1 }}
                                     >
-                                      <HistoryIcon sx={{color:'#011D45', mt:1}}/>
+                                      <HistoryIcon
+                                        sx={{ color: "#011D45", mt: 1 }}
+                                      />
 
                                       <LogoutIcon
                                         sx={{
@@ -308,14 +316,16 @@ const HomePage = () => {
                                 ) : (
                                   <>
                                     <Button
+                                      size="small"
                                       startIcon={<LoginOutlined />}
-                                      variant="outlined"
+                                     
                                       sx={{
                                         color: "green",
                                         cursor: "pointer",
                                         borderColor: "green",
                                         width: "150px",
                                         mt: 1,
+                                        fontSize: {xs:"9px", sm: "12px" },
                                       }}
                                     >
                                       signin
@@ -402,20 +412,24 @@ const HomePage = () => {
                                   sx={{ flexDirection: "row", gap: 1, mt: 2 }}
                                 >
                                   <Button
+                                    size="small"
                                     startIcon={<LogoutIcon />}
                                     sx={{
                                       color: "tomato",
                                       borderColor: "tomato",
+                                      fontSize: {xs:"9px", sm: "12px" },
                                     }}
                                     variant="outlined"
                                   >
                                     signout
                                   </Button>
                                   <Button
+                                    size="small"
                                     startIcon={<LoginOutlined />}
                                     sx={{
                                       color: "green",
                                       cursor: "not-allowed",
+                                      fontSize: {xs:"9px", sm: "12px" },
                                     }}
                                   >
                                     signin
@@ -639,7 +653,7 @@ const HomePage = () => {
                               textAlign: "center",
                               py: 1,
                               color: "#FFF",
-                              fontSize: { sm: "12px", xs: "8px" },
+                              fontSize: { sm: "12px",xs:"9px" },
                             }}
                           >
                             {item.count}
@@ -711,7 +725,7 @@ const HomePage = () => {
                               textAlign: "center",
                               py: 1,
                               color: "#FFF",
-                              fontSize: { sm: "12px", xs: "8px" },
+                              fontSize: { sm: "12px",xs:"9px" },
                             }}
                           >
                             {item.count}
@@ -783,7 +797,7 @@ const HomePage = () => {
                               textAlign: "center",
                               py: 1,
                               color: "#FFF",
-                              fontSize: { sm: "12px", xs: "8px" },
+                              fontSize: { sm: "12px",xs:"9px" },
                             }}
                           >
                             {item.count}

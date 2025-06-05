@@ -14,6 +14,7 @@ import workspecReducer from "../slices/WorkSpecSlice";
 import MobileReportReducer from "../slices/MobileReportSlice";
 import loginReducer from "../slices/UserLoginSlice";
 import KnowledgeBaseReducer from "../slices/KnowledgeBaseModule";
+import { Login } from "@mui/icons-material";
 
 // Combine all reducers
 const rootReducer = combineReducers({
@@ -35,6 +36,7 @@ const persistConfig = {
   key: "root",
   storage, // localStorage
   // whitelist is omitted to persist everything
+  whitelist:['login', 'CustomerModule']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
