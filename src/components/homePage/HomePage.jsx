@@ -1,11 +1,11 @@
 import { LoginOutlined } from "@mui/icons-material";
 import CallIcon from "@mui/icons-material/Call";
+import HistoryIcon from "@mui/icons-material/History";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
 import WindowIcon from "@mui/icons-material/Window";
-import HistoryIcon from "@mui/icons-material/History";
 import {
   Box,
   Button,
@@ -26,6 +26,7 @@ import {
 } from "../../redux/slices/ActionRequiredSlice";
 import { loggedInUser_get } from "../../redux/slices/HomePageSlice";
 import { todayLeaveDetails } from "../../redux/slices/LeavesModule";
+import DottedSpinner from "../common/DottedSpinner";
 import ReusableTextfield from "../common/ReusableTextfield";
 import TaskCard from "../task/TaskCard";
 
@@ -44,9 +45,9 @@ const HomePage = () => {
     (state) => state.LeavesModule
   );
   const { loggedInUser } = useSelector((state) => state.HomePageModule);
+  const [openActionRequirdStack, setopenActionRequirdStack] = useState(false);
   const [openActionRequird, setOpenActionRequird] = useState(false);
   const [openLeaveCount, setOpenLeaveCount] = useState(true);
-  const [leaveCount] = useState(onLeaveToday?.length);
   const [zIndex, setZIndex] = useState(1000);
   const [searchText, setSearchText] = useState("");
   const [leavesLoadStarted, setLeavesLoadStarted] = useState(false);
@@ -55,16 +56,33 @@ const HomePage = () => {
   const nav = useNavigate();
   useEffect(() => {
     dispatch(loggedInUser_get());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(actionRequiredAjax());
   }, [dispatch]);
   useEffect(() => {
     dispatch(todayLeaveDetails());
-  }, [openLeaveCount]);
+  }, [dispatch, openLeaveCount]);
+
   useEffect(() => {
-    if (actionRequiredDetails.length > 0) {
+    const openActionDialog = loggedInUser?.sessionData;
+    const settingValue = loggedInUser?.setting?.value;
+
+    if (openActionDialog) {
+      if (settingValue) {
+        actionRequiredDetails.map((each) => {
+          each.enable === true
+            ? setopenActionRequirdStack(true)
+            : setopenActionRequirdStack(false);
+        });
+      } else {
+        setopenActionRequirdStack(false);
+      }
+    } else {
+    }
+
+    if (openActionRequirdStack && actionRequiredDetails.length > 0) {
       actionRequiredDetails.forEach((each) => {
         if (each.actionRequiredType === 2) {
           setWorkLoadStarted(true);
@@ -78,7 +96,7 @@ const HomePage = () => {
         }
       });
     }
-  }, [openActionRequird, actionRequiredDetails]);
+  }, [loggedInUser, actionRequiredDetails, dispatch, openActionRequird]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -112,6 +130,7 @@ const HomePage = () => {
     <Box sx={{ bgcolor: "#F0F3FA" }}>
       <Box sx={{ mt: 8 }}>
         <Stack gap={1}>
+          {/* user details */}
           <Stack sx={{ position: "relative" }}>
             <Stack
               sx={{
@@ -157,7 +176,20 @@ const HomePage = () => {
                               >
                                 Not signed In
                               </Typography>
-
+                              {loggedInUser.lastSignedIn !== null && (
+                                <Typography
+                                  sx={{
+                                    color: "green",
+                                    fontSize: { sm: "12px", xs: "10px" },
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Last signed in &nbsp;
+                                  {loggedInUser.differenceInLastSignIn}&nbsp; at
+                                  &nbsp;
+                                  {loggedInUser.lastSignedIn.substring(11, 19)}
+                                </Typography>
+                              )}
                               {loggedInUser.noMobileAccess === false ? (
                                 <>
                                   <Stack
@@ -167,6 +199,7 @@ const HomePage = () => {
                                       alignItems: "center",
                                     }}
                                   >
+                                    {/* need to work with pop up */}
                                     <HistoryIcon
                                       sx={{ color: "#011D45", mt: 1 }}
                                     />
@@ -179,7 +212,7 @@ const HomePage = () => {
                                         color: "green",
                                         cursor: "not-allowed",
                                         borderColor: "green",
-                                        fontSize: {xs:"9px", sm: "12px" },
+                                        fontSize: { xs: "9px", sm: "12px" },
                                         mt: 1,
                                       }}
                                     >
@@ -218,7 +251,7 @@ const HomePage = () => {
                                         cursor: "pointer",
                                         borderColor: "green",
                                         width: "110px",
-                                        fontSize: {xs:"9px", sm: "12px" },
+                                        fontSize: { xs: "9px", sm: "12px" },
                                         mt: 1,
                                       }}
                                     >
@@ -226,20 +259,6 @@ const HomePage = () => {
                                     </Button>
                                   </Stack>
                                 </>
-                              )}
-                              {loggedInUser.lastSignedIn !== null && (
-                                <Typography
-                                  sx={{
-                                    color: "green",
-                                    fontSize: { sm: "12px", xs: "10px" },
-                                    fontWeight: 500,
-                                  }}
-                                >
-                                  Last signed in &nbsp;
-                                  {loggedInUser.differenceInLastSignIn}&nbsp; at
-                                  &nbsp;
-                                  {loggedInUser.lastSignedIn.substring(11, 19)}
-                                </Typography>
                               )}
                             </Stack>
 
@@ -318,14 +337,13 @@ const HomePage = () => {
                                     <Button
                                       size="small"
                                       startIcon={<LoginOutlined />}
-                                     
                                       sx={{
                                         color: "green",
                                         cursor: "pointer",
                                         borderColor: "green",
                                         width: "150px",
                                         mt: 1,
-                                        fontSize: {xs:"9px", sm: "12px" },
+                                        fontSize: { xs: "9px", sm: "12px" },
                                       }}
                                     >
                                       signin
@@ -417,7 +435,7 @@ const HomePage = () => {
                                     sx={{
                                       color: "tomato",
                                       borderColor: "tomato",
-                                      fontSize: {xs:"9px", sm: "12px" },
+                                      fontSize: { xs: "9px", sm: "12px" },
                                     }}
                                     variant="outlined"
                                   >
@@ -429,7 +447,7 @@ const HomePage = () => {
                                     sx={{
                                       color: "green",
                                       cursor: "not-allowed",
-                                      fontSize: {xs:"9px", sm: "12px" },
+                                      fontSize: { xs: "9px", sm: "12px" },
                                     }}
                                   >
                                     signin
@@ -482,6 +500,7 @@ const HomePage = () => {
               </Stack>
             </Stack>
           </Stack>
+          {/* dashboard */}
           <Stack
             sx={{
               alignItems: "center",
@@ -527,299 +546,304 @@ const HomePage = () => {
               </Stack>
             </Stack>
           </Stack>
-          <Stack
-            sx={{
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+
+          {/* action required */}
+          {openActionRequirdStack && (
             <Stack
               sx={{
-                border: "1px solid #c9c9c9",
-                width: "95%",
-                zIndex: 999,
-                bgcolor: "#FFF",
-                borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px",
-                borderBottomLeftRadius: openActionRequird ? "0px" : "5px",
-                borderBottomRightRadius: openActionRequird ? "0px" : "5px",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Stack sx={{ px: { sm: 2, xs: 1 } }}>
-                <Stack
-                  sx={{
-                    flexDirection: "row",
-                    gap: 2,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "red",
-                      fontFamily: '"Poppins", sans-serif',
-                      fontWeight: 500,
-                      letterSpacing: 0.1,
-                      fontSize: { sm: "13px", xs: "12px" },
-                    }}
-                  >
-                    Action Required
-                  </Typography>
-                  <IconButton onClick={toggleActionRequird}>
-                    {openActionRequird ? (
-                      <KeyboardArrowDownIcon
-                        sx={{
-                          color: "red",
-                          fontSize: { sm: "22px", xs: "20px" },
-                        }}
-                      />
-                    ) : (
-                      <KeyboardArrowRightIcon
-                        sx={{
-                          color: "red",
-                          fontSize: { sm: "22px", xs: "20px" },
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                </Stack>
-              </Stack>
-            </Stack>
-
-            {openActionRequird && (
               <Stack
                 sx={{
-                  borderRight: "1px solid #c9c9c9",
+                  border: "1px solid #c9c9c9",
                   width: "95%",
-                  borderLeft: "1px solid #c9c9c9",
-                  borderBottom: "1px solid #c9c9c9",
-                  maxHeight: "200px",
-                  overflowY: "scroll",
-                  bgcolor: "#FFFF",
+                  zIndex: 999,
+                  bgcolor: "#FFF",
+                  borderTopLeftRadius: "5px",
+                  borderTopRightRadius: "5px",
+                  borderBottomLeftRadius: openActionRequird ? "0px" : "5px",
+                  borderBottomRightRadius: openActionRequird ? "0px" : "5px",
                 }}
               >
-                <Stack sx={{ width: "100%", gap: 1 }}>
-                  {/* Approval List */}
-
-                  {isLoadingApproval ? (
-                    <Stack
+                <Stack sx={{ px: { sm: 2, xs: 1 } }}>
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      gap: 2,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography
                       sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                        mt: 0.5,
+                        color: "red",
+                        fontFamily: '"Poppins", sans-serif',
+                        fontWeight: 500,
+                        letterSpacing: 0.1,
+                        fontSize: { sm: "13px", xs: "12px" },
                       }}
                     >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        Approval loadings
-                      </Typography>
-                    </Stack>
-                  ) : approvalList?.length > 0 ? (
-                    approvalList
-                      .filter((item) => item.count > 0)
-                      .map((item, index) => (
-                        <Stack
-                          key={`approval-${index}`}
+                      Action Required
+                    </Typography>
+                    <IconButton onClick={toggleActionRequird}>
+                      {openActionRequird ? (
+                        <KeyboardArrowDownIcon
                           sx={{
-                            flexDirection: "row",
-                            gap: 1,
-                            alignItems: "center",
-                            bgcolor: "#F0F8FF",
-                            mx: 0.5,
+                            color: "red",
+                            fontSize: { sm: "22px", xs: "20px" },
                           }}
-                        >
-                          <Typography
-                            sx={{
-                              bgcolor: "#F05119",
-                              width: { sm: "30px", xs: "20px" },
-                              borderTopLeftRadius: "5px",
-                              borderBottomLeftRadius: "5px",
-                              textAlign: "center",
-                              py: 1,
-                              color: "#FFF",
-                              fontSize: { sm: "12px",xs:"9px" },
-                            }}
-                          >
-                            {item.count}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              py: 1,
-                              color: "#225683",
-                              fontFamily: '"Poppins", sans-serif',
-                              fontWeight: 600,
-                              fontSize: { sm: "12px", xs: "10px" },
-                            }}
-                          >
-                            {item.formSpec}
-                          </Typography>
-                        </Stack>
-                      ))
-                  ) : null}
-
-                  {/* Leaves List */}
-                  {isLoadingLeaves ? (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                      }}
-                    >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        leave loadings
-                      </Typography>
-                    </Stack>
-                  ) : leavesList?.length > 0 ? (
-                    leavesList
-                      .filter((item) => item.count > 0)
-                      .map((item, index) => (
-                        <Stack
-                          key={`leave-${index}`}
+                        />
+                      ) : (
+                        <KeyboardArrowRightIcon
                           sx={{
-                            flexDirection: "row",
-                            gap: 1,
-                            alignItems: "center",
-                            bgcolor: "#F0F8FF",
-                            mx: 0.5,
+                            color: "red",
+                            fontSize: { sm: "22px", xs: "20px" },
                           }}
-                        >
-                          <Typography
-                            sx={{
-                              bgcolor: "#F05119",
-                              width: { sm: "30px", xs: "20px" },
-                              borderTopLeftRadius: "5px",
-                              borderBottomLeftRadius: "5px",
-                              textAlign: "center",
-                              py: 1,
-                              color: "#FFF",
-                              fontSize: { sm: "12px",xs:"9px" },
-                            }}
-                          >
-                            {item.count}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              py: 1,
-                              color: "#225683",
-                              fontFamily: '"Poppins", sans-serif',
-                              fontWeight: 600,
-                              fontSize: { sm: "12px", xs: "10px" },
-                            }}
-                          >
-                            Leave Request
-                          </Typography>
-                        </Stack>
-                      ))
-                  ) : null}
-
-                  {/* Work List */}
-                  {isLoadingWork ? (
-                    <Stack
-                      sx={{
-                        flexDirection: "row",
-                        gap: 1,
-                        alignItems: "center",
-                        bgcolor: "#FAEBD7",
-                        py: 0.7,
-                        px: 0.5,
-                        ml: 0.5,
-                        mr: 0.5,
-                      }}
-                    >
-                      <CircularProgress
-                        sx={{
-                          color: "black",
-                          height: "10px",
-                          width: "10px",
-                        }}
-                        size={15}
-                      />
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold", fontSize: "12px" }}
-                      >
-                        works loadings
-                      </Typography>
-                    </Stack>
-                  ) : workList?.length > 0 ? (
-                    workList
-                      .filter((item) => item.count > 0)
-                      .map((item, index) => (
-                        <Stack
-                          key={`work-${index}`}
-                          sx={{
-                            flexDirection: "row",
-                            gap: 1,
-                            alignItems: "center",
-                            bgcolor: "#F0F8FF",
-                            mx: 0.5,
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              bgcolor: "#F05119",
-                              width: { sm: "30px", xs: "20px" },
-                              borderTopLeftRadius: "5px",
-                              borderBottomLeftRadius: "5px",
-                              textAlign: "center",
-                              py: 1,
-                              color: "#FFF",
-                              fontSize: { sm: "12px",xs:"9px" },
-                            }}
-                          >
-                            {item.count}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              py: 1,
-                              color: "#225683",
-                              fontFamily: '"Poppins", sans-serif',
-                              fontWeight: 600,
-                              fontSize: { sm: "12px", xs: "10px" },
-                            }}
-                          >
-                            {item.workSpecTitle}
-                          </Typography>
-                        </Stack>
-                      ))
-                  ) : null}
+                        />
+                      )}
+                    </IconButton>
+                  </Stack>
                 </Stack>
               </Stack>
-            )}
-          </Stack>
+
+              {openActionRequird && (
+                <Stack
+                  sx={{
+                    borderRight: "1px solid #c9c9c9",
+                    width: "95%",
+                    borderLeft: "1px solid #c9c9c9",
+                    borderBottom: "1px solid #c9c9c9",
+                    maxHeight: "200px",
+                    overflowY: "scroll",
+                    bgcolor: "#FFFF",
+                  }}
+                >
+                  <Stack sx={{ width: "100%", gap: 1 }}>
+                    {/* Approval List */}
+
+                    {isLoadingApproval ? (
+                      <Stack
+                        sx={{
+                          flexDirection: "row",
+                          gap: 1,
+                          alignItems: "center",
+                          bgcolor: "#FAEBD7",
+                          py: 0.7,
+                          px: 0.5,
+                          ml: 0.5,
+                          mr: 0.5,
+                          mt: 0.5,
+                        }}
+                      >
+                        <CircularProgress
+                          sx={{
+                            color: "black",
+                            height: "10px",
+                            width: "10px",
+                          }}
+                          size={15}
+                        />
+                        <Typography
+                          component={"span"}
+                          sx={{ fontWeight: "bold", fontSize: "12px" }}
+                        >
+                          Approval loadings
+                        </Typography>
+                      </Stack>
+                    ) : approvalList?.length > 0 ? (
+                      approvalList
+                        .filter((item) => item.count > 0)
+                        .map((item, index) => (
+                          <Stack
+                            key={`approval-${index}`}
+                            sx={{
+                              flexDirection: "row",
+                              gap: 1,
+                              alignItems: "center",
+                              bgcolor: "#F0F8FF",
+                              mx: 0.5,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                bgcolor: "#F05119",
+                                width: { sm: "30px", xs: "20px" },
+                                borderTopLeftRadius: "5px",
+                                borderBottomLeftRadius: "5px",
+                                textAlign: "center",
+                                py: 1,
+                                color: "#FFF",
+                                fontSize: { sm: "12px", xs: "9px" },
+                              }}
+                            >
+                              {item.count}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                py: 1,
+                                color: "#225683",
+                                fontFamily: '"Poppins", sans-serif',
+                                fontWeight: 600,
+                                fontSize: { sm: "12px", xs: "10px" },
+                              }}
+                            >
+                              {item.formSpec}
+                            </Typography>
+                          </Stack>
+                        ))
+                    ) : null}
+
+                    {/* Leaves List */}
+                    {isLoadingLeaves ? (
+                      <Stack
+                        sx={{
+                          flexDirection: "row",
+                          gap: 1,
+                          alignItems: "center",
+                          bgcolor: "#FAEBD7",
+                          py: 0.7,
+                          px: 0.5,
+                          ml: 0.5,
+                          mr: 0.5,
+                        }}
+                      >
+                        <CircularProgress
+                          sx={{
+                            color: "black",
+                            height: "10px",
+                            width: "10px",
+                          }}
+                          size={15}
+                        />
+                        <Typography
+                          component={"span"}
+                          sx={{ fontWeight: "bold", fontSize: "12px" }}
+                        >
+                          leave loadings
+                        </Typography>
+                      </Stack>
+                    ) : leavesList?.length > 0 ? (
+                      leavesList
+                        .filter((item) => item.count > 0)
+                        .map((item, index) => (
+                          <Stack
+                            key={`leave-${index}`}
+                            sx={{
+                              flexDirection: "row",
+                              gap: 1,
+                              alignItems: "center",
+                              bgcolor: "#F0F8FF",
+                              mx: 0.5,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                bgcolor: "#F05119",
+                                width: { sm: "30px", xs: "20px" },
+                                borderTopLeftRadius: "5px",
+                                borderBottomLeftRadius: "5px",
+                                textAlign: "center",
+                                py: 1,
+                                color: "#FFF",
+                                fontSize: { sm: "12px", xs: "9px" },
+                              }}
+                            >
+                              {item.count}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                py: 1,
+                                color: "#225683",
+                                fontFamily: '"Poppins", sans-serif',
+                                fontWeight: 600,
+                                fontSize: { sm: "12px", xs: "10px" },
+                              }}
+                            >
+                              Leave Request
+                            </Typography>
+                          </Stack>
+                        ))
+                    ) : null}
+
+                    {/* Work List */}
+                    {isLoadingWork ? (
+                      <Stack
+                        sx={{
+                          flexDirection: "row",
+                          gap: 1,
+                          alignItems: "center",
+                          bgcolor: "#FAEBD7",
+                          py: 0.7,
+                          px: 0.5,
+                          ml: 0.5,
+                          mr: 0.5,
+                        }}
+                      >
+                        <CircularProgress
+                          sx={{
+                            color: "black",
+                            height: "10px",
+                            width: "10px",
+                          }}
+                          size={15}
+                        />
+                        <Typography
+                          component={"span"}
+                          sx={{ fontWeight: "bold", fontSize: "12px" }}
+                        >
+                          works loadings
+                        </Typography>
+                      </Stack>
+                    ) : workList?.length > 0 ? (
+                      workList
+                        .filter((item) => item.count > 0)
+                        .map((item, index) => (
+                          <Stack
+                            key={`work-${index}`}
+                            sx={{
+                              flexDirection: "row",
+                              gap: 1,
+                              alignItems: "center",
+                              bgcolor: "#F0F8FF",
+                              mx: 0.5,
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                bgcolor: "#F05119",
+                                width: { sm: "30px", xs: "20px" },
+                                borderTopLeftRadius: "5px",
+                                borderBottomLeftRadius: "5px",
+                                textAlign: "center",
+                                py: 1,
+                                color: "#FFF",
+                                fontSize: { sm: "12px", xs: "9px" },
+                              }}
+                            >
+                              {item.count}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                py: 1,
+                                color: "#225683",
+                                fontFamily: '"Poppins", sans-serif',
+                                fontWeight: 600,
+                                fontSize: { sm: "12px", xs: "10px" },
+                              }}
+                            >
+                              {item.workSpecTitle}
+                            </Typography>
+                          </Stack>
+                        ))
+                    ) : null}
+                  </Stack>
+                </Stack>
+              )}
+            </Stack>
+          )}
+          {/* leaves */}
           <Stack
             sx={{
               alignItems: "center",
@@ -849,31 +873,35 @@ const HomePage = () => {
                 >
                   <Typography
                     sx={{
-                      color: "red",
                       fontFamily: '"Poppins", sans-serif',
                       fontWeight: 500,
                       letterSpacing: 0.1,
                       fontSize: { sm: "13px", xs: "12px" },
-                      color: "gray",
+                      color: onLeaveToday?.length === 0 ? "gray" : "red",
                     }}
                   >
                     on leave today
-                    <Typography component={"span"} sx={{ color: "gray" }}>
-                      ({leaveCount})
+                    <Typography
+                      component={"span"}
+                      sx={{
+                        color: onLeaveToday?.length === 0 ? "gray" : "red",
+                      }}
+                    >
+                      ({(onLeaveToday && onLeaveToday?.length) || 0})
                     </Typography>
                   </Typography>
                   <IconButton onClick={toggleLeaveCount}>
                     {openLeaveCount ? (
                       <KeyboardArrowDownIcon
                         sx={{
-                          color: "red",
+                         color: onLeaveToday?.length === 0 ? "gray" : "red",
                           fontSize: { sm: "23px", xs: "20px" },
                         }}
                       />
                     ) : (
                       <KeyboardArrowRightIcon
                         sx={{
-                          color: "red",
+                          color: onLeaveToday?.length === 0 ? "gray" : "red",
                           fontSize: { sm: "23px", xs: "20px" },
                         }}
                       />
@@ -895,62 +923,68 @@ const HomePage = () => {
                 }}
               >
                 <Stack sx={{ px: { sm: 2, xs: 1 }, gap: 1, py: 1 }}>
-                  {onLeaveToday && onLeaveToday.length < 0 ? (
+                  {isonLeaveTodayLoading ? (
+                    <Stack
+                      sx={{
+                        textAlign: "center",
+                        fontWeight: 500,
+                        alignItems: "center",
+                      }}
+                    >
+                      <DottedSpinner size={20} color="#1976d2" thickness={4} />
+                    </Stack>
+                  ) : onLeaveToday && onLeaveToday.length > 0 ? (
                     <>
-                      {isonLeaveTodayLoading ? (
-                        <Typography>Loading ....</Typography>
-                      ) : (
-                        onLeaveToday.map((empDetails) => {
-                          <Stack sx={{ gap: 1 }}>
+                      {onLeaveToday.map((empDetails, index) => (
+                        <Stack key={index} sx={{ gap: 1 }}>
+                          <Stack
+                            sx={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              bgcolor: "#F0F8FF",
+                            }}
+                          >
                             <Stack
                               sx={{
                                 flexDirection: "row",
+                                gap: 1,
                                 alignItems: "center",
-                                justifyContent: "space-between",
-                                bgcolor: "#F0F8FF",
                               }}
                             >
-                              <Stack
+                              <Typography
                                 sx={{
-                                  flexDirection: "row",
-                                  gap: 1,
-                                  alignItems: "center",
+                                  bgcolor: "#F05119",
+                                  width: "10px",
+                                  borderTopRightRadius: "5px",
+                                  borderBottomRightRadius: "5px",
+                                  textAlign: "center",
+                                  height: "35px",
+                                  color: "#FFF",
+                                }}
+                              ></Typography>
+                              <Typography
+                                sx={{
+                                  py: 1,
+                                  fontSize: {
+                                    sm: "14px",
+                                    xs: "12px",
+                                  },
                                 }}
                               >
-                                <Typography
-                                  sx={{
-                                    bgcolor: "#F05119",
-                                    width: "10px",
-                                    borderTopRightRadius: "5px",
-                                    borderBottomRightRadius: "5px",
-                                    textAlign: "center",
-                                    height: "35px",
-                                    color: "#FFF",
-                                  }}
-                                ></Typography>
-                                <Typography
-                                  sx={{
-                                    py: 1,
-                                    fontSize: {
-                                      sm: "14px",
-                                      xs: "12px",
-                                    },
-                                  }}
-                                >
-                                  {empDetails.empname}
-                                </Typography>
-                              </Stack>
-                              <Box sx={{ margin: "5px 10px" }}>
-                                <CallIcon sx={{ fontSize: "15px" }} />
-                              </Box>
+                                {empDetails.empname}
+                              </Typography>
                             </Stack>
-                          </Stack>;
-                        })
-                      )}
+                            <Box sx={{ margin: "5px 10px" }}>
+                              <CallIcon sx={{ fontSize: "15px" }} />
+                            </Box>
+                          </Stack>
+                        </Stack>
+                      ))}
                     </>
                   ) : (
-                    <Typography sx={{ textAlign: "center", fontWeight: 500 }}>
-                      no data
+                    <Typography sx={{ textAlign: "center" }}>
+                      No data found
                     </Typography>
                   )}
                 </Stack>
@@ -958,6 +992,7 @@ const HomePage = () => {
             )}
           </Stack>
         </Stack>
+        {/* search filed */}
         <Stack
           sx={{
             alignItems: "center",

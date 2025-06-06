@@ -186,6 +186,7 @@ const LeavesModule = createSlice({
       .addCase(todayLeaveDetails.fulfilled, (state, action) => {
         state.onLeaveTodayStatus = "succeeded";
         state.onLeaveToday = action.payload;
+        console.log(action.payload)
         state.isonLeaveTodayLoading = false;
       })
       .addCase(todayLeaveDetails.rejected, (state) => {
