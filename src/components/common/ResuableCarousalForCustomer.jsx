@@ -9,22 +9,21 @@ const ResuableCarousal = ({ items }) => {
   const [activecarousal, setActiveCarousal] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    CustomerModuleMenu,
-    customerViewTypeTitle,
-    displayCountForCustomerModule,
-  } = useSelector((state) => state.CustomerModule);
+  const { customerViewTypeTitle } = useSelector(
+    (state) => state.CustomerModule
+  );
 
   useEffect(() => {
-    // Flatten the nested items array
+    console.log("customerViewTypeTitle:", customerViewTypeTitle);
+
     const flatItems = items.flat();
-
-    const matchedItem = flatItems.find(
-      (item) => item.title === customerViewTypeTitle
-    );
-
+    const matchedItem = flatItems.find((item) => {
+      const itemTitle = item.title?.trim().toLowerCase();
+      const targetTitle = customerViewTypeTitle?.trim().toLowerCase();
+      return itemTitle === targetTitle;
+    });
     if (matchedItem) {
-      setActiveCarousal(matchedItem.id); // Use `id` if that's what your logic tracks
+      setActiveCarousal(matchedItem.id); // or whatever logic you're using
     }
   }, [customerViewTypeTitle, items]);
 
@@ -32,10 +31,10 @@ const ResuableCarousal = ({ items }) => {
     dispatch(setTitleForCustomerView(title));
 
     setActiveCarousal(id);
+
     switch (id) {
       case 1:
         navigate("/view/all/customers/typed?viewType=1&customerView=1");
-
         break;
       case 2:
         navigate("/view/all/customers/typed?viewType=8&customerView=1");
@@ -58,25 +57,61 @@ const ResuableCarousal = ({ items }) => {
       case 8:
         navigate("/view/all/customers/typed?viewType=12&customerView=1");
         break;
+      case 11:
+        navigate(
+          `/view/all/customers/typed?viewType=4&customerViewType=1&customerView=2`
+        );
+        break;
+      case 12:
+        navigate(
+          `/view/all/customers/typed?viewType=5&customerViewType=2&customerView=2`
+        );
+        break;
+      case 13:
+        navigate(
+          `/view/all/customers/typed?viewType=6&customerViewType=3&customerView=2`
+        );
+        break;
+      case 14:
+        navigate(`/view/all/customers/typed?viewType=7&customerView=2`);
+        break;
+      case 15:
+        navigate(`/view/all/customers/typed?viewType=8&customerView=2`);
+        break;
+      default:
+        console.warn("Unknown view type ID:", id);
     }
   };
 
   return (
     <Carousel
-      sx={{
+         sx={{
         mt: 0.1,
         width: "99%",
         borderRadius: "5px",
+        position: "relative",
         boxShadow:
           "0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12)",
       }}
-      autoPlay={true}
       indicators={false}
       navButtonsAlwaysVisible={true}
       duration={2000}
       animation="slide"
       navButtonsProps={{
-        style: { color: "#FFF", background: "#2478FE" },
+        sx: {
+          color: "#FFF",
+          background: "#2478FE",
+          fontSize: "12px",
+          padding: "4px 4px",
+          width: "25px", // Responsive width
+          height: "25px",
+          borderRadius: "50%",
+        },
+      }}
+      navButtonsWrapperProps={{
+        sx: {
+          marginTop: "10px", // Shift both buttons down together
+        },
       }}
     >
       {items.map((group, index) => (
@@ -100,21 +135,41 @@ const ResuableCarousal = ({ items }) => {
             <Stack
               key={i}
               onClick={() => handleViewTypeChange(menuitem.id, menuitem.title)}
-              sx={{ cursor: "pointer" }} 
+              sx={{
+                cursor: "pointer",
+                position: "relative",
+                width: { sm: "130px", xs: "90px" },
+                minHeight: "60px", // enough space for count and title
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+              }}
             >
-              <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>
-                {menuitem.count }
-              </Typography>
+              {/* Count - fixed at top */}
               <Typography
                 sx={{
-                  fontFamily: '"Poppins", sans-serif',
+                  position: "absolute",
+                  top: 10,
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                {menuitem.count}
+              </Typography>
+
+              {/* Title - grows below */}
+              <Typography
+                sx={{
+               
                   fontSize: { sm: "12px", xs: "10px" },
                   fontWeight: { sm: 600, xs: "bold" },
-                  width: { sm: "130px", xs: "90px" },
-                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "30px", // space below the fixed count
                   color: menuitem.id === activecarousal ? "#ffa00d" : "#011D45",
                   textDecoration:
                     menuitem.id === activecarousal ? "underline" : "none",
+                  wordBreak: "break-word",
                 }}
               >
                 {menuitem.title}

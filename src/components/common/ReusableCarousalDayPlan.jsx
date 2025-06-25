@@ -18,25 +18,35 @@ const ReusableCarousalDayPlan = ({ items }) => {
       localStorage.setItem("activeMenuTitle", menuItem);
     }
   }, [menuItem]);
-  
+
   const handleMenuItemClick = (menu) => {
     if (!menu) return;
-   
+
     switch (menu.id) {
       case 1:
-        navigate(`/view/all/customers?viewType=4&customerViewType=1&customerView=2`);
+        navigate(
+          `/view/all/customers?viewType=4&customerViewType=1&customerView=2`
+        );
         break;
       case 2:
-       navigate(`/view/all/customers?viewType=5&customerView=2&customerViewType=2`);
+        navigate(
+          `/view/all/customers?viewType=5&customerView=2&customerViewType=2`
+        );
         break;
       case 3:
-        navigate(`/view/all/customers?viewType=6&customerView=2&customerViewType=3`);
-         break;
+        navigate(
+          `/view/all/customers?viewType=6&customerView=2&customerViewType=3`
+        );
+        break;
       case 4:
-        navigate(`/view/all/employees?viewType=7&customerViewType=2&customerView=4`);
+        navigate(
+          `/view/all/employees?viewType=7&customerViewType=2&customerView=4`
+        );
         break;
       case 5:
-        navigate(`/view/all/employees?viewType=8&customerViewType=5&customerView=2`);
+        navigate(
+          `/view/all/employees?viewType=8&customerViewType=5&customerView=2`
+        );
         break;
       default:
         break;
@@ -45,19 +55,33 @@ const ReusableCarousalDayPlan = ({ items }) => {
 
   return (
     <Carousel
-      sx={{
+        sx={{
         mt: 0.1,
         width: "99%",
         borderRadius: "5px",
-        boxShadow: "0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12)",
+        position: "relative",
+        boxShadow:
+          "0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12)",
       }}
-      autoPlay={true}
       indicators={false}
       navButtonsAlwaysVisible={true}
       duration={2000}
       animation="slide"
       navButtonsProps={{
-        style: { color: "#FFF", background: "#2478FE" },
+        sx: {
+          color: "#FFF",
+          background: "#2478FE",
+          fontSize: "12px",
+          padding: "4px 4px",
+          width: "25px", // Responsive width
+          height: "25px",
+          borderRadius: "50%",
+        },
+      }}
+      navButtonsWrapperProps={{
+        sx: {
+          marginTop: "10px", // Shift both buttons down together
+        },
       }}
     >
       {items?.map((group, index) => (
@@ -78,19 +102,39 @@ const ReusableCarousalDayPlan = ({ items }) => {
           }}
         >
           {group?.map((menuitem, i) => (
-            <Stack key={i} onClick={() => handleMenuItemClick(menuitem)}>
-              <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>
+            <Stack
+              key={i}
+              onClick={() => handleMenuItemClick(menuitem)}
+              sx={{
+                cursor: "pointer",
+                position: "relative",
+                width: { sm: "130px", xs: "90px" },
+                minHeight: "60px", // enough space for count and title
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
                 {menuitem.count}
               </Typography>
               <Typography
                 sx={{
-                  cursor: "pointer",
                   fontSize: { sm: "12px", xs: "10px" },
                   fontWeight: { sm: 600, xs: "bold" },
-                  width: { sm: "130px", xs: "90px" },
-                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "30px", // space below the fixed count
                   color: menuitem.title === activeTitle ? "#ffa00d" : "black",
-                  textDecoration: menuitem.title === activeTitle ? "underline" : "none",
+                  textDecoration:
+                    menuitem.title === activeTitle ? "underline" : "none",
                 }}
               >
                 {menuitem.title}

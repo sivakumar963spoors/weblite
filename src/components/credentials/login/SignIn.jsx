@@ -1,272 +1,301 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import JSEncrypt from "jsencrypt";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ReusableTextfield from "../../common/ReusableTextfield";
-const SignIn = ({ handleLogin }) => {
+import { encrypasswprd, postLogin } from "../../../api/Auth";
+import logoImg from "../../../assets/logo.png";
+const SignIn = ({ handleLogin, onLogout }) => {
   const navigate = useNavigate();
-  const [isRegisterClick, setRegisterClick] = useState(false);
+
   const [isLoginClick, setIsLoginClick] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [loginData, setLoginData] = useState({ userName: "", password: "" });
-  const [registerData, setRegisterData] = useState({
-    firstName: "",
-    lastName: "",
+  const [errorMsg, setErrorMsg] = useState({
+    userName: "",
+    password: "",
+  });
+  const [userDetails, setuserDetails] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
   });
-  const [userDetails, setuserDetails] = useState({});
   const publicKey =
     "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOgiuu/2ainlWvBleyQlkPmm4F7ZCG397xEmgSAYghvJSNQgyAit3kw6+DwK82svLgAOOwpYBp/V3rZUkGiMvcpP05v7cRAKMJeUaA6z8n3OpMJ3cNmuLZvVUCLL9GQgjsqoK+GIWQVcgsGXbR/nI0c94AKrnfDqmK5ck/x+gphQIDAQAB";
 
   const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
-  };
-
-  const handleRegisterChange = (e) => {
-    setRegisterData({ ...registerData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const trimmedValue = value.replace(/^\s+/, "");
+    setLoginData({ ...loginData, [name]: trimmedValue });
   };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (!loginData.userName || !loginData.password) {
-      alert("Please enter email and password.");
+
+    setErrorMsg({ userName: "", password: "" });
+
+    let hasError = false;
+    const newErrors = {};
+
+    if (!loginData.userName) {
+      newErrors.userName = "Username is required.";
+      hasError = true;
+    }
+
+    if (!loginData.password) {
+      newErrors.password = "Password is required.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrorMsg(newErrors);
       return;
     }
 
-    // const encrypt = new JSEncrypt();
-    // encrypt.setPublicKey(publicKey);
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(publicKey);
 
-    // const encryptedPassword = encrypt.encrypt(loginData.password);
-    // if (!encryptedPassword) {
-    //   alert("Encryption failed.");
-    //   return;
-    // }
+    const encryptedPassword = encrypt.encrypt(loginData.password);
+    if (!encryptedPassword) {
+      alert("Encryption failed.");
+      return;
+    }
 
     try {
-      const loginResponse = await fetch(
-     "https://vapt.spoors.dev/webliteBackend/service/get/webliteLogin",
-      //"http://localhost:8080/effort/service/get/webliteLogin",
-        {
-          method: "POST",
-          credentials: "include",
+      const loginResponse = await fetch(encrypasswprd, {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userName: loginData.userName,
-            password: loginData.password,
-          }),
-        }
-      );
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userName: loginData.userName,
+          password: encryptedPassword,
+        }),
+      });
+
+      const result = await loginResponse.text(); // or `.json()` if response is JSON
 
       if (!loginResponse.ok) {
-        alert("Login failed. Please check credentials.");
+        setErrorMsg({
+          userName: "",
+          password: "Invalid username or password.",
+        });
         return;
-      } else {
-        handleLogin();
-        navigate("/home");
       }
+
+      const loginResponse_two = await fetch(postLogin, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userName: loginData.userName,
+          password: result,
+        }),
+      });
+
+      if (loginResponse_two.status === 401) {
+        setErrorMsg({
+          userName: "",
+          password: "Invalid password.",
+        });
+        return;
+      }
+
+      if (loginResponse_two.status === 403) {
+        setErrorMsg({
+          userName: "",
+          password: "Company is inactive.",
+        });
+        return;
+      }
+
+      if (!loginResponse_two.ok) {
+        setErrorMsg({
+          userName: "",
+          password: "Login failed. Please try again.",
+        });
+        return;
+      }
+
+      handleLogin();
+      navigate("/home");
     } catch (error) {
-      console.error("Login error:", error);
       alert("Something went wrong. Try again later.");
     }
   };
 
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !registerData.email ||
-      !registerData.password ||
-      !registerData.confirmPassword
-    ) {
-      alert("Please fill all fields.");
-      return;
-    }
-    if (registerData.password !== registerData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        name: registerData.userName,
-        password: registerData.password,
-      })
-    );
-
-    alert("Registration successful! You can now log in.");
-    setIsLoginClick(true);
-    setRegisterClick(false);
-  };
-
   return (
-    <Box
+    <Stack
       sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        background:
+          "linear-gradient(to bottom,  rgba(255, 255, 255, 1),rgba(24, 151, 219, 1))",
         height: "100vh",
       }}
     >
-      {isLoginClick && (
-        <Stack
-          component="form"
-          onSubmit={handleLoginSubmit}
-          sx={{
-            gap: 2,
-            border: "1px solid gray",
-            py: 5,
-            px: { sm: 5, xs: 3 },
-            borderRadius: "5px",
-          }}
-        >
-          {userDetails && userDetails.isSignOutFrom}
-          <Stack>
-            <Typography>name</Typography>
-            <ReusableTextfield
-              placeholder="Enter name"
-              name="userName"
-              value={loginData.userName}
-              onChange={handleLoginChange}
+      <Box>
+        <AppBar position="static">
+          <Toolbar sx={{ background: "#FFF" }}>
+            <Box
+              component={"img"}
+              src={logoImg}
+              sx={{ height: "40px", color: "#FFF" }}
             />
-          </Stack>
-          <Stack>
-            <Typography>Password</Typography>
-            <ReusableTextfield
-              placeholder="Enter password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              value={loginData.password}
-              onChange={handleLoginChange}
-              icon={
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              }
-            />
-          </Stack>
-          <Button type="submit" variant="outlined">
-            Login
-          </Button>
-          <Typography sx={{ fontSize: "10px" }}>
-            Don't have an account?{" "}
-            <Typography
-              component={"span"}
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
+        <>
+          {isLoginClick && (
+            <Stack
+              component="form"
+              onSubmit={handleLoginSubmit}
               sx={{
-                color: "blue",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setIsLoginClick(false);
-                setRegisterClick(true);
+                gap: 2,
+                py: 5,
+                px: { sm: 5, xs: 2 },
+                borderRadius: "5px",
+                m: 1,
+                boxShadow: "0px 0px 8px 2px rgba(140, 210, 233, 0.63)",
+                width: { sm: "40%", xs: "95%" },
               }}
             >
-              Register here
-            </Typography>
-          </Typography>
-        </Stack>
-      )}
-
-      {isRegisterClick && (
-        <Stack
-          component="form"
-          onSubmit={handleRegisterSubmit}
-          sx={{
-            gap: 2,
-            border: "1px solid gray",
-            py: { xs: 2, sm: 2, md: 3 },
-            px: { sm: 5, xs: 3 },
-            borderRadius: "5px",
-          }}
-        >
-          <Stack>
-            <Typography>First Name</Typography>
-            <ReusableTextfield
-              placeholder="Enter first name"
-              name="firstName"
-              value={registerData.firstName}
-              onChange={handleRegisterChange}
-            />
-          </Stack>
-          <Stack>
-            <Typography>Last Name</Typography>
-            <ReusableTextfield
-              placeholder="Enter last name"
-              name="lastName"
-              value={registerData.lastName}
-              onChange={handleRegisterChange}
-            />
-          </Stack>
-          <Stack>
-            <Typography>Email</Typography>
-            <ReusableTextfield
-              placeholder="Enter email"
-              name="email"
-              value={registerData.email}
-              onChange={handleRegisterChange}
-            />
-          </Stack>
-          <Stack>
-            <Typography>Password</Typography>
-            <ReusableTextfield
-              placeholder="Enter password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              value={registerData.password}
-              onChange={handleRegisterChange}
-              icon={
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              }
-            />
-          </Stack>
-          <Stack>
-            <Typography>Confirm Password</Typography>
-            <ReusableTextfield
-              placeholder="Confirm password"
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              value={registerData.confirmPassword}
-              onChange={handleRegisterChange}
-              icon={
-                <IconButton
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              {userDetails && userDetails.isSignOutFrom}
+              <Stack>
+                <Typography
+                  sx={{
+                    my: 3,
+                    fontSize: "20px",
+                    textTransform: "uppercase",
+                    fontWeight: "bold",
+                  }}
                 >
-                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              }
-            />
-          </Stack>
-          <Button type="submit" variant="outlined">
-            Register
-          </Button>
-          <Typography sx={{ fontSize: "10px" }}>
-            Already have an account?{" "}
-            <Typography
-              component={"span"}
-              sx={{
-                color: "blue",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setIsLoginClick(true);
-                setRegisterClick(false);
-              }}
-            >
-              Login here
-            </Typography>
-          </Typography>
-        </Stack>
-      )}
-    </Box>
+                  SignIn
+                </Typography>
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        border: "1px solid blue",
+                      },
+                      "&:hover fieldset": {
+                        border: "1px solid blue",
+                      },
+                      "&.Mui-focused fieldset": {
+                        border: "1px solid blue",
+                        boxShadow: "0px 0px 10px 1px rgba(140, 210, 233, 0.63)",
+                      },
+                    },
+                    "& .MuiInputBase-input": {
+                      fontSize: "12px",
+                      textTransform: "capitalize",
+                      padding: 2,
+                    },
+                    "& .MuiInputAdornment-root": {
+                      color: "green",
+                    },
+                  }}
+                  placeholder="Enter name"
+                  name="userName"
+                  value={loginData.userName}
+                  onChange={handleLoginChange}
+                  label="Email"
+                  autoComplete="current-password"
+                  error={!!errorMsg.userName}
+                  helperText={errorMsg.userName}
+                />
+              </Stack>
+              <Stack>
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        border: "1px solid blue",
+                      },
+                      "&:hover fieldset": {
+                        border: "1px solid blue",
+                      },
+                      "&.Mui-focused fieldset": {
+                        border: "1px solid blue",
+                        boxShadow: "0px 0px 10px 1px rgba(140, 210, 233, 0.63)",
+                      },
+                    },
+                    "& .MuiInputBase-input": {
+                      fontSize: "12px",
+                      padding: 2,
+                      textTransform: "capitalize",
+                    },
+                    "& .MuiInputAdornment-root": {
+                      color: "green",
+                    },
+                  }}
+                  placeholder="Enter password"
+                  label="password"
+                  name="password"
+                  error={!!errorMsg.password}
+                  helperText={errorMsg.password}
+                  type={showPassword ? "text" : "password"}
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </Stack>
+              <Button type="submit" variant="outlined" sx={{ color: "#000" }}>
+                Login
+              </Button>
+              {/* <Typography sx={{ fontSize: "10px" }}>
+                Don't have an account?{" "}
+                <Typography
+                  component={"span"}
+                  sx={{
+                    color: "blue",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setIsLoginClick(false);
+                    setRegisterClick(true);
+                  }}
+                >
+                  Register here
+                </Typography>
+              </Typography> */}
+            </Stack>
+          )}
+        </>
+      </Box>
+
+      <Box></Box>
+    </Stack>
   );
 };
 

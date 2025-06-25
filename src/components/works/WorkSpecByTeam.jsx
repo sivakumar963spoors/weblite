@@ -1,9 +1,8 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import ReusableCarousalForWorks from "../common/ReusableCarousalForWorks";
 import ReusableTextfield from "../common/ReusableTextfield";
 
 const WorkspecActionNew = () => {
@@ -52,10 +51,10 @@ const WorkspecActionNew = () => {
 
   return (
     <Box sx={{ mt: 10 }}>
-      <ReusableCarousalForWorks
+      {/* <ReusableCarousalForWorks
         items={carousalItems}
         onActiveTileChange={handleActiveTileChange}
-      />
+      /> */}
       <Typography
         sx={{
           color: "#FFF",

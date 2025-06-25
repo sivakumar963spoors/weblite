@@ -14,7 +14,7 @@ const MenuTitleUpdater = () => {
       "/knowledgebase/manage": "Knowledge Base",
       "/knowledgebase/manage/new": "New Knowledge Base",
       "/manage/article/:id": "View Article",
-      "view/all/customers/typed": "Customers",
+      "view/all/customers/typed": "",
       "/Allcustomers": "All Customers",
       "/customer/details/view": "Customer Details",
       "/customer/view/activity": "customer history",
@@ -46,6 +46,7 @@ const MenuTitleUpdater = () => {
       "/extraService/get/dayplan/planned/actual/visits/report/:empId/:reportId":
         "Reports",
       "/extraService/generate/planned/actual/visits": "Report details",
+      "/api/device/dashboard/signInreason/:empId": "weblite login",
     };
     const pathname = location.pathname.split("?")[0];
 
@@ -85,7 +86,7 @@ const MenuTitleUpdater = () => {
     } else if (pathToTitleMap === "/customer/details/view") {
       newTitle = `Customer Details`;
     } else if (pathname === "/view/all/customers/typed") {
-      newTitle = `Customer`;
+      newTitle = ``;
     }
 
     dispatch(toggleMenuTitle(newTitle));

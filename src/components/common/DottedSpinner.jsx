@@ -8,7 +8,7 @@ const DottedSpinner = ({ size = 24, color = "black", thickness = 5 }) => {
       sx={{
         color,
         '& circle': {
-          strokeDasharray: '2, 6',        // dot size and gap
+          strokeDasharray: '5, 8',        // dot size and gap
           strokeLinecap: 'round',         // round dots
           animation: 'dotted-spin 1.2s linear infinite',
         },

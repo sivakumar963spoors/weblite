@@ -730,7 +730,9 @@ const CustomerDetails = () => {
                               {get_selectedCustomerDetails_data?.formDisplays
                                 ?.filter((each) => each.type === 1)
                                 .map((formDisplay, index) => (
+                           
                                   <Stack key={index}>
+                                        
                                     <Typography>
                                       {formDisplay.fieldDisplay.fieldType ===
                                       29 ? (
@@ -759,7 +761,11 @@ const CustomerDetails = () => {
                                                         maxHeight: "150px",
                                                       }}
                                                       src={`${formDisplay.fieldDisplay.fieldValueDispaly}`}
-                                                    ></Box>
+                                                    >
+
+
+                                                      ooooooo
+                                                    </Box>
                                                   </a>
                                                   {formDisplay.fieldDisplay
                                                     .locationAddress && (
@@ -1156,6 +1162,7 @@ const CustomerDetails = () => {
                               true && (
                               <Button variant="contained">activity 2</Button>
                             )}
+                            {/* activity button */}
                           {get_selectedCustomerDetails_data?.customer
                             ?.customerCheckIn === false &&
                             get_selectedCustomerDetails_data?.activityWhenCheckIn ===
@@ -1170,7 +1177,7 @@ const CustomerDetails = () => {
                                   )
                                 }
                               >
-                                acitivity 3
+                                acitivity 
                               </Button>
                             )}
                         </Stack>

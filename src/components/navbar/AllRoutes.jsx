@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ViewArticle from "../../components/articles/ViewArticle";
 import ViewActivity from "../../components/customers/customerActivity/ViewActivity";
 import ViewDeatilsActivity from "../../components/customers/customerActivity/ViewDeatilsActivity";
@@ -43,6 +43,9 @@ import SignInReportDetails from "../reports/signinsignoutreport/SignInReportDeta
 import AdvanceActivityReport from "../reports/advActivity/AdvanceActivityReport";
 import PlanVsActualDetails from "../reports/planVsActual/PlanVsActualDetails";
 import PlanVsActualReport from "../reports/planVsActual/PlanVsActualReport";
+import SignInReason from "../credentials/SignInReason";
+import ViewWorkSpec from "../workspec/ViewWorkSpec";
+import StatusView from "../myapprovals/StatusView";
 const AllRoutes = () => {
   return (
     <>
@@ -84,6 +87,9 @@ const AllRoutes = () => {
         <Route path="/workSpec/actions/new" element={<WorkspecActionNew />} />
         <Route path="/work/details/view" element={<WorkDetailView />} />
         <Route path="/mobile/reports/showAllReports" element={<AllReports />} />
+        <Route path="/view/workSpec/actions/new" element={<ViewWorkSpec />} />
+
+        <Route path="/workflow/status/view/:id" element={<StatusView />} />
         <Route
           path="/workSpec/actionable/details/byTeam"
           element={<WorkSpecByTeam />}
@@ -144,7 +150,12 @@ const AllRoutes = () => {
           path="extraService/generate/planned/actual/visits"
           element={<PlanVsActualDetails />}
         />
-        <Route path="*" element={<PageNotFound />} />
+
+        <Route
+          path="/api/device/dashboard/signInreason/:empId"
+          element={<SignInReason />}
+        />
+        <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </>
   );

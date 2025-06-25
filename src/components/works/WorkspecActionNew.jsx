@@ -1,12 +1,11 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import ReusableCarousalForWorks from "../common/ReusableCarousalForWorks";
-import { useSelector } from "react-redux";
-import ReusableTextfield from "../common/ReusableTextfield";
-import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useSearchParams } from "react-router-dom";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import SearchIcon from "@mui/icons-material/Search";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import ReusableTextfield from "../common/ReusableTextfield";
 const WorkspecActionNew = () => {
   const { workspecMenu } = useSelector((state) => state.WorkSepcModule);
   const [itemsPerRow, setItemsPerRow] = useState(4);
@@ -52,10 +51,7 @@ const WorkspecActionNew = () => {
   };
   return (
     <Box sx={{ mt: 10 }}>
-      <ReusableCarousalForWorks
-        items={carousalItems}
-        onActiveTileChange={handleActiveTileChange}
-      />
+      
       <Typography
         sx={{
           color: "#FFF",

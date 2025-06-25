@@ -1,21 +1,22 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Defaults to localStorage
 
 // Import all reducers
 import ActionRequiredReducer from "../slices/ActionRequiredSlice";
+import ApprovalReducer from "../slices/ApprovalSlice";
 import CustomerModuleReducer from "../slices/CustomerModule";
 import DayPlannerReducer from "../slices/DayPalneModule";
 import HomePageModuleReducer from "../slices/HomePageSlice";
+import KnowledgeBaseReducer from "../slices/KnowledgeBaseModule";
 import LeavesModuleReducer from "../slices/LeavesModule";
 import menuReducer from "../slices/MenuSlice";
-import ApprovalReducer from "../slices/ApprovalSlice";
-import workspecReducer from "../slices/WorkSpecSlice";
 import MobileReportReducer from "../slices/MobileReportSlice";
 import loginReducer from "../slices/UserLoginSlice";
-import KnowledgeBaseReducer from "../slices/KnowledgeBaseModule";
-import { Login } from "@mui/icons-material";
 
+import WorkSpecModuleReducer from "../slices/WorkSpec";
+
+import FormsModuleReducer from "../slices/FormsSlice";
 // Combine all reducers
 const rootReducer = combineReducers({
   login: loginReducer,
@@ -26,9 +27,11 @@ const rootReducer = combineReducers({
   DayPlannerModule: DayPlannerReducer,
   HomePageModule: HomePageModuleReducer,
   ApprovalModule: ApprovalReducer,
-  WorkSepcModule: workspecReducer,
+
   MobileReportsModule: MobileReportReducer,
   KnowledgeBaseReducerModule: KnowledgeBaseReducer,
+  FormsModule: FormsModuleReducer,
+  WorkSpecModuleData: WorkSpecModuleReducer,
 });
 
 // Persist configuration
@@ -36,7 +39,7 @@ const persistConfig = {
   key: "root",
   storage, // localStorage
   // whitelist is omitted to persist everything
-  whitelist:['login', 'CustomerModule']
+  whitelist: ["login", "CustomerModule"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
