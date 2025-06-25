@@ -4,6 +4,7 @@ import {
   customerDetailsAPi,
   cutomerActivityUrl,
   getCustomersAjaxUrl,
+  getEmpAjaxUrl,
   loadMetPast30DaysPercentage_ajax,
   loadNotMetPast30Days_ajax,
   loadNotMetPast30DaysByTeam_ajax,
@@ -14,16 +15,18 @@ import {
   totalCustomersSize_ajax,
 } from "../../api/Auth";
 import { CustomerModuleMenu } from "../../components/customers/CustomerData";
+import { customeMneuForDayPlan } from "../../components/customers/CustomerViewTwo";
 const updateCustomerMenuCounts = (menu, state) => {
-
   const safeLoadNotMetPast30Days = Number(state.loadNotMetPast30Days);
-const cleanedLoadNotMetPast30Days = isNaN(safeLoadNotMetPast30Days) ? 0 : safeLoadNotMetPast30Days;
+  const cleanedLoadNotMetPast30Days = isNaN(safeLoadNotMetPast30Days)
+    ? 0
+    : safeLoadNotMetPast30Days;
   return menu.map((item) => {
     const title = item.title;
     const countMap = {
       "Assigned to you": state.totalCustomersSize,
       "Visited today": state.todaysCustomerVisits,
-      "Coverage": cleanedLoadNotMetPast30Days,
+      Coverage: cleanedLoadNotMetPast30Days,
       "You haven't visited in the past 30 days":
         state.loadMetPast30DaysPercentage,
       "Assigned to team": state.loadtotalsCustomersCountUnderEmployees,
@@ -43,6 +46,8 @@ const cleanedLoadNotMetPast30Days = isNaN(safeLoadNotMetPast30Days) ? 0 : safeLo
 
 const initialState = {
   CustomerModuleMenu: CustomerModuleMenu,
+  customerViewForTwoType: customeMneuForDayPlan,
+  isgetAllemp: false,
   totalCustomersSize: 0,
   todaysCustomerVisits: 0,
   loadNotMetPast30Days: 0,
@@ -51,8 +56,10 @@ const initialState = {
   loadYesterdayCustomerVisitsByTeam: 0,
   loadtotalsCustomersCountUnderEmployees: 0,
   filteredCustomerData: [],
+  filteredEmpData: [],
   loadNotMetPast30DaysByTeam: 0,
   getAllCustomerData: {},
+  getAllEmpData: {},
   isgetAllCustomerData: false,
   customerViewTypeTitle: "",
   displayCountForCustomerModule: 0,
@@ -202,6 +209,21 @@ export const get_allCustomer = createAsyncThunk(
     } catch (error) {}
   }
 );
+export const get_emp = createAsyncThunk(
+  "CustomerModule/get_emp",
+  async (queryParams, thunkAPI) => {
+    try {
+      const response = await fetch(getEmpAjaxUrl(queryParams), {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {}
+  }
+);
 export const get_selectedCustomerDetails = createAsyncThunk(
   "CustomerModule/get_selectedCustomerDetails",
   async (queryParams, thunkAPI) => {
@@ -248,7 +270,6 @@ export const get_customerActivityForms = createAsyncThunk(
     } catch (error) {}
   }
 );
-
 
 const CustomerModule = createSlice({
   name: "CustomerModule",
@@ -401,6 +422,18 @@ const CustomerModule = createSlice({
       })
       .addCase(get_allCustomer.rejected, (state, action) => {
         state.isgetAllCustomerData = false;
+      })
+      .addCase(get_emp.pending, (state, action) => {
+        state.isgetAllemp = true;
+      })
+      .addCase(get_emp.fulfilled, (state, action) => {
+        state.getAllEmpData = action.payload;
+        state.filteredEmpData = action?.payload?.employees || [];
+
+        state.isgetAllemp = false;
+      })
+      .addCase(get_emp.rejected, (state, action) => {
+        state.isgetAllemp = false;
       })
       .addCase(get_selectedCustomerDetails.pending, (state, action) => {
         state.isGetSelectedCustomer = true;

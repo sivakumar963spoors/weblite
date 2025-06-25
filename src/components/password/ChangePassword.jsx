@@ -46,7 +46,7 @@ const ChangePassword = () => {
                       <VisibilityOffIcon
                         sx={{ fontSize: { sm: "24px", xs: "20px" } }}
                       />
-                    ) : (
+                    ) : ( 
                       <VisibilityIcon
                         sx={{ fontSize: { sm: "24px", xs: "20px" } }}
                       />

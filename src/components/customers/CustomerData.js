@@ -1,4 +1,3 @@
-
 export const CustomerModuleMenu = [
   { id: 1, count: 0, title: "Assigned to you" },
   { id: 2, count: 199, title: "Visited today" },
@@ -13,3 +12,5 @@ export const CustomerModuleMenu = [
   { id: 7, count: 0, title: "Visited by the team today" },
   { id: 8, count: 0, title: "Team hasn't visited in the past 30 days" },
 ];
+
+

@@ -2,39 +2,70 @@ import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useNavigate } from "react-router-dom";
-const ResuableCarousal = ({ items, isActiveViewType,isActiveLeaveMenu }) => {
+const ResuableCarousal = ({ items, isActiveViewType }) => {
   const [activecarousal, setIsActiveCarousal] = useState(0);
   useEffect(() => {
-    if ([1, 2, 3, 4, 5].includes(isActiveViewType)) {
+    if ([1, 2, 3, 5, 6].includes(isActiveViewType)) {
       setIsActiveCarousal(isActiveViewType);
     } else {
       console.warn("No navigation defined for this menu item");
     }
   }, [isActiveViewType]);
-  const nav = useNavigate();
-  const handleViewTypeChange = (viewType, leaveMenuType) => {
-    nav(`/view/leaves/new?viewType=${viewType}&leaveMenuType=${leaveMenuType}`);
+  useEffect(() => {
+    console.log(items);
+  }, []);
+  const navigate = useNavigate();
+  const handleViewTypeChange = (leaveViewType) => {
+    if (leaveViewType === 1) {
+      navigate(`/view/leaves/new?leaveMenuType=1&viewType=1&leaveViewType=1`);
+    } else if (leaveViewType === 2) {
+      navigate(
+        `/view/leaves/new?leaveMenuType=2&viewType=2&teamLeaves=1&leaveViewType=2`
+      );
+    } else if (leaveViewType === 3) {
+      navigate(
+        `/view/leaves/new?leaveMenuType=2&viewType=3&teamLeaves=2&leaveViewType=3`
+      );
+    } else if (leaveViewType === 6) {
+      navigate(`/view/leaves/new?leaveMenuType=6&viewType=4&leaveViewType=6 `);
+    } else if (leaveViewType === 5) {
+      navigate(`/view/leaves/new?leaveMenuType=5&viewType=3&leaveViewType=5`);
+    } else {
+      navigate(`/view/leaves/new?leaveMenuType=6&viewType=4&leaveViewType=6`);
+    }
   };
 
   return (
     <>
       <Carousel
-        sx={{
-          mt: 0.1,
-          width: "99%",
-          borderRadius: "5px",
-          boxShadow:
-            "0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12)",
-        }}
-        autoPlay={true}
-        indicators={false}
-        navButtonsAlwaysVisible={true}
-        duration={2000}
-        animation="slide"
-        navButtonsWrapperProps={{ style: {} }}
-        navButtonsProps={{
-          style: { color: "#FFF", background: "#2478FE" },
-        }}
+          sx={{
+        mt: 0.1,
+        width: "99%",
+        borderRadius: "5px",
+        position: "relative",
+        boxShadow:
+          "0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12)",
+      }}
+      indicators={false}
+      navButtonsAlwaysVisible={true}
+      duration={2000}
+      animation="slide"
+      navButtonsProps={{
+        sx: {
+          color: "#FFF",
+          background: "#2478FE",
+          fontSize: "12px",
+          padding: "4px 4px",
+          width: "25px", // Responsive width
+          height: "25px",
+          borderRadius: "50%",
+        },
+      }}
+      navButtonsWrapperProps={{
+        sx: {
+          marginTop: "10px", // Shift both buttons down together
+        },
+      }}
       >
         {items.map((group, index) => (
           <Stack
@@ -56,24 +87,43 @@ const ResuableCarousal = ({ items, isActiveViewType,isActiveLeaveMenu }) => {
             {group.map((menuitem, i) => (
               <Stack
                 key={i}
-                sx={{}}
-                onClick={() => handleViewTypeChange(menuitem.leaveMenuType, menuitem.menuType)}
+                sx={{
+                  cursor: "pointer",
+                  position: "relative",
+                  width: { sm: "130px", xs: "90px" },
+                  minHeight: "60px", // enough space for count and title
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                onClick={() => handleViewTypeChange(menuitem.leaveViewType)}
               >
-                <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>
+                <Typography
+                  sx={{
+                    position: "absolute",
+                    top: 10,
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                  }}
+                >
                   {menuitem.count}
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: '"Poppins", sans-serif',
                     color: "#011D45",
-                    cursor: "pointer",
                     fontSize: { sm: "12px", xs: "10px" },
                     fontWeight: { sm: 600, xs: "bold" },
-                    width: { sm: "130px", xs: "90px" },
-                    textAlign: "center",
-                    color: menuitem.leaveMenuType == isActiveViewType ? "#ffa00d" : "black",
+                    width: "100%",
+                    marginTop: "30px", // space below the fixed count
+                    color:
+                      menuitem.leaveViewType == isActiveViewType
+                        ? "#ffa00d"
+                        : "#011D45",
                     textDecoration:
-                      menuitem.leaveMenuType == isActiveViewType ? "underline" : "none",
+                      menuitem.leaveViewType == isActiveViewType
+                        ? "underline"
+                        : "none",
                   }}
                 >
                   {menuitem.title}
@@ -86,6 +136,5 @@ const ResuableCarousal = ({ items, isActiveViewType,isActiveLeaveMenu }) => {
     </>
   );
 };
-
 
 export default ResuableCarousal;

@@ -11,7 +11,7 @@ import {
   get_allCustomer,
   resetCustomerData,
 } from "../../redux/slices/CustomerModule";
-import { ViewWeek } from "@mui/icons-material";
+
 
 const CustomerCard = ({ searchText }) => {
   const navigate = useNavigate();
@@ -34,11 +34,19 @@ const CustomerCard = ({ searchText }) => {
     navigate(`/customer/viewactivity/forms?customerId=${id}`);
   };
   const [searchParams] = useSearchParams();
-  const viewType = searchParams.get("viewType");
-  const customerView = searchParams.get("customerView");
-
+  const viewType = Number(searchParams.get("viewType"));
+  const customerView = Number(searchParams.get("customerView"));
+  const customerViewType = Number(searchParams.get("customerViewType"));
   useEffect(() => {
-    if (viewType && customerView) {
+    if ( viewType && customerViewType && customerView) {
+      dispatch(
+        get_allCustomer({
+          viewType: viewType,
+          customerViewType: customerViewType,
+          customerView: customerView,
+        })
+      );
+    } else if (viewType && customerView) {
       dispatch(
         get_allCustomer({
           viewType: viewType,
@@ -48,8 +56,8 @@ const CustomerCard = ({ searchText }) => {
     } else if (viewType) {
       dispatch(get_allCustomer({ viewType: Number(viewType) }));
     }
-    console.log(getAllCustomerData);
-  }, [dispatch, viewType, customerView]);
+  
+  }, [dispatch, viewType, customerView,customerViewType]);
 
   useEffect(() => {
     if (searchText && searchText.trim() !== "") {
@@ -143,8 +151,8 @@ const CustomerCard = ({ searchText }) => {
                             </Stack>
                           </Stack>
                         )}
-                        {customer.incompleteCustInDP == false &&
-                          customer.customerCheckInCheckOut == false && (
+                        {customer.incompleteCustInDP === false &&
+                          customer.customerCheckInCheckOut === false && (
                             <Stack>
                               <Typography
                                 sx={{

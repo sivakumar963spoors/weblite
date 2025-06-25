@@ -1,5 +1,6 @@
 import { LoginOutlined } from "@mui/icons-material";
 import CallIcon from "@mui/icons-material/Call";
+import CircleIcon from "@mui/icons-material/Circle";
 import HistoryIcon from "@mui/icons-material/History";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -14,10 +15,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   actionRequiredAjax,
   actionRequiredAjax_GetApproval,
@@ -29,7 +29,6 @@ import { todayLeaveDetails } from "../../redux/slices/LeavesModule";
 import DottedSpinner from "../common/DottedSpinner";
 import ReusableTextfield from "../common/ReusableTextfield";
 import TaskCard from "../task/TaskCard";
-
 const HomePage = () => {
   const dispatch = useDispatch();
   const {
@@ -44,19 +43,51 @@ const HomePage = () => {
   const { onLeaveToday, isonLeaveTodayLoading } = useSelector(
     (state) => state.LeavesModule
   );
-  const { loggedInUser } = useSelector((state) => state.HomePageModule);
+  const { loggedInUser, isloggedInUser } = useSelector(
+    (state) => state.HomePageModule
+  );
   const [openActionRequirdStack, setopenActionRequirdStack] = useState(false);
   const [openActionRequird, setOpenActionRequird] = useState(false);
   const [openLeaveCount, setOpenLeaveCount] = useState(true);
   const [zIndex, setZIndex] = useState(1000);
   const [searchText, setSearchText] = useState("");
-  const [leavesLoadStarted, setLeavesLoadStarted] = useState(false);
-  const [workLoadStarted, setWorkLoadStarted] = useState(false);
-  const [approvalLoadStarted, setApprovalLoadStarted] = useState(false);
+
+  const [welcomeText, setwelcomeText] = useState(true);
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
-    dispatch(loggedInUser_get());
-  }, [dispatch]);
+    const webLiteAccess = searchParams.get("webLiteAccess");
+    const latitude = searchParams.get("latitude");
+    const longitude = searchParams.get("longitude");
+    const signInFrom = searchParams.get("signInFrom");
+    const dayPlanId = searchParams.get("dayPlanId");
+    const repeatSignIn = searchParams.get("repeatSignIn");
+    const employeeSignIn = searchParams.get("employeeSignIn");
+    if (
+      webLiteAccess !== null ||
+      latitude !== null ||
+      longitude !== null ||
+      signInFrom !== null ||
+      dayPlanId !== null ||
+      repeatSignIn !== null ||
+      employeeSignIn !== null
+    ) {
+      dispatch(
+        loggedInUser_get({
+          webLiteAccess,
+          latitude,
+          longitude,
+          signInFrom,
+          dayPlanId,
+          repeatSignIn,
+          employeeSignIn,
+        })
+      );
+    } else {
+      dispatch(loggedInUser_get({ switchToWebLite: true }));
+    }
+  }, [dispatch, searchParams]);
 
   useEffect(() => {
     dispatch(actionRequiredAjax());
@@ -64,6 +95,14 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(todayLeaveDetails());
   }, [dispatch, openLeaveCount]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setwelcomeText(false);
+    }, 2000); // 2 seconds
+
+    // Cleanup the timer on component unmount
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const openActionDialog = loggedInUser?.sessionData;
@@ -85,13 +124,13 @@ const HomePage = () => {
     if (openActionRequirdStack && actionRequiredDetails.length > 0) {
       actionRequiredDetails.forEach((each) => {
         if (each.actionRequiredType === 2) {
-          setWorkLoadStarted(true);
+        
           dispatch(actionRequiredAjax_Getworks());
         } else if (each.actionRequiredType === 3) {
-          setLeavesLoadStarted(true);
+         
           dispatch(actionRequiredAjax_Getleaves());
         } else if (each.actionRequiredType === 4) {
-          setApprovalLoadStarted(true);
+         
           dispatch(actionRequiredAjax_GetApproval());
         }
       });
@@ -126,150 +165,89 @@ const HomePage = () => {
     const value = e.toLowerCase();
     setSearchText(value);
   };
+
+  const handleNavigationToSignIn = ({
+    empId,
+    employeeSignIn,
+    signInFrom,
+    repeatSignIn,
+  }) => {
+    const queryParams = new URLSearchParams({
+      employeeSignIn,
+      signInFrom,
+      repeatSignIn,
+    }).toString();
+
+    nav(`/api/device/dashboard/signInreason/${empId}?${queryParams}`);
+  };
+  const handlenavigationfor = (count, formSpecId) => {
+    if (count === 1) {
+
+    } else if (count > 10) {
+      nav(
+        `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=5&approvalView=2`
+      );
+    } else {
+      nav(
+        `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=5&approvalView=2`
+      );
+    }
+  };
+
+  const worklistnavigation = (count, workSpecId) => {
+    if (count === 1) {
+   
+    } else if (count > 10) {
+      nav(
+        `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=8&workView=1
+`
+      );
+    } else {
+      nav(
+        `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=8&workView=1
+`
+      );
+    }
+  };
+  const leavenavigation = () => {
+    nav(
+      "/view/leaves/new?leaveMenuType=2&viewType=2&teamLeaves=1&leaveViewType=2"
+    );
+  };
   return (
     <Box sx={{ bgcolor: "#F0F3FA" }}>
       <Box sx={{ mt: 8 }}>
         <Stack gap={1}>
           {/* user details */}
-          <Stack sx={{ position: "relative" }}>
-            <Stack
-              sx={{
-                alignItems: "center",
-                justifyContent: "center",
-                mt: -1,
-                zIndex: zIndex,
-              }}
-            >
+
+          {!isloggedInUser && (
+            <Stack sx={{ position: "relative" }}>
               <Stack
                 sx={{
-                  width: "95%",
-                  bgcolor: "#FFF",
-                  border: "1px solid #C9C9C9",
-                  borderRadius: "4px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mt: -1,
+                  zIndex: zIndex,
                 }}
               >
-                {loggedInUser && (
-                  <>
-                    <Stack>
-                      {loggedInUser.employeeSignIn === "-1" &&
-                        loggedInUser.employeeSignInAfterSignOut === 0 &&
-                        (loggedInUser.isSignInFrom ? (
-                          <Stack>
-                            <Stack
-                              sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
-                            >
-                              <Typography
-                                sx={{
-                                  fontWeight: "bold",
-                                  fontSize: { sm: "16px", xs: "14px" },
-                                }}
+                <Stack
+                  sx={{
+                    width: "95%",
+                    bgcolor: "#FFF",
+                    border: "1px solid #C9C9C9",
+                    borderRadius: "4px",
+                  }}
+                >
+                  {loggedInUser && (
+                    <>
+                      <Stack>
+                        {loggedInUser.employeeSignIn === "-1" &&
+                          loggedInUser.employeeSignInAfterSignOut === 0 &&
+                          (loggedInUser.isSignInFrom ? (
+                            <Stack>
+                              <Stack
+                                sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
                               >
-                                Hi, {loggedInUser?.loginEmpName}
-                              </Typography>
-
-                              <Typography
-                                sx={{
-                                  color: "red",
-                                  fontSize: { sm: "12px", xs: "10px" },
-                                  fontWeight: 500,
-                                }}
-                              >
-                                Not signed In
-                              </Typography>
-                              {loggedInUser.lastSignedIn !== null && (
-                                <Typography
-                                  sx={{
-                                    color: "green",
-                                    fontSize: { sm: "12px", xs: "10px" },
-                                    fontWeight: 500,
-                                  }}
-                                >
-                                  Last signed in &nbsp;
-                                  {loggedInUser.differenceInLastSignIn}&nbsp; at
-                                  &nbsp;
-                                  {loggedInUser.lastSignedIn.substring(11, 19)}
-                                </Typography>
-                              )}
-                              {loggedInUser.noMobileAccess === false ? (
-                                <>
-                                  <Stack
-                                    sx={{
-                                      flexDirection: "row",
-                                      gap: 0.3,
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    {/* need to work with pop up */}
-                                    <HistoryIcon
-                                      sx={{ color: "#011D45", mt: 1 }}
-                                    />
-
-                                    <Button
-                                      size="small"
-                                      startIcon={<LoginOutlined />}
-                                      variant="outlined"
-                                      sx={{
-                                        color: "green",
-                                        cursor: "not-allowed",
-                                        borderColor: "green",
-                                        fontSize: { xs: "9px", sm: "12px" },
-                                        mt: 1,
-                                      }}
-                                    >
-                                      signin
-                                    </Button>
-                                  </Stack>
-                                  <Typography
-                                    sx={{
-                                      fontSize: { sm: "11px", xs: "9px" },
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    Note: system has detected mobile application
-                                    access against your profile. Kindly do the
-                                    sign-in through the mobile application.
-                                  </Typography>
-                                </>
-                              ) : (
-                                <>
-                                  <Stack
-                                    sx={{
-                                      flexDirection: "row",
-                                      alignItems: "center",
-                                      gap: 1,
-                                    }}
-                                  >
-                                    <HistoryIcon
-                                      sx={{ color: "#011D45", mt: 1 }}
-                                    />
-                                    <Button
-                                      size="small"
-                                      startIcon={<LoginOutlined />}
-                                      variant="outlined"
-                                      sx={{
-                                        color: "green",
-                                        cursor: "pointer",
-                                        borderColor: "green",
-                                        width: "110px",
-                                        fontSize: { xs: "9px", sm: "12px" },
-                                        mt: 1,
-                                      }}
-                                    >
-                                      signin
-                                    </Button>
-                                  </Stack>
-                                </>
-                              )}
-                            </Stack>
-
-                            <Typography></Typography>
-                          </Stack>
-                        ) : (
-                          <Stack>
-                            <Stack
-                              sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
-                            >
-                              <Stack sx={{}}>
                                 <Typography
                                   sx={{
                                     fontWeight: "bold",
@@ -278,6 +256,7 @@ const HomePage = () => {
                                 >
                                   Hi, {loggedInUser?.loginEmpName}
                                 </Typography>
+
                                 <Typography
                                   sx={{
                                     color: "red",
@@ -290,7 +269,7 @@ const HomePage = () => {
                                 {loggedInUser.lastSignedIn !== null && (
                                   <Typography
                                     sx={{
-                                      color: "green",
+                                      color:"green",
                                       fontSize: { sm: "12px", xs: "10px" },
                                       fontWeight: 500,
                                     }}
@@ -307,18 +286,29 @@ const HomePage = () => {
                                 {loggedInUser.noMobileAccess === false ? (
                                   <>
                                     <Stack
-                                      sx={{ flexDirection: "row", gap: 1 }}
+                                      sx={{
+                                        flexDirection: "row",
+                                        gap: 0.3,
+                                        alignItems: "center",
+                                      }}
                                     >
-                                      <HistoryIcon
-                                        sx={{ color: "#011D45", mt: 1 }}
-                                      />
+                                      {/* need to work with pop up */}
+                                      <HistoryIcon sx={{ color: "#011D45" }} />
 
-                                      <LogoutIcon
+                                      <Button
+                                        size="small"
+                                        startIcon={<LoginOutlined />}
+                                        variant="outlined"
                                         sx={{
-                                          color: "red",
+                                          color:"#fff",
                                           cursor: "not-allowed",
+                                          borderColor: "green",
+                                          fontSize: { xs: "9px", sm: "12px" },
+                                          mt: 1,
                                         }}
-                                      />
+                                      >
+                                        signin
+                                      </Button>
                                     </Stack>
                                     <Typography
                                       sx={{
@@ -334,49 +324,42 @@ const HomePage = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <Button
-                                      size="small"
-                                      startIcon={<LoginOutlined />}
+                                    <Stack
                                       sx={{
-                                        color: "green",
-                                        cursor: "pointer",
-                                        borderColor: "green",
-                                        width: "150px",
-                                        mt: 1,
-                                        fontSize: { xs: "9px", sm: "12px" },
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 1,
                                       }}
                                     >
-                                      signin
-                                    </Button>
+                                      <HistoryIcon sx={{ color: "#011D45" }} />
+                                      <Button
+                                        size="small"
+                                        startIcon={<LoginOutlined />}
+                                        variant="outlined"
+                                        sx={{
+                                          color:"#fff",
+                                          cursor: "pointer",
+                                          borderColor: "green",
+                                          width: "110px",
+                                          fontSize: { xs: "9px", sm: "12px" },
+                                          mt: 1,
+                                        }}
+                                      >
+                                        signin
+                                      </Button>
+                                    </Stack>
                                   </>
                                 )}
                               </Stack>
-                            </Stack>
-                          </Stack>
-                        ))}
-                    </Stack>
-                  </>
-                )}
 
-                {loggedInUser && (
-                  <>
-                    <Stack>
-                      {loggedInUser.employeeSignIn === "1" && (
-                        <>
-                          {loggedInUser.signInFlag === true && (
+                              <Typography></Typography>
+                            </Stack>
+                          ) : (
                             <Stack>
                               <Stack
-                                sx={{
-                                  px: 2,
-                                  py: { sm: 1.5, xs: 1 },
-                                  gap: 0.5,
-                                }}
+                                sx={{ px: 2, py: { sm: 1.5, xs: 1 }, gap: 0.5 }}
                               >
-                                <Stack
-                                  sx={{
-                                    gap: 1,
-                                  }}
-                                >
+                                <Stack sx={{ gap: 1 }}>
                                   <Typography
                                     sx={{
                                       fontWeight: "bold",
@@ -385,121 +368,343 @@ const HomePage = () => {
                                   >
                                     Hi, {loggedInUser?.loginEmpName}
                                   </Typography>
-                                  <Typography sx={{ color: "green" }}>
-                                    Great. Successfully Signedin.Have a great
-                                    day!
-                                  </Typography>
+{loggedInUser?.lastSignedIn && (
+                                    <Typography
+                                      sx={{
+                                        color: "green",
+                                        fontSize: { sm: "12px", xs: "10px" },
+                                        fontWeight: 500,
+                                      }}
+                                    >
+                                      Last signed in&nbsp;
+                                      {loggedInUser?.differenceInLastSignIn ??
+                                        "recently"}
+                                      &nbsp;at&nbsp;
+                                      {loggedInUser.lastSignedIn.substring(
+                                        11,
+                                        19
+                                      )}
+                                    </Typography>
+                                  )}
+                                 
+                                  {loggedInUser.noMobileAccess === false ? (
+                                    <>
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          gap: 1,
+                                          mt: 1,
+                                          mb: 1,
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        {/* <HistoryIcon sx={{ color: "#011D45" }} /> */}
+
+                                        <Button
+                                          disabled
+                                          size="small"
+                                          startIcon={<LoginOutlined />}
+                                          sx={{
+                                            color:"green",
+                                            cursor: "pointer",
+                                            borderColor: "green",
+                                            fontSize: { xs: "9px", sm: "12px" },
+                                            background: "green",
+                                          
+                                            fontWeight: "bold",
+                                          }}
+                                          variant="contained"
+                                        >
+                                          login
+                                        </Button>
+                                        <Typography
+                                          sx={{
+                                            color: "red",
+                                            fontSize: {
+                                              xs: "10px",
+                                              sm: "13px",
+                                            },
+                                          }}
+                                        >
+                                          {" "}
+                                          <CircleIcon
+                                            size="small"
+                                            sx={{
+                                              height: "10px",
+                                              width: "10px",
+                                            }}
+                                          />
+                                          Not sign in
+                                        </Typography>
+                                      </Stack>
+                                      <Typography
+                                        sx={{
+                                          fontSize: { sm: "11px", xs: "9px" },
+                                          fontWeight: 500,
+                                        }}
+                                      >
+                                        Note: system has detected mobile
+                                        application access against your profile.
+                                        Kindly do the sign-in through the mobile
+                                        application.
+                                      </Typography>
+                                    </>
+                                  ) : (
+                                    <Stack
+                                      sx={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 1,
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      <Button
+                                        size="small"
+                                        startIcon={<LoginOutlined />}
+                                        sx={{
+                                          
+                                          cursor: "pointer",
+                                          borderColor: "green",
+                                          fontSize: { xs: "9px", sm: "12px" },
+                                          background: "green",
+                                        
+                                          fontWeight: "bold",
+                                        }}
+                                        variant="contained"
+                                        onClick={() =>
+                                          handleNavigationToSignIn({
+                                            empId: loggedInUser?.empId,
+                                            employeeSignIn:
+                                              loggedInUser?.employeeSignIn,
+                                            signInFrom:
+                                              loggedInUser?.signInFrom,
+                                            repeatSignIn: "1",
+                                          })
+                                        }
+                                      >
+                                        signin
+                                      </Button>
+                                      <Typography
+                                        sx={{
+                                          color: "red",
+                                          fontSize: { xs: "9px", sm: "13px" },
+                                        }}
+                                      >
+                                        {" "}
+                                        <CircleIcon
+                                          size="small"
+                                          sx={{ height: "10px", width: "10px" }}
+                                        />
+                                        Not sign in
+                                      </Typography>
+                                    </Stack>
+                                  )}
                                 </Stack>
                               </Stack>
                             </Stack>
-                          )}
+                          ))}
+                      </Stack>
+                    </>
+                  )}
 
-                          {(loggedInUser.isSignOutFrom === true ||
-                            loggedInUser.isSignOutFrom === false) && (
-                            <Stack>
-                              <Stack
-                                sx={{
-                                  px: 2,
-                                  py: { sm: 1.5, xs: 1 },
-                                  gap: 0.5,
-                                }}
-                              >
+                  {loggedInUser && (
+                    <>
+                      <Stack>
+                        {loggedInUser.employeeSignIn === "1" && (
+                          <>
+                            {loggedInUser.signInFlag === true ? (
+                              <Stack>
                                 <Stack
                                   sx={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
+                                    px: 2,
+                                    py: { sm: 1.5, xs: 1 },
+                                    gap: 0.5,
                                   }}
                                 >
-                                  <Typography
-                                    sx={{
-                                      fontWeight: "bold",
-                                      fontSize: { sm: "16px", xs: "14px" },
-                                    }}
-                                  >
-                                    Hi, {loggedInUser?.loginEmpName}
-                                  </Typography>
+                                  {welcomeText ? (
+                                    <Stack
+                                      sx={{
+                                        gap: 1,
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: "bold",
+                                          fontSize: { sm: "16px", xs: "14px" },
+                                        }}
+                                      >
+                                        Hi, {loggedInUser?.loginEmpName}
+                                      </Typography>
+                                      <Typography sx={{ color: "green" }}>
+                                        Great. Successfully Signedin.Have a
+                                        great day!
+                                      </Typography>
+                                    </Stack>
+                                  ) : null}
                                 </Stack>
-
-                                <Typography sx={{ color: "green" }}>
-                                  signed in&nbsp;
-                                  {loggedInUser.differenceInSignInDate}&nbsp;at
-                                  &nbsp;{loggedInUser.signedTime}
-                                </Typography>
-                                <Stack
-                                  sx={{ flexDirection: "row", gap: 1, mt: 2 }}
-                                >
-                                  <Button
-                                    size="small"
-                                    startIcon={<LogoutIcon />}
-                                    sx={{
-                                      color: "tomato",
-                                      borderColor: "tomato",
-                                      fontSize: { xs: "9px", sm: "12px" },
-                                    }}
-                                    variant="outlined"
-                                  >
-                                    signout
-                                  </Button>
-                                  <Button
-                                    size="small"
-                                    startIcon={<LoginOutlined />}
-                                    sx={{
-                                      color: "green",
-                                      cursor: "not-allowed",
-                                      fontSize: { xs: "9px", sm: "12px" },
-                                    }}
-                                  >
-                                    signin
-                                  </Button>
-                                </Stack>
-                                {loggedInUser.noMobileAccess === false && (
-                                  <Typography
-                                    sx={{
-                                      fontSize: { sm: "11px", xs: "9px" },
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    Note: system has detected mobile application
-                                    access against your profile. Kindly do the
-                                    sign-in through the mobile application.
-                                  </Typography>
-                                )}
                               </Stack>
-                            </Stack>
-                          )}
-                        </>
-                      )}
-                    </Stack>
-                  </>
-                )}
-
-                {loggedInUser && (
-                  <>
-                    {(() => {
-                      const matchingGroup =
-                        loggedInUser.employeeSignIn === "-1" &&
-                        loggedInUser.employeeSignInAfterSignOut === "1";
-
-                      return (
-                        <>
-                          <Stack>
-                            {matchingGroup ? (
-                              loggedInUser.isSignInFrom ? (
-                                <>Need to add </>
-                              ) : (
-                                <> need to add</>
-                              )
                             ) : null}
-                          </Stack>
-                        </>
-                      );
-                    })()}
-                  </>
-                )}
+
+                            {welcomeText ? null : (
+                              <>
+                                {(loggedInUser.isSignOutFrom === true ||
+                                  loggedInUser.isSignOutFrom === false) && (
+                                  <Stack>
+                                    <Stack
+                                      sx={{
+                                        px: 2,
+                                        py: { sm: 1.5, xs: 1 },
+                                        gap: 0.5,
+                                      }}
+                                    >
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          alignItems: "center",
+                                          justifyContent: "space-between",
+                                        }}
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontWeight: "bold",
+                                            fontSize: {
+                                              sm: "16px",
+                                              xs: "14px",
+                                            },
+                                          }}
+                                        >
+                                          Hi, {loggedInUser?.loginEmpName}
+                                        </Typography>
+                                      </Stack>
+
+                                      <Typography
+                                        sx={{
+                                          
+                                          fontWeight: { sm: 500, xs: 600 },
+                                          fontSize: { sm: "13px", xs: "10px" },
+                                        }}
+                                      >
+                                        signed in&nbsp;
+                                        {loggedInUser.differenceInSignInDate}
+                                        &nbsp;at &nbsp;{loggedInUser.signedTime}
+                                      </Typography>
+                                      <Stack
+                                        sx={{
+                                          flexDirection: "row",
+                                          gap: 0.5,
+                                          mt: 0.7,
+                                        }}
+                                      >
+                                        {loggedInUser.noMobileAccess ===
+                                        false ? (
+                                          <Button
+                                            disabled
+                                            size="small"
+                                            startIcon={<LogoutIcon />}
+                                            sx={{
+                                              color: "tomato",
+                                              borderColor: "tomato",
+                                              fontSize: {
+                                                xs: "9px",
+                                                sm: "12px",
+                                              },
+                                              cursor: "not-allowed",
+                                            }}
+                                            variant="contained"
+                                          >
+                                            signout
+                                          </Button>
+                                        ) : (
+                                          <Button
+                                            size="small"
+                                            startIcon={<LogoutIcon />}
+                                            sx={{
+                                              color: "#FFF",
+                                              borderColor: "tomato",
+                                              fontSize: {
+                                                xs: "9px",
+                                                sm: "12px",
+                                              },
+                                              fontWeight: "bold",
+                                              background: "tomato",
+                                            }}
+                                            variant="contained"
+                                            onClick={() =>
+                                              handleNavigationToSignIn({
+                                                empId: loggedInUser?.empId,
+                                                employeeSignIn: "0",
+                                                signInFrom: "1",
+                                                repeatSignIn: "2",
+                                              })
+                                            }
+                                          >
+                                            signout
+                                          </Button>
+                                        )}
+                                        <Button
+                                          size="small"
+                                          startIcon={<LoginOutlined />}
+                                          sx={{
+                                            color:"green",
+                                            cursor: "not-allowed",
+                                            fontSize: { xs: "9px", sm: "12px" },
+                                          }}
+                                        >
+                                          signed in
+                                        </Button>
+                                      </Stack>
+                                      {loggedInUser.noMobileAccess ===
+                                        false && (
+                                        <Typography
+                                          sx={{
+                                            fontSize: { sm: "11px", xs: "9px" },
+                                            fontWeight: 500,
+                                          }}
+                                        >
+                                          Note: system has detected mobile
+                                          application access against your
+                                          profile. Kindly do the sign-in through
+                                          the mobile application.
+                                        </Typography>
+                                      )}
+                                    </Stack>
+                                  </Stack>
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+                      </Stack>
+                    </>
+                  )}
+
+                  {loggedInUser && (
+                    <>
+                      {(() => {
+                        const matchingGroup =
+                          loggedInUser.employeeSignIn === "-1" &&
+                          loggedInUser.employeeSignInAfterSignOut === "1";
+
+                        return (
+                          <>
+                            <Stack>
+                              {matchingGroup ? (
+                                loggedInUser.isSignInFrom ? (
+                                  <>Need to add </>
+                                ) : (
+                                  <> need to add</>
+                                )
+                              ) : null}
+                            </Stack>
+                          </>
+                        );
+                      })()}
+                    </>
+                  )}
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
+          )}
           {/* dashboard */}
           <Stack
             sx={{
@@ -513,17 +718,18 @@ const HomePage = () => {
                 width: "95%",
                 bgcolor: "#FFF",
                 borderRadius: "4px",
+                cursor: "not-allowed",
               }}
             >
-              <Stack sx={{ px: { sm: 2, xs: 1 }, py: 1 }}>
+              <Stack sx={{ px: { sm: 2, xs: 1 }, py: 1,cursor: "not-allowed", }}>
                 <Stack
                   sx={{
                     flexDirection: "row",
                     gap: { sm: 2, xs: 1 },
                     alignItems: "center",
-                    cursor: "pointer",
+                    
                   }}
-                  onClick={navigateToDashBoard}
+                 // onClick={navigateToDashBoard}
                 >
                   <IconButton
                     sx={{
@@ -664,7 +870,11 @@ const HomePage = () => {
                               alignItems: "center",
                               bgcolor: "#F0F8FF",
                               mx: 0.5,
+                              cursor: "pointer",
                             }}
+                            onClick={() =>
+                              handlenavigationfor(item.count, item.formSpecId)
+                            }
                           >
                             <Typography
                               sx={{
@@ -736,7 +946,9 @@ const HomePage = () => {
                               alignItems: "center",
                               bgcolor: "#F0F8FF",
                               mx: 0.5,
+                              cursor: "pointer",
                             }}
+                            onClick={leavenavigation}
                           >
                             <Typography
                               sx={{
@@ -808,7 +1020,11 @@ const HomePage = () => {
                               alignItems: "center",
                               bgcolor: "#F0F8FF",
                               mx: 0.5,
+                              cursor: "pointer",
                             }}
+                            onClick={() =>
+                              worklistnavigation(item.count, item.workSpecId)
+                            }
                           >
                             <Typography
                               sx={{
@@ -894,7 +1110,7 @@ const HomePage = () => {
                     {openLeaveCount ? (
                       <KeyboardArrowDownIcon
                         sx={{
-                         color: onLeaveToday?.length === 0 ? "gray" : "red",
+                          color: onLeaveToday?.length === 0 ? "gray" : "red",
                           fontSize: { sm: "23px", xs: "20px" },
                         }}
                       />

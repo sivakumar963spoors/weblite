@@ -1,28 +1,17 @@
 import AddIcon from "@mui/icons-material/Add";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import webliteFormSvg from "../../assets/svg_new/weblite_Form.svg";
-import fromRequition from '../../assets/svg_new/form_requistion.svg'
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
-
-import bgloader from "../../assets/loader.gif";
+import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import WorkActionFormIcon from "../../assets/svg_new/actionWorkProcess.svg";
 import BlueCustomersIcon from "../../assets/svg_new/customers.svg";
 import dayPlan from "../../assets/svg_new/day-planner.svg";
-import FormsIcon from "../../assets/svg_new/leaves.svg";
+import fromRequition from "../../assets/svg_new/form_requistion.svg";
 import KnowledgeBaseIcon from "../../assets/svg_new/KB.svg";
-import leavesIcon from "../../assets/menu_svg_filled/Blue/Leaves.svg";
-import WorkActionFormIcon from '../../assets/svg_new/actionWorkProcess.svg';
+import FormsIcon from "../../assets/svg_new/leaves.svg";
+import webliteFormSvg from "../../assets/svg_new/weblite_Form.svg";
 import {
   loadMetPast30DaysPercentage_get,
   loadNotMetPast30Days_get,
@@ -34,6 +23,13 @@ import {
   todaysCustomerVisits_get,
   totalCustomersSize_get,
 } from "../../redux/slices/CustomerModule";
+import {
+  fetchActualCustomerVisitsCount,
+  fetchPlannedCustomersCount,
+  fetchTeamPlannedCustomersCount,
+  fetchTeamUnplannedCustomerVisitsCount,
+  fetchUnplannedCustomerVisitsCount,
+} from "../../redux/slices/DayPalneModule";
 import {
   fetchFormApprovalsCountByManager,
   fetchFormApprovalsCountByMe,
@@ -57,19 +53,8 @@ import {
   fetchTotalMyLeaves,
   fetchTotalTeamLeaves,
 } from "../../redux/slices/LeavesModule";
-import {
-  fetchActualCustomerVisitsCount,
-  fetchPlannedCustomersCount,
-  fetchTeamPlannedCustomersCount,
-  fetchTeamUnplannedCustomerVisitsCount,
-  fetchUnplannedCustomerVisitsCount,
-} from "../../redux/slices/DayPalneModule";
 import DottedSpinner from "../common/DottedSpinner";
-const approvalCards = [
-  { count: 0, label: "Pending your manager approvals" },
-  { count: 0, label: "Awaiting your approval" },
-  { count: 0, label: "Awaiting team approval" },
-];
+
 const TaskCard = ({ searchInput }) => {
   const {
     pendingApprovals,
@@ -110,10 +95,43 @@ const TaskCard = ({ searchInput }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    const webLiteAccess = searchParams.get("webLiteAccess");
+    const latitude = searchParams.get("latitude");
+    const longitude = searchParams.get("longitude");
+    const signInFrom = searchParams.get("signInFrom");
+    const dayPlanId = searchParams.get("dayPlanId");
+    const repeatSignIn = searchParams.get("repeatSignIn");
+    const employeeSignIn = searchParams.get("employeeSignIn");
+    if (
+      webLiteAccess !== null ||
+      latitude !== null ||
+      longitude !== null ||
+      signInFrom !== null ||
+      dayPlanId !== null ||
+      repeatSignIn !== null ||
+      employeeSignIn !== null
+    ) {
+      dispatch(
+        loggedInUser_get({
+          webLiteAccess,
+          latitude,
+          longitude,
+          signInFrom,
+          dayPlanId,
+          repeatSignIn,
+          employeeSignIn,
+        })
+      );
+    } else {
+      dispatch(loggedInUser_get({ switchToWebLite: true }));
+    }
+  }, [dispatch, searchParams]);
+  useEffect(() => {
     dispatch(loadHomeScreenCards_get());
-    dispatch(loggedInUser_get());
+
     dispatch(totalCustomersSize_get());
     dispatch(todaysCustomerVisits_get());
     dispatch(loadNotMetPast30Days_get());
@@ -130,6 +148,7 @@ const TaskCard = ({ searchInput }) => {
     dispatch(fetchWorkSpecCards());
     dispatch(fetchFormApprovalsCountByManager());
     dispatch(fetchFormApprovalsCountByMe());
+    //leaves
     dispatch(fetchPendingApprovals());
     dispatch(fetchTotalMyLeaves());
     dispatch(fetchTotalTeamLeaves());
@@ -175,14 +194,96 @@ const TaskCard = ({ searchInput }) => {
     } else {
       dispatch(resetFilteredData());
     }
-  }, [searchInput, LoadHomeScreenCards]);
+  }, [searchInput, LoadHomeScreenCards, dispatch]);
 
   useEffect(() => {
     dispatch(loggedInUser_get());
   }, [dispatch]);
 
-  const navigateToShowAlldModule = (moduleId) => {
-    alert(moduleId);
+  const navigateToShowAlldModule = (
+    moduleId,
+    formType,
+    formSpecPermission,
+    formSpecViewPermission,
+    formAddPermission,
+    formSpecId,
+    customEntitySpecId
+  ) => {
+    const hasPermission = (value) => value === "true" || value === true;
+    const hasEmployeeAddFormAccess =
+      loggedInUser?.employeeAccessSettings?.addForm === "true" ||
+      loggedInUser?.employeeAccessSettings?.addForm === true;
+
+    if (moduleId === 37) {
+      if (formType === 1) {
+        if (hasPermission(formSpecPermission)) {
+          if (hasPermission(formSpecViewPermission)) {
+            if (hasPermission(formAddPermission)) {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+              );
+            } else {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+              );
+            }
+          }
+        } else if (hasEmployeeAddFormAccess) {
+          navigate(
+            `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=5&approvalView=2`
+          );
+        } else {
+          navigate(
+            `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+          );
+        }
+      } else if (formType === 2) {
+        if (hasPermission(formSpecPermission)) {
+          if (hasPermission(formSpecViewPermission)) {
+            if (hasPermission(formAddPermission)) {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+              );
+            } else {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+              );
+            }
+          }
+        } else if (hasEmployeeAddFormAccess) {
+          navigate(
+            `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=3&approvalView=15`
+          );
+        } else {
+          navigate(
+            `/view/forms?empId=${loggedInUser?.empId}&viewType=5&formSpecId=${formSpecId}`
+          );
+        }
+      } else {
+        if (hasPermission(formSpecPermission)) {
+          if (hasPermission(formSpecViewPermission)) {
+            if (hasPermission(formAddPermission)) {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=2&formSpecId=${formSpecId}`
+              );
+            } else {
+              navigate(
+                `/view/forms?empId=${loggedInUser?.empId}&viewType=2&formSpecId=${formSpecId}`
+              );
+            }
+          }
+        } else if (hasEmployeeAddFormAccess) {
+          navigate(
+            `/view/forms?empId=${loggedInUser?.empId}&viewType=2&formSpecId=${formSpecId}`
+          );
+        } else {
+          navigate(
+            `/view/forms?empId=${loggedInUser?.empId}&viewType=2&formSpecId=${formSpecId}`
+          );
+        }
+      }
+    }
+    // Then navigate based on moduleId
     switch (moduleId) {
       case 12:
         navigate("/knowledgebase/manage");
@@ -191,15 +292,15 @@ const TaskCard = ({ searchInput }) => {
         navigate("/view/all/customers?viewType=9");
         break;
       case 15:
-        navigate("/view/leaves/new?viewType=2&leaveMenuType=2");
+        navigate(
+          "/view/leaves/new?leaveMenuType=2&viewType=2&teamLeaves=1&leaveViewType=2"
+        );
         break;
       case 36:
-        navigate("/view/forms/new?empId=136947&viewType=2&formSpecId=245583");
-        break;
-      case 37:
         navigate(
-          "/workSpec/actions/new?workSpecId=14291&viewType=8&workView=1"
+          `/view/workSpec/actions/new?workSpecId=${customEntitySpecId}&viewType=8&workView=1`
         );
+
         break;
       case 34:
         navigate(
@@ -210,6 +311,7 @@ const TaskCard = ({ searchInput }) => {
         navigate("/dayplanner/customers");
         break;
       default:
+        break;
     }
   };
 
@@ -260,13 +362,18 @@ const TaskCard = ({ searchInput }) => {
   };
 
   const handleNavToAdd = (id) => {
-    alert(id);
+    let workSpecId;
     switch (id) {
       case 15:
         navigate("/leave/my/create");
         break;
-      case 1:
-        navigate(`/customers/viewtype/${id}`);
+      case 36:
+        workSpecId = 246481; // dynamic if needed
+        window.location.href = `http://localhost:8080/effort/employeeService/add/form/${workSpecId}`;
+      case 37:
+        workSpecId = 246481; // dynamic if needed
+        window.location.href = `http://localhost:8080/effort/employeeService/add/form/${workSpecId}`;
+
         break;
       case 2:
         navigate(`/customers/viewtype/${id}`);
@@ -294,64 +401,121 @@ const TaskCard = ({ searchInput }) => {
     }
   };
   const navToLeaveModule = (view) => {
-    if (view === 2) {
-      navigate(`/view/leaves/new?viewType=2&leaveMenuType=2`);
+    if (view === 1) {
+      navigate(`/view/leaves/new?leaveMenuType=1&viewType=1&leaveViewType=1`);
+    } else if (view === 2) {
+      navigate(
+        `/view/leaves/new?leaveMenuType=2&viewType=2&teamLeaves=1&leaveViewType=2`
+      );
     } else if (view === 3) {
-      navigate(`/view/leaves/new?viewType=3&leaveMenuType=3`);
+      navigate(
+        `/view/leaves/new?leaveMenuType=2&viewType=3&teamLeaves=2&leaveViewType=3`
+      );
+    } else if (view === 4) {
+      navigate(`/view/leaves/new?leaveMenuType=1&viewType=1&leaveViewType=1`);
+    } else if (view === 5) {
+      navigate(`/view/leaves/new?leaveMenuType=5&viewType=3&leaveViewType=5`);
     } else {
-      navigate(`/view/leaves/new?viewType=1&leaveMenuType=1`);
+      navigate(`/view/leaves/new?leaveMenuType=6&viewType=4&leaveViewType=6`);
     }
   };
 
-  const handleDyaPlan = (label) => {
+  const handleDyaPlan = (label, title) => {
     if (!label) return;
+    dispatch(setTitleForCustomerView(title));
 
-    localStorage.setItem("activeMenuTitle", label.title);
-    switch (label.id) {
-      case 1:
-        navigate(
-          `/view/all/customers?viewType=4&customerViewType=1&customerView=2`
-        );
-        break;
-      case 2:
-        navigate(
-          `/view/all/customers?viewType=5&customerView=2&customerViewType=2`
-        );
-        break;
-      case 3:
-        navigate(
-          `/view/all/customers?viewType=6&customerView=2&customerViewType=3`
-        );
-        break;
+    switch (label) {
       case 4:
         navigate(
-          `/view/all/employees?viewType=7&customerViewType=2&customerView=4`
+          `/view/all/customers/typed?viewType=4&customerViewType=1&customerView=2`
         );
         break;
       case 5:
         navigate(
-          `/view/all/employees?viewType=8&customerViewType=5&customerView=2`
+          `/view/all/customers/typed?viewType=5&customerViewType=2&customerView=2`
         );
+        break;
+      case 6:
+        navigate(
+          `/view/all/customers/typed?viewType=6&customerViewType=3&customerView=2`
+        );
+        break;
+      case 7:
+        navigate(`/view/all/customers/typed?viewType=7&customerView=2`);
+        break;
+      case 8:
+        navigate(`/view/all/customers/typed?viewType=8&customerView=2`);
         break;
       default:
         break;
     }
   };
-
+  const handleNavigationToFilledYestarday = (formSpecId) => {
+    navigate(
+      `/view/forms?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=102`
+    );
+  };
+  const handleNavigationToFilledToday = (formSpecId) => {
+    navigate(
+      `/view/forms?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=101`
+    );
+  };
   useEffect(() => {
     if (loggedInUser?.empId) {
       dispatch(fetchYesterdayCount(loggedInUser?.empId));
       dispatch(fetchTodayCount(loggedInUser?.empId));
     }
-    console.log(filteredLoadHomeScreenCards);
   }, [loggedInUser?.empId, dispatch]);
+  const handleNavigationToManagerApproval = (formSpecId) => {};
+  const handleNavigateToAwaitingYourApproval = (formSpecId) => {
+    navigate(
+      `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=5&approvalView=2`
+    );
+  };
+  const handleNavigateToAwaitingTeamApproval = (formSpecId) => {
+    navigate(
+      `/view/forms/new?formSpecId=${formSpecId}&empId=${loggedInUser?.empId}&viewType=2&approvalView=3&splitTeamWise=1&statusMessage=`
+    );
+  };
 
+  const youneedToDoNavigation = (workSpecId) => {
+    navigate(
+      `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=8&workView=1
+`
+    );
+  };
+
+  const teamNeedToDO = (workSpecId) => {
+    navigate(
+      `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=9&workView=2`
+    );
+  };
+
+  const needuraction = (workSpecId) => {
+    navigate(
+      `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=10&workView=4`
+    );
+  };
+
+  const teamaction = (workSpecId) => {
+    navigate(
+      `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=11&workView=5`
+    );
+  };
+
+  const noprogress = (workSpecId) => {
+    navigate(
+      `/view/workSpec/actions/new?workSpecId=${workSpecId}&viewType=12&workView=3`
+    );
+  };
   return (
     <Box sx={{}}>
       <Stack gap={1} sx={{ pt: 1 }}>
         {loggedInUser && isLoadHomeScreenCards ? (
           <Stack sx={{ alignItems: "center", justifyContent: "center" }}>
-            <Box component={"img"} src={bgloader} />
+            {/* <Box component={"img"} src={bgloader} /> */}
+
+            <DottedSpinner size={40} color="#1976d2" />
           </Stack>
         ) : filteredLoadHomeScreenCards &&
           filteredLoadHomeScreenCards.length > 0 ? (
@@ -405,11 +569,11 @@ const TaskCard = ({ searchInput }) => {
                                       />
                                     ) : data.formType === 2 ? (
                                       <Box
-                                        component={"img"}
-                                        scr={fromRequition}
-                                        style={{
-                                          width: "24px",
-                                          height: "24px",
+                                        component="img"
+                                        src={fromRequition} // ✅ corrected "src"
+                                        sx={{
+                                          width: 24,
+                                          height: 24,
                                         }}
                                       />
                                     ) : (
@@ -464,10 +628,12 @@ const TaskCard = ({ searchInput }) => {
                                   <Typography
                                     sx={{
                                       fontWeight: { sm: 500, xs: 500 },
-                                      fontSize: { sm: "14px", xs: "10px" },
+                                      fontSize: { sm: "12px", xs: "10px" },
                                     }}
                                   >
-                                    {data.moduleName}
+                                    {data.moduleName.length > 20
+                                      ? `${data.moduleName.slice(0, 20)}...`
+                                      : data.moduleName}
                                   </Typography>
                                 </React.Fragment>
                               )}
@@ -475,7 +641,7 @@ const TaskCard = ({ searchInput }) => {
 
                             <Stack
                               sx={{
-                                flexDirection: { sm: "row", xs: "column" },
+                                flexDirection: "row",
                                 gap: { sm: 1, xs: 0.5 },
                                 fontSize: "13px",
                               }}
@@ -485,7 +651,15 @@ const TaskCard = ({ searchInput }) => {
                                 variant="contained"
                                 sx={{ fontSize: { xs: "9px", sm: "12px" } }}
                                 onClick={() =>
-                                  navigateToShowAlldModule(data.moduleId)
+                                  navigateToShowAlldModule(
+                                    data.moduleId,
+                                    data.formType,
+                                    data.formSpecPermission,
+                                    data.formSpecViewPermission,
+                                    data.formAddPermission,
+                                    data.formSpecId,
+                                    data.customEntitySpecId
+                                  )
                                 }
                               >
                                 Show all
@@ -694,7 +868,7 @@ const TaskCard = ({ searchInput }) => {
                                                       : "red",
 
                                                   fontSize: {
-                                                    sm: "14px",
+                                                    sm: "12px",
                                                     xs: "10px",
                                                   },
                                                 }}
@@ -704,7 +878,7 @@ const TaskCard = ({ searchInput }) => {
                                               <Typography
                                                 sx={{
                                                   fontSize: {
-                                                    sm: "14px",
+                                                    sm: "12px",
                                                     xs: "10px",
                                                   },
                                                 }}
@@ -777,7 +951,7 @@ const TaskCard = ({ searchInput }) => {
                                                       ? "green"
                                                       : "red",
                                                   fontSize: {
-                                                    sm: "14px",
+                                                    sm: "12px",
                                                     xs: "12px",
                                                   },
                                                 }}
@@ -792,7 +966,7 @@ const TaskCard = ({ searchInput }) => {
                                                         ? "green"
                                                         : "red",
                                                     fontSize: {
-                                                      sm: "14px",
+                                                      sm: "12px",
                                                       xs: "12px",
                                                     },
                                                   }}
@@ -891,7 +1065,7 @@ const TaskCard = ({ searchInput }) => {
                                         <Typography
                                           sx={{
                                             fontSize: {
-                                              sm: "14px",
+                                              sm: "12px",
                                               xs: "10px",
                                             },
                                           }}
@@ -949,23 +1123,12 @@ const TaskCard = ({ searchInput }) => {
                                       <Stack
                                         sx={{
                                           flexDirection: "row",
-                                          gap: 2,
+                                          gap: 1,
                                           flexWrap: "wrap",
                                           justifyContent: "space-between",
                                         }}
                                       >
-                                        <Stack
-                                          sx={{
-                                            flexDirection: "column",
-                                            alignItems: "flex-start",
-                                            justifyContent: "space-between",
-                                            gap: 1,
-                                            width: "100%",
-                                            px: 1,
-
-                                            borderRadius: "4px",
-                                          }}
-                                        >
+                                        <>
                                           <Stack
                                             sx={{
                                               flexDirection: "row",
@@ -980,7 +1143,7 @@ const TaskCard = ({ searchInput }) => {
                                             <Typography
                                               sx={{
                                                 fontSize: {
-                                                  sm: "14px",
+                                                  sm: "12px",
                                                   xs: "10px",
                                                 },
                                                 textTransform: "capitalize",
@@ -1022,6 +1185,7 @@ const TaskCard = ({ searchInput }) => {
                                             <Stack
                                               sx={{
                                                 flexDirection: "row",
+                                                textAlign: "center",
                                                 alignItems: "center",
                                               }}
                                             >
@@ -1031,10 +1195,6 @@ const TaskCard = ({ searchInput }) => {
                                                     leaveData.count === 0
                                                       ? "green"
                                                       : "red",
-                                                  fontSize: {
-                                                    sm: "14px",
-                                                    xs: "10px",
-                                                  },
                                                 }}
                                               >
                                                 {leaveData.count}
@@ -1045,15 +1205,12 @@ const TaskCard = ({ searchInput }) => {
                                                     leaveData.count === 0
                                                       ? "green"
                                                       : "red",
-                                                  fontSize: {
-                                                    sm: "14px",
-                                                    xs: "10px",
-                                                  },
+                                                  fontSize: "13px",
                                                 }}
                                               />
                                             </Stack>
                                           </Stack>
-                                        </Stack>
+                                        </>
                                       </Stack>
                                     </Stack>
                                   );
@@ -1064,17 +1221,17 @@ const TaskCard = ({ searchInput }) => {
                                   {
                                     title: "pending your manager approval",
                                     count: pendingApprovals,
-                                    view: 1,
+                                    view: 4,
                                   },
                                   {
                                     title: "Approved leaves",
                                     count: approvedLeaves,
-                                    view: 2,
+                                    view: 5,
                                   },
                                   {
                                     title: "Rejected leaves",
                                     count: rejectedLeaves,
-                                    view: 3,
+                                    view: 6,
                                   },
                                 ].map((leaveData, i) => {
                                   return (
@@ -1113,7 +1270,7 @@ const TaskCard = ({ searchInput }) => {
                                             <Typography
                                               sx={{
                                                 fontSize: {
-                                                  sm: "14px",
+                                                  sm: "12px",
                                                   xs: "10px",
                                                 },
                                                 textTransform: "capitalize",
@@ -1144,7 +1301,7 @@ const TaskCard = ({ searchInput }) => {
                                             <Stack
                                               sx={{
                                                 flexDirection: "row",
-                                                alignItems: "center",
+                                                textAlign: "center",
                                               }}
                                             >
                                               <Typography
@@ -1153,10 +1310,6 @@ const TaskCard = ({ searchInput }) => {
                                                     leaveData.count === 0
                                                       ? "green"
                                                       : "red",
-                                                  fontSize: {
-                                                    sm: "14px",
-                                                    xs: "10px",
-                                                  },
                                                 }}
                                               >
                                                 {leaveData.count}
@@ -1167,10 +1320,7 @@ const TaskCard = ({ searchInput }) => {
                                                     leaveData.count === 0
                                                       ? "green"
                                                       : "red",
-                                                  fontSize: {
-                                                    sm: "14px",
-                                                    xs: "10px",
-                                                  },
+                                                  fontSize: "13px",
                                                 }}
                                               />
                                             </Stack>
@@ -1196,27 +1346,27 @@ const TaskCard = ({ searchInput }) => {
                                       {
                                         title: "Planned Today",
                                         count: plannedCount,
-                                        view: 1,
+                                        view: 4,
                                       },
                                       {
                                         title: "Visited ",
                                         count: actualCount,
-                                        view: 2,
+                                        view: 5,
                                       },
                                       {
                                         title: "unplanned visits",
                                         count: unplannedCount,
-                                        view: 3,
+                                        view: 6,
                                       },
                                       {
-                                        view: 4,
+                                        view: 7,
                                         count: teamPlannedCount,
-                                        title: "team planned employees",
+                                        title: " your team planned employees",
                                       },
                                       {
-                                        view: 5,
+                                        view: 8,
                                         count: teamUnplannedCount,
-                                        title: " team unplanned employees",
+                                        title: "yur team unplanned employees",
                                       },
                                     ]
                                       .slice(0, 3)
@@ -1242,7 +1392,12 @@ const TaskCard = ({ searchInput }) => {
                                                 transform: "scale(1.01)",
                                               },
                                             }}
-                                            onClick={() => handleDyaPlan(label)}
+                                            onClick={() =>
+                                              handleDyaPlan(
+                                                label.view,
+                                                label.title
+                                              )
+                                            }
                                           >
                                             <Typography
                                               sx={{
@@ -1252,7 +1407,7 @@ const TaskCard = ({ searchInput }) => {
                                                     : "red",
 
                                                 fontSize: {
-                                                  sm: "14px",
+                                                  sm: "12px",
                                                   xs: "10px",
                                                 },
                                               }}
@@ -1262,7 +1417,7 @@ const TaskCard = ({ searchInput }) => {
                                             <Typography
                                               sx={{
                                                 fontSize: {
-                                                  sm: "14px",
+                                                  sm: "12px",
                                                   xs: "10px",
                                                 },
                                               }}
@@ -1293,25 +1448,25 @@ const TaskCard = ({ searchInput }) => {
                                       {
                                         title: "Planned Today",
                                         count: plannedCount,
-                                        view: 1,
+                                        view: 4,
                                       },
                                       {
                                         title: "Visited ",
                                         count: actualCount,
-                                        view: 2,
+                                        view: 5,
                                       },
                                       {
                                         title: "unplanned visits",
                                         count: unplannedCount,
-                                        view: 3,
+                                        view: 6,
                                       },
                                       {
-                                        view: 4,
+                                        view: 7,
                                         count: teamPlannedCount,
                                         title: "team planned employees",
                                       },
                                       {
-                                        view: 5,
+                                        view: 8,
                                         count: teamUnplannedCount,
                                         title: " team unplanned employees",
                                       },
@@ -1328,12 +1483,17 @@ const TaskCard = ({ searchInput }) => {
                                               flexDirection: "row",
                                               justifyContent: "space-between",
                                             }}
-                                            onClick={() => handleDyaPlan(label)}
+                                            onClick={() =>
+                                              handleDyaPlan(
+                                                label.view,
+                                                label.title
+                                              )
+                                            }
                                           >
                                             <Typography
                                               sx={{
                                                 fontSize: {
-                                                  sm: "14px",
+                                                  sm: "12px",
                                                   xs: "10px",
                                                 },
                                               }}
@@ -1353,7 +1513,7 @@ const TaskCard = ({ searchInput }) => {
                                                       ? "green"
                                                       : "red",
                                                   fontSize: {
-                                                    sm: "14px",
+                                                    sm: "12px",
                                                     xs: "10px",
                                                   },
                                                 }}
@@ -1367,7 +1527,7 @@ const TaskCard = ({ searchInput }) => {
                                                       ? "green"
                                                       : "red",
                                                   fontSize: {
-                                                    sm: "14px",
+                                                    sm: "12px",
                                                     xs: "10px",
                                                   },
                                                 }}
@@ -1882,15 +2042,7 @@ const TaskCard = ({ searchInput }) => {
                                             py: 2,
                                             cursor: "pointer",
                                             transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              boxShadow:
-                                                "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                              transform: "scale(1.01)",
-                                            },
 
-                                            "& > *": {
-                                              width: "32%",
-                                            },
                                             "& > * >: nth-of-type(2)": {
                                               fontSize: {
                                                 sm: "12px",
@@ -1901,106 +2053,196 @@ const TaskCard = ({ searchInput }) => {
                                         >
                                           {loggedInUser?.manager ? (
                                             <>
-                                              {" "}
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByMe_byMe?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                              {/* ====================== online sync from===================== */}{" "}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+                                                const isClickable = size > 0;
+
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigationToManagerApproval(
                                                           data.formSpecId
-                                                      );
+                                                        ); // You should define this handler
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component={"span"}
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                       
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
 
-                                                    const size =
-                                                      matchingGroup?.pendingCount ??
-                                                      0;
+                                                    <Typography
+                                                      sx={{
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                      }}
+                                                    >
+                                                      Pending your manager
+                                                      approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
+                                              {/* Awaiting your approval */}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.formApprovalByMe ??
+                                                  0;
+                                                const isClickable = size > 0;
 
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Pending your manager approval
-                                                </Typography>
-                                              </Stack>
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByManager_byManager?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigateToAwaitingYourApproval(
                                                           data.formSpecId
-                                                      );
+                                                        );
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component="span"
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                      
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
+                                                    <Typography
+                                                      sx={{
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                      }}
+                                                    >
+                                                      Awaiting your approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
+                                              {/* Awaiting team approval */}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.formApprovalByTeam ??
+                                                  0;
+                                                const isClickable = size > 0;
 
-                                                    const size =
-                                                      matchingGroup?.formApprovalByMe ??
-                                                      0;
-
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Awaiting your approval
-                                                </Typography>
-                                              </Stack>
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByManager_byManager?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigateToAwaitingTeamApproval(
                                                           data.formSpecId
-                                                      );
-
-                                                    const size =
-                                                      matchingGroup?.formApprovalByTeam ??
-                                                      0;
-
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Awaiting team approval
-                                                </Typography>
-                                              </Stack>
+                                                        ); // Define this
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component="span"
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
+                                                    <Typography
+                                                      sx={{
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                      }}
+                                                    >
+                                                      Awaiting team approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
                                             </>
                                           ) : (
                                             <>
@@ -2125,9 +2367,6 @@ const TaskCard = ({ searchInput }) => {
                                               transform: "scale(1.01)",
                                             },
 
-                                            "& > *": {
-                                              width: "32%",
-                                            },
                                             "& > * >: nth-of-type(2)": {
                                               fontSize: {
                                                 sm: "12px",
@@ -2846,15 +3085,7 @@ const TaskCard = ({ searchInput }) => {
                                             py: 2,
                                             cursor: "pointer",
                                             transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              boxShadow:
-                                                "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                              transform: "scale(1.01)",
-                                            },
 
-                                            "& > *": {
-                                              width: "32%",
-                                            },
                                             "& > * >: nth-of-type(2)": {
                                               fontSize: {
                                                 sm: "12px",
@@ -2865,106 +3096,188 @@ const TaskCard = ({ searchInput }) => {
                                         >
                                           {loggedInUser?.manager ? (
                                             <>
-                                              {" "}
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByMe_byMe?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                              {/* ====================== online sync from===================== */}{" "}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByMe_byMe?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.pendingCount ??
+                                                  0;
+                                                const isClickable = size > 0;
+
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigationToManagerApproval(
                                                           data.formSpecId
-                                                      );
+                                                        ); // You should define this handler
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component={"span"}
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                        fontWeight: 600,
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
 
-                                                    const size =
-                                                      matchingGroup?.pendingCount ??
-                                                      0;
+                                                    <Typography>
+                                                      Pending your manager
+                                                      approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
+                                              {/* Awaiting your approval */}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.formApprovalByMe ??
+                                                  0;
+                                                const isClickable = size > 0;
 
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Pending your manager approval
-                                                </Typography>
-                                              </Stack>
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByManager_byManager?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigateToAwaitingYourApproval(
                                                           data.formSpecId
-                                                      );
+                                                        );
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component="span"
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                        fontWeight: 600,
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
+                                                    <Typography>
+                                                      Awaiting your approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
+                                              {/* Awaiting team approval */}
+                                              {(() => {
+                                                const matchingGroup =
+                                                  loadFormApprovalsCountByManager_byManager?.find(
+                                                    (group) =>
+                                                      group.formSpecId ===
+                                                      data.formSpecId
+                                                  );
+                                                const size =
+                                                  matchingGroup?.formApprovalByTeam ??
+                                                  0;
+                                                const isClickable = size > 0;
 
-                                                    const size =
-                                                      matchingGroup?.formApprovalByMe ??
-                                                      0;
-
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Awaiting your approval
-                                                </Typography>
-                                              </Stack>
-                                              <Stack>
-                                                <Typography>
-                                                  {(() => {
-                                                    const matchingGroup =
-                                                      loadFormApprovalsCountByManager_byManager?.find(
-                                                        (group) =>
-                                                          group.formSpecId ===
+                                                return (
+                                                  <Stack
+                                                    sx={{
+                                                      width: "100%",
+                                                      p: 1,
+                                                      cursor: isClickable
+                                                        ? "pointer"
+                                                        : "not-allowed",
+                                                      "&:hover": isClickable
+                                                        ? {
+                                                            boxShadow:
+                                                              "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                            transform:
+                                                              "scale(1.01)",
+                                                          }
+                                                        : {},
+                                                    }}
+                                                    onClick={() => {
+                                                      if (isClickable) {
+                                                        handleNavigateToAwaitingTeamApproval(
                                                           data.formSpecId
-                                                      );
-
-                                                    const size =
-                                                      matchingGroup?.formApprovalByTeam ??
-                                                      0;
-
-                                                    return (
-                                                      <Typography
-                                                        component={"span"}
-                                                        sx={{
-                                                          color:
-                                                            size > 0
-                                                              ? "green"
-                                                              : "red",
-                                                        }}
-                                                      >
-                                                        {size}
-                                                      </Typography>
-                                                    );
-                                                  })()}
-                                                </Typography>
-                                                <Typography>
-                                                  Awaiting team approval
-                                                </Typography>
-                                              </Stack>
+                                                        ); // Define this
+                                                      }
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      component="span"
+                                                      sx={{
+                                                        color:
+                                                          size > 0
+                                                            ? "green"
+                                                            : "red",
+                                                        fontSize: {
+                                                          sm: "12px",
+                                                          xs: "10px",
+                                                        },
+                                                        fontWeight: 600,
+                                                      }}
+                                                    >
+                                                      {size}
+                                                    </Typography>
+                                                    <Typography>
+                                                      Awaiting team approval
+                                                    </Typography>
+                                                  </Stack>
+                                                );
+                                              })()}
                                             </>
                                           ) : (
                                             <>
@@ -3089,9 +3402,6 @@ const TaskCard = ({ searchInput }) => {
                                               transform: "scale(1.01)",
                                             },
 
-                                            "& > *": {
-                                              width: "32%",
-                                            },
                                             "& > * >: nth-of-type(2)": {
                                               fontSize: {
                                                 sm: "12px",
@@ -3325,98 +3635,145 @@ const TaskCard = ({ searchInput }) => {
                                             py: 1.5,
                                             cursor: "pointer",
                                             transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              boxShadow:
-                                                "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                              transform: "scale(1.01)",
-                                            },
                                           }}
                                         >
-                                          <Stack>
-                                            <Typography>
-                                              {(() => {
-                                                const matchingGroup =
-                                                  yesterdayCount?.find(
-                                                    (group) =>
-                                                      group.forms?.some(
-                                                        (form) =>
-                                                          form.formSpecId ===
-                                                          data.formSpecId
-                                                      )
-                                                  );
+                                          {(() => {
+                                            const matchingGroup =
+                                              yesterdayCount?.find((group) =>
+                                                group.forms?.some(
+                                                  (form) =>
+                                                    form.formSpecId ===
+                                                    data.formSpecId
+                                                )
+                                              );
+                                            const size =
+                                              matchingGroup?.size ?? 0;
+                                            const isClickable = size > 0;
 
-                                                const size =
-                                                  matchingGroup?.size ?? 0;
+                                            return (
+                                              <Stack
+                                                sx={{
+                                                  width: "100%",
+                                                  p: 1,
+                                                  cursor: isClickable
+                                                    ? "pointer"
+                                                    : "not-allowed",
+                                                  "&:hover": isClickable
+                                                    ? {
+                                                        boxShadow:
+                                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                        transform:
+                                                          "scale(1.01)",
+                                                      }
+                                                    : {},
+                                                }}
+                                                onClick={() => {
+                                                  if (isClickable) {
+                                                    handleNavigationToFilledYestarday(
+                                                      data.formSpecId
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
 
-                                                return (
-                                                  <Typography
-                                                    component={"span"}
-                                                    sx={{
-                                                      color:
-                                                        size > 0
-                                                          ? "green"
-                                                          : "red",
-                                                    }}
-                                                  >
-                                                    {size}
-                                                  </Typography>
-                                                );
-                                              })()}
-                                            </Typography>
+                                                    fontWeight: {
+                                                      sm: 600,
+                                                      xs: 500,
+                                                    },
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
 
-                                            <Typography
-                                              sx={{
-                                                fontSize: {
-                                                  sm: "14px",
-                                                  xs: "10px",
-                                                },
-                                              }}
-                                            >
-                                              filled yesterday
-                                            </Typography>
-                                          </Stack>
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: {
+                                                      sm: "12px",
+                                                      xs: "10px",
+                                                    },
+                                                  }}
+                                                >
+                                                  filled yesterday
+                                                </Typography>
+                                              </Stack>
+                                            );
+                                          })()}
 
-                                          <Stack>
-                                            <Typography>
-                                              {(() => {
-                                                const matchingGroup =
-                                                  todayCount?.find((group) =>
-                                                    group.forms?.some(
-                                                      (form) =>
-                                                        form.formSpecId ===
-                                                        data.formSpecId
-                                                    )
-                                                  );
+                                          {(() => {
+                                            const matchingGroup =
+                                              todayCount?.find((group) =>
+                                                group.forms?.some(
+                                                  (form) =>
+                                                    form.formSpecId ===
+                                                    data.formSpecId
+                                                )
+                                              );
+                                            const size =
+                                              matchingGroup?.size ?? 0;
+                                            const isClickable = size > 0;
 
-                                                const size =
-                                                  matchingGroup?.size ?? 0;
+                                            return (
+                                              <Stack
+                                                sx={{
+                                                  width: "100%",
+                                                  p: 1,
+                                                  cursor: isClickable
+                                                    ? "pointer"
+                                                    : "not-allowed",
+                                                  "&:hover": isClickable
+                                                    ? {
+                                                        boxShadow:
+                                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                        transform:
+                                                          "scale(1.01)",
+                                                      }
+                                                    : {},
+                                                }}
+                                                onClick={() => {
+                                                  if (isClickable) {
+                                                    handleNavigationToFilledToday(
+                                                      data.formSpecId
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
 
-                                                return (
-                                                  <Typography
-                                                    component={"span"}
-                                                    sx={{
-                                                      color:
-                                                        size > 0
-                                                          ? "green"
-                                                          : "red",
-                                                    }}
-                                                  >
-                                                    {size}
-                                                  </Typography>
-                                                );
-                                              })()}
-                                            </Typography>
-                                            <Typography
-                                              sx={{
-                                                fontSize: {
-                                                  sm: "14px",
-                                                  xs: "10px",
-                                                },
-                                              }}
-                                            >
-                                              filled today
-                                            </Typography>
-                                          </Stack>
+                                                    fontWeight: {
+                                                      sm: 600,
+                                                      xs: 500,
+                                                    },
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: {
+                                                      sm: "12px",
+                                                      xs: "10px",
+                                                    },
+                                                  }}
+                                                >
+                                                  filled today
+                                                </Typography>
+                                              </Stack>
+                                            );
+                                          })()}
                                         </Stack>
                                       ) : (
                                         <Stack
@@ -3429,98 +3786,145 @@ const TaskCard = ({ searchInput }) => {
                                             py: 1.5,
                                             cursor: "pointer",
                                             transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              boxShadow:
-                                                "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                              transform: "scale(1.01)",
-                                            },
                                           }}
                                         >
-                                          <Stack>
-                                            <Typography>
-                                              {(() => {
-                                                const matchingGroup =
-                                                  yesterdayCount?.find(
-                                                    (group) =>
-                                                      group.forms?.some(
-                                                        (form) =>
-                                                          form.formSpecId ===
-                                                          data.formSpecId
-                                                      )
-                                                  );
+                                          {(() => {
+                                            const matchingGroup =
+                                              yesterdayCount?.find((group) =>
+                                                group.forms?.some(
+                                                  (form) =>
+                                                    form.formSpecId ===
+                                                    data.formSpecId
+                                                )
+                                              );
+                                            const size =
+                                              matchingGroup?.size ?? 0;
+                                            const isClickable = size > 0;
 
-                                                const size =
-                                                  matchingGroup?.size ?? 0;
+                                            return (
+                                              <Stack
+                                                sx={{
+                                                  width: "100%",
+                                                  p: 1,
+                                                  cursor: isClickable
+                                                    ? "pointer"
+                                                    : "not-allowed",
+                                                  "&:hover": isClickable
+                                                    ? {
+                                                        boxShadow:
+                                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                        transform:
+                                                          "scale(1.01)",
+                                                      }
+                                                    : {},
+                                                }}
+                                                onClick={() => {
+                                                  if (isClickable) {
+                                                    handleNavigationToFilledYestarday(
+                                                      data.formSpecId
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
 
-                                                return (
-                                                  <Typography
-                                                    component={"span"}
-                                                    sx={{
-                                                      color:
-                                                        size > 0
-                                                          ? "green"
-                                                          : "red",
-                                                    }}
-                                                  >
-                                                    {size}
-                                                  </Typography>
-                                                );
-                                              })()}
-                                            </Typography>
+                                                    fontWeight: {
+                                                      sm: 600,
+                                                      xs: 500,
+                                                    },
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
 
-                                            <Typography
-                                              sx={{
-                                                fontSize: {
-                                                  sm: "14px",
-                                                  xs: "10px",
-                                                },
-                                              }}
-                                            >
-                                              filled yesterday
-                                            </Typography>
-                                          </Stack>
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: {
+                                                      sm: "12px",
+                                                      xs: "10px",
+                                                    },
+                                                  }}
+                                                >
+                                                  filled yesterday
+                                                </Typography>
+                                              </Stack>
+                                            );
+                                          })()}
 
-                                          <Stack>
-                                            <Typography>
-                                              {(() => {
-                                                const matchingGroup =
-                                                  todayCount?.find((group) =>
-                                                    group.forms?.some(
-                                                      (form) =>
-                                                        form.formSpecId ===
-                                                        data.formSpecId
-                                                    )
-                                                  );
+                                          {(() => {
+                                            const matchingGroup =
+                                              todayCount?.find((group) =>
+                                                group.forms?.some(
+                                                  (form) =>
+                                                    form.formSpecId ===
+                                                    data.formSpecId
+                                                )
+                                              );
+                                            const size =
+                                              matchingGroup?.size ?? 0;
+                                            const isClickable = size > 0;
 
-                                                const size =
-                                                  matchingGroup?.size ?? 0;
+                                            return (
+                                              <Stack
+                                                sx={{
+                                                  width: "100%",
+                                                  p: 1,
+                                                  cursor: isClickable
+                                                    ? "pointer"
+                                                    : "not-allowed",
+                                                  "&:hover": isClickable
+                                                    ? {
+                                                        boxShadow:
+                                                          "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                        transform:
+                                                          "scale(1.01)",
+                                                      }
+                                                    : {},
+                                                }}
+                                                onClick={() => {
+                                                  if (isClickable) {
+                                                    handleNavigationToFilledToday(
+                                                      data.formSpecId
+                                                    );
+                                                  }
+                                                }}
+                                              >
+                                                <Typography
+                                                  component={"span"}
+                                                  sx={{
+                                                    color:
+                                                      size > 0
+                                                        ? "green"
+                                                        : "red",
 
-                                                return (
-                                                  <Typography
-                                                    component={"span"}
-                                                    sx={{
-                                                      color:
-                                                        size > 0
-                                                          ? "green"
-                                                          : "red",
-                                                    }}
-                                                  >
-                                                    {size}
-                                                  </Typography>
-                                                );
-                                              })()}
-                                            </Typography>
-                                            <Typography
-                                              sx={{
-                                                fontSize: {
-                                                  sm: "14px",
-                                                  xs: "10px",
-                                                },
-                                              }}
-                                            >
-                                              filled today
-                                            </Typography>
-                                          </Stack>
+                                                    fontWeight: {
+                                                      sm: 600,
+                                                      xs: 500,
+                                                    },
+                                                  }}
+                                                >
+                                                  {size}
+                                                </Typography>
+
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: {
+                                                      sm: "12px",
+                                                      xs: "10px",
+                                                    },
+                                                  }}
+                                                >
+                                                  filled today
+                                                </Typography>
+                                              </Stack>
+                                            );
+                                          })()}
                                         </Stack>
                                       )
                                     ) : null
@@ -3538,93 +3942,127 @@ const TaskCard = ({ searchInput }) => {
                                         py: 1.5,
                                         cursor: "pointer",
                                         transition: "all 0.3s ease",
-                                        "&:hover": {
-                                          boxShadow:
-                                            "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                          transform: "scale(1.01)",
-                                        },
                                       }}
                                     >
-                                      <Stack>
-                                        <Typography>
-                                          {(() => {
-                                            const matchingGroup =
-                                              yesterdayCount?.find((group) =>
-                                                group.forms?.some(
-                                                  (form) =>
-                                                    form.formSpecId ===
-                                                    data.formSpecId
-                                                )
-                                              );
+                                      {(() => {
+                                        const matchingGroup =
+                                          yesterdayCount?.find((group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                          );
+                                        const size = matchingGroup?.size ?? 0;
+                                        const isClickable = size > 0;
 
-                                            const size =
-                                              matchingGroup?.size ?? 0;
+                                        return (
+                                          <Stack
+                                            sx={{
+                                              width: "100%",
+                                              p: 1,
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
+                                              "&:hover": isClickable
+                                                ? {
+                                                    boxShadow:
+                                                      "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                    transform: "scale(1.01)",
+                                                  }
+                                                : {},
+                                            }}
+                                            onClick={() => {
+                                              if (isClickable) {
+                                                handleNavigationToFilledYestarday(
+                                                  data.formSpecId
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <Typography
+                                              component={"span"}
+                                              sx={{
+                                                color:
+                                                  size > 0 ? "green" : "red",
+                                              }}
+                                            >
+                                              {size}
+                                            </Typography>
 
-                                            return (
-                                              <Typography
-                                                component={"span"}
-                                                sx={{
-                                                  color:
-                                                    size > 0 ? "green" : "red",
-                                                }}
-                                              >
-                                                {size}
-                                              </Typography>
-                                            );
-                                          })()}
-                                        </Typography>
+                                            <Typography
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "12px",
+                                                  xs: "10px",
+                                                },
+                                              }}
+                                            >
+                                              filled yesterday
+                                            </Typography>
+                                          </Stack>
+                                        );
+                                      })()}
 
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          filled yesterday
-                                        </Typography>
-                                      </Stack>
+                                      {(() => {
+                                        const matchingGroup = todayCount?.find(
+                                          (group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                        );
+                                        const size = matchingGroup?.size ?? 0;
+                                        const isClickable = size > 0;
 
-                                      <Stack>
-                                        <Typography>
-                                          {(() => {
-                                            const matchingGroup =
-                                              todayCount?.find((group) =>
-                                                group.forms?.some(
-                                                  (form) =>
-                                                    form.formSpecId ===
-                                                    data.formSpecId
-                                                )
-                                              );
+                                        return (
+                                          <Stack
+                                            sx={{
+                                              width: "100%",
+                                              p: 1,
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
+                                              "&:hover": isClickable
+                                                ? {
+                                                    boxShadow:
+                                                      "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                    transform: "scale(1.01)",
+                                                  }
+                                                : {},
+                                            }}
+                                            onClick={() => {
+                                              if (isClickable) {
+                                                handleNavigationToFilledToday(
+                                                  data.formSpecId
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <Typography
+                                              component={"span"}
+                                              sx={{
+                                                color:
+                                                  size > 0 ? "green" : "red",
+                                              }}
+                                            >
+                                              {size}
+                                            </Typography>
 
-                                            const size =
-                                              matchingGroup?.size ?? 0;
-
-                                            return (
-                                              <Typography
-                                                component={"span"}
-                                                sx={{
-                                                  color:
-                                                    size > 0 ? "green" : "red",
-                                                }}
-                                              >
-                                                {size}
-                                              </Typography>
-                                            );
-                                          })()}
-                                        </Typography>
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          filled today
-                                        </Typography>
-                                      </Stack>
+                                            <Typography
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "12px",
+                                                  xs: "10px",
+                                                },
+                                              }}
+                                            >
+                                              filled today
+                                            </Typography>
+                                          </Stack>
+                                        );
+                                      })()}
                                     </Stack>
                                   ) : (
                                     <Stack
@@ -3637,93 +4075,127 @@ const TaskCard = ({ searchInput }) => {
                                         py: 1.5,
                                         cursor: "pointer",
                                         transition: "all 0.3s ease",
-                                        "&:hover": {
-                                          boxShadow:
-                                            "0 1px 10px rgba(0, 0, 0, 0.10)",
-                                          transform: "scale(1.01)",
-                                        },
                                       }}
                                     >
-                                      <Stack>
-                                        <Typography>
-                                          {(() => {
-                                            const matchingGroup =
-                                              yesterdayCount?.find((group) =>
-                                                group.forms?.some(
-                                                  (form) =>
-                                                    form.formSpecId ===
-                                                    data.formSpecId
-                                                )
-                                              );
+                                      {(() => {
+                                        const matchingGroup =
+                                          yesterdayCount?.find((group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                          );
+                                        const size = matchingGroup?.size ?? 0;
+                                        const isClickable = size > 0;
 
-                                            const size =
-                                              matchingGroup?.size ?? 0;
+                                        return (
+                                          <Stack
+                                            sx={{
+                                              width: "100%",
+                                              p: 1,
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
+                                              "&:hover": isClickable
+                                                ? {
+                                                    boxShadow:
+                                                      "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                    transform: "scale(1.01)",
+                                                  }
+                                                : {},
+                                            }}
+                                            onClick={() => {
+                                              if (isClickable) {
+                                                handleNavigationToFilledYestarday(
+                                                  data.formSpecId
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <Typography
+                                              component={"span"}
+                                              sx={{
+                                                color:
+                                                  size > 0 ? "green" : "red",
+                                              }}
+                                            >
+                                              {size}
+                                            </Typography>
 
-                                            return (
-                                              <Typography
-                                                component={"span"}
-                                                sx={{
-                                                  color:
-                                                    size > 0 ? "green" : "red",
-                                                }}
-                                              >
-                                                {size}
-                                              </Typography>
-                                            );
-                                          })()}
-                                        </Typography>
+                                            <Typography
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "12px",
+                                                  xs: "10px",
+                                                },
+                                              }}
+                                            >
+                                              filled yesterday
+                                            </Typography>
+                                          </Stack>
+                                        );
+                                      })()}
 
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          filled yesterday
-                                        </Typography>
-                                      </Stack>
+                                      {(() => {
+                                        const matchingGroup = todayCount?.find(
+                                          (group) =>
+                                            group.forms?.some(
+                                              (form) =>
+                                                form.formSpecId ===
+                                                data.formSpecId
+                                            )
+                                        );
+                                        const size = matchingGroup?.size ?? 0;
+                                        const isClickable = size > 0;
 
-                                      <Stack>
-                                        <Typography>
-                                          {(() => {
-                                            const matchingGroup =
-                                              todayCount?.find((group) =>
-                                                group.forms?.some(
-                                                  (form) =>
-                                                    form.formSpecId ===
-                                                    data.formSpecId
-                                                )
-                                              );
+                                        return (
+                                          <Stack
+                                            sx={{
+                                              width: "100%",
+                                              p: 1,
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
+                                              "&:hover": isClickable
+                                                ? {
+                                                    boxShadow:
+                                                      "0 1px 10px rgba(0, 0, 0, 0.10)",
+                                                    transform: "scale(1.01)",
+                                                  }
+                                                : {},
+                                            }}
+                                            onClick={() => {
+                                              if (isClickable) {
+                                                handleNavigationToFilledToday(
+                                                  data.formSpecId
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <Typography
+                                              component={"span"}
+                                              sx={{
+                                                color:
+                                                  size > 0 ? "green" : "red",
+                                              }}
+                                            >
+                                              {size}
+                                            </Typography>
 
-                                            const size =
-                                              matchingGroup?.size ?? 0;
-
-                                            return (
-                                              <Typography
-                                                component={"span"}
-                                                sx={{
-                                                  color:
-                                                    size > 0 ? "green" : "red",
-                                                }}
-                                              >
-                                                {size}
-                                              </Typography>
-                                            );
-                                          })()}
-                                        </Typography>
-                                        <Typography
-                                          sx={{
-                                            fontSize: {
-                                              sm: "14px",
-                                              xs: "10px",
-                                            },
-                                          }}
-                                        >
-                                          filled today
-                                        </Typography>
-                                      </Stack>
+                                            <Typography
+                                              sx={{
+                                                fontSize: {
+                                                  sm: "12px",
+                                                  xs: "10px",
+                                                },
+                                              }}
+                                            >
+                                              filled today
+                                            </Typography>
+                                          </Stack>
+                                        );
+                                      })()}
                                     </Stack>
                                   )}
                                 </>
@@ -3760,11 +4232,21 @@ const TaskCard = ({ searchInput }) => {
 
                                         const size = matchingGroup?.count ?? 0;
 
+                                        const isClickable = size > 0;
+
                                         return (
                                           <Stack
+                                            onClick={() =>
+                                              youneedToDoNavigation(
+                                                data.customEntitySpecId
+                                              )
+                                            }
                                             sx={{
                                               flexDirection: "row",
                                               alignItems: "center",
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
                                             }}
                                           >
                                             <Typography
@@ -3804,13 +4286,21 @@ const TaskCard = ({ searchInput }) => {
 
                                           const size =
                                             matchingGroup?.count ?? 0;
-
+                                          const isClickable = size > 0;
                                           return (
                                             <Stack
                                               sx={{
                                                 flexDirection: "row",
                                                 alignItems: "center",
+                                                cursor: isClickable
+                                                  ? "pointer"
+                                                  : "not-allowed",
                                               }}
+                                              onClick={() =>
+                                                teamNeedToDO(
+                                                  data.customEntitySpecId
+                                                )
+                                              }
                                             >
                                               <Typography
                                                 component={"span"}
@@ -3850,7 +4340,7 @@ const TaskCard = ({ searchInput }) => {
                                       matchingGroup?.canSendWorkInvitation;
 
                                     if (!canSend) return null;
-
+                                    const isClickable = size > 0;
                                     return (
                                       <Stack>
                                         <Typography>
@@ -3860,7 +4350,15 @@ const TaskCard = ({ searchInput }) => {
                                           sx={{
                                             flexDirection: "row",
                                             alignItems: "center",
+                                            cursor: isClickable
+                                              ? "pointer"
+                                              : "not-allowed",
                                           }}
+                                          onClick={() =>
+                                            needuraction(
+                                              data.customEntitySpecId
+                                            )
+                                          }
                                         >
                                           <Typography
                                             component={"span"}
@@ -3893,6 +4391,7 @@ const TaskCard = ({ searchInput }) => {
 
                                     if (!loggedInUser?.manager || !canSend)
                                       return null;
+                                    const isClickable = size > 0;
 
                                     return (
                                       <Stack>
@@ -3903,7 +4402,13 @@ const TaskCard = ({ searchInput }) => {
                                           sx={{
                                             flexDirection: "row",
                                             alignItems: "center",
+                                            cursor: isClickable
+                                              ? "pointer"
+                                              : "not-allowed",
                                           }}
+                                          onClick={() =>
+                                            teamaction(data.customEntitySpecId)
+                                          }
                                         >
                                           <Typography
                                             component={"span"}
@@ -3941,12 +4446,21 @@ const TaskCard = ({ searchInput }) => {
 
                                         const size = matchingGroup?.count ?? 0;
 
+                                        const isClickable = size > 0;
                                         return (
                                           <Stack
                                             sx={{
                                               flexDirection: "row",
                                               alignItems: "center",
+                                              cursor: isClickable
+                                                ? "pointer"
+                                                : "not-allowed",
                                             }}
+                                            onClick={() =>
+                                              noprogress(
+                                                data.customEntitySpecId
+                                              )
+                                            }
                                           >
                                             <Typography
                                               component={"span"}

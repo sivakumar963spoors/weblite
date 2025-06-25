@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   approvedLeaves,
+  getAddLeaveData,
+  getLeavesByTypes,
+  getLeavesByTypesForCount,
+  getWithDrawLeave,
   pendingApprovals,
   rejectedLeaves,
   todaysEmpLeave_ajax,
@@ -13,6 +17,9 @@ const initialState = {
   status: "idle",
   error: null,
   data: {},
+isfetchgetWithDrawLeave:false,
+fetchgetWithDrawLeaveData:{},
+  dataEmpCount: {},
   onLeaveToday: [],
   onLeaveTodayStatus: "",
   isonLeaveTodayLoading: false,
@@ -31,7 +38,11 @@ const initialState = {
   errorTotalTeamLeaves: null,
   errorApprovedLeaves: null,
   errorRejectedLeaves: null,
+  isdataEmpCount: false,
+  fetchgetAddLeaveDataDetails: {},
+  isfetchgetAddLeaveData: false,
 };
+
 export const todayLeaveDetails = createAsyncThunk(
   "leaves/todayLeaveDetails",
   async (_, thunkAPI) => {
@@ -55,17 +66,9 @@ export const todayLeaveDetails = createAsyncThunk(
 );
 export const getLeavesData = createAsyncThunk(
   "leaves/fetchLeavesData",
-  async (_viewType, { rejectWithValue }) => {
-    let url = "http://localhost:8000/view/leaves/new/manager";
-    const viewType = Number(_viewType);
-    if (viewType === 4) {
-      url = "http://localhost:8000/approve/api";
-    } else if (viewType === 2) {
-      url = "http://localhost:8000/view/leaves/new/manager";
-    }
-
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await fetch(url, {
+      const response = await fetch(getLeavesByTypes(params), {
         method: "GET",
         credentials: "include",
       });
@@ -83,7 +86,28 @@ export const getLeavesData = createAsyncThunk(
     }
   }
 );
+export const getLeavesDataForCount = createAsyncThunk(
+  "leaves/getLeavesDataForCount",
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await fetch(getLeavesByTypesForCount(params), {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch leaves data: ${response.status} ${response.statusText}`
+        );
+      }
 
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching leaves data:", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 export const fetchPendingApprovals = createAsyncThunk(
   "leaves/fetchPendingApprovals",
   async (_, { rejectWithValue }) => {
@@ -163,21 +187,83 @@ export const fetchRejectedLeaves = createAsyncThunk(
     }
   }
 );
+export const fetchgetAddLeaveData = createAsyncThunk(
+  "leaves/fetchgetAddLeaveData",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(getAddLeaveData, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch rejected leaves");
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+// withd
+export const fetchgetWithDrawLeave = createAsyncThunk(
+  "leaves/fetchgetWithDrawLeave",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const url = getWithDrawLeave(payload);
+      const res = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to withdraw leave");
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+
 const LeavesModule = createSlice({
   name: "LaeveModule",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getLeavesData.pending, (state) => {
-        state.status = "loading";
+ .addCase(fetchgetWithDrawLeave.pending, (state) => {
+        state.isfetchgetWithDrawLeave = true;
       })
+      .addCase(fetchgetWithDrawLeave.fulfilled, (state, action) => {
+        state.fetchgetWithDrawLeaveData = action.payload;
+        state.isfetchgetWithDrawLeave = false;
+      })
+      .addCase(fetchgetWithDrawLeave.rejected, (state, action) => {
+        state.isfetchgetWithDrawLeave = false;
+      })
+      .addCase(fetchgetAddLeaveData.pending, (state) => {
+        state.isfetchgetAddLeaveData = true;
+      })
+      .addCase(fetchgetAddLeaveData.fulfilled, (state, action) => {
+        state.fetchgetAddLeaveDataDetails = action.payload;
+        state.isfetchgetAddLeaveData = false;
+      })
+      .addCase(fetchgetAddLeaveData.rejected, (state, action) => {
+        state.isfetchgetAddLeaveData = false;
+      })
+      .addCase(getLeavesData.pending, (state) => {})
       .addCase(getLeavesData.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.data = action.payload;
       })
       .addCase(getLeavesData.rejected, (state, action) => {
         state.status = "failed";
+      })
+      .addCase(getLeavesDataForCount.pending, (state) => {
+        state.isdataEmpCount = true;
+      })
+      .addCase(getLeavesDataForCount.fulfilled, (state, action) => {
+        state.dataEmpCount = action.payload;
+        state.isdataEmpCount = false;
+      })
+      .addCase(getLeavesDataForCount.rejected, (state, action) => {
+        state.isdataEmpCount = false;
       })
       .addCase(todayLeaveDetails.pending, (state) => {
         state.onLeaveTodayStatus = "loading";
@@ -186,7 +272,7 @@ const LeavesModule = createSlice({
       .addCase(todayLeaveDetails.fulfilled, (state, action) => {
         state.onLeaveTodayStatus = "succeeded";
         state.onLeaveToday = action.payload;
-        console.log(action.payload)
+        console.log(action.payload);
         state.isonLeaveTodayLoading = false;
       })
       .addCase(todayLeaveDetails.rejected, (state) => {
